@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - uses: actions/configure-pages@v4
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - run: npm ci
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
