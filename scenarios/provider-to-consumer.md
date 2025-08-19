@@ -43,139 +43,168 @@ subgraph Consumer
 end
 ```
 
-## KCP to Kube
+## Kube to KCP to Kube
 
 ### Problem Description
 
-TODO
+The problem is specified on the example of an Internal Developer
+Platform (IDP). Teams can be Providers and Consumer of Services.
 
-### Solution
+The Database Team (DB) offers a Postgres Service.
+The Observability Team (Obs) wants to use the Postgres Service as the
+database for their Elastic service.
+The Webshop Team (WS) wants to use the Postgres Services as the database
+for the Webshops they maintain for their customers and the Elastic
+Service for logging and metrics.
 
-api-syncagent is run by the provider to export offerings in the KCP workspace.
-Consumers bind the APIExport and use kube-bind the pull the resulting CRD and push instances.
-
-kube-bind can be a kube-bind backend in KCP or konnector run by the consumers.
+This diagram shows the premise of the problem:
 
 ```mermaid
 flowchart LR
 
-    subgraph PC1[Provider Compute 1]
-        providerCRD1([CRD1])
-        providerCRD2([CRD2])
-        instancep1([Instance])
+subgraph KCP
+    subgraph KCP_DB[root:team:database]
+        PGExport[Postgres APIExport]
     end
 
-
-    providerCRD1 --> |api-syncagent| providerwsCRD1
-    providerCRD2 --> |api-syncagent| providerwsCRD2
-
-    subgraph KCP
-        subgraph PWS[Provider WS]
-            providerwsCRD1([CRD1])
-            providerwsCRD2([CRD2])
-        end
-
-        subgraph CAWS[Consumer A WS]
-            consumerawsCRD1([CRD1])
-        end
-
-        providerwsCRD1 --> |APIBinding| consumerawsCRD1
-
-        subgraph CBWS[Consumer B WS]
-            consumerbwsCRD2([CRD2])
-            instancews1([Instance])
-        end
-
-        providerwsCRD2 --> |APIBinding| consumerbwsCRD2
-        instancews1 --> |VW| instancep1
+    subgraph KCP_Obs[root:team:observability]
+        PGBindingObs[Postgres APIBinding]
+        ElasticExport[Elastic APIExport]
     end
+    PGExport -.-> PGBindingObs
 
-    consumerawsCRD1 --> |kube-bind| consumeraCRD1
-
-    subgraph CA[Consumer A]
-        consumeraCRD1([CRD1])
+    subgraph KCP_WS[root:team:webshop]
+        ElasticBinding[Elastic APIBinding]
+        PGBindingWS[Postgres APIBinding]
     end
+    PGExport -.-> PGBindingWS
+    ElasticExport -.-> ElasticBinding
+end
 
-    consumerbwsCRD2 --> |kube-bind| consumerbCRD2
-    instanceb1 --> |kube-bind| instancews1
+subgraph DBCompute[Database Compute Cluster]
+    PGCRD[Postgres CRD]
+    PGCRD -.-> |api-syncagent| PGExport
+end
 
-    subgraph CB[Cosumer B]
-        consumerbCRD2([CRD2])
-        instanceb1([Instnce])
-    end
+subgraph ObsCompute[Observability Compute Cluster]
+    ElasticCRD[Elastic CRD]
+    ElasticCRD -.-> |api-syncagent| ElasticExport
+end
+
+subgraph WSCompute[Workshop Compute Cluster]
+    Webshop
+end
 ```
 
-## Internal Development Platform
+Not pictures is the teams using e.g. GitOps to manage the components of
+their services, which are running in the respective clusters.
 
-### Problem Description
+### Tools Solution
 
-TODO
+This solution focuses on using commonly available tools to manage and
+apply the manifests.
 
-### Solution
+The Obersvability Team uses KRO (Kubernetes Resource Orchestrator) to
+instantiate their Elastic Service, including the Postgres Instance from
+the Database Team.
 
-KCP used as an internal developer platform with teams offering services that in turn utilize other services on the IDP.
+Since KRO works only on one Cluster they are using kube-bind to pull the
+CRD of the Postgres Services from the APIBinding they created in their
+workspace to their compute cluster.
 
-Here the Observability team is offering Elastic instances. For Elastic they need a relational database and chose Postgres, which the Database team offers.
+The postgres instance for an elastic service is created as part of the
+KRO Resource Graph Definition, which is mirrored back to KCP by
+kube-bind.
 
 ```mermaid
 flowchart TD
 
 subgraph KCP
-    subgraph DatabaseWS[Database Team Workspace]
+    subgraph KCP_DB[root:team:database]
         PGExport[Postgres APIExport]
-        subgraph PGExportVW[Postgres VW]
-            PGInstanceDbWs
-        end
     end
 
-    PGExport -.-> PGBinding
-    PGInstanceObsWs --> |VW| PGInstanceDbWs
-
-    subgraph ObservabilityWS[Observability Team Workspace]
-        PGBinding[Postgres APIBinding]
-        PGInstanceObsWs[Postgres Instance]
-
-        ELKExport[Elastic APIExport]
-        subgraph ELKExportVW[Elastic VW]
-            ELKInstanceProvider[ELK Instance]
-        end
+    subgraph KCP_Obs[root:team:observability]
+        ElasticExport[Elastic APIExport]
+        PGBindingObs[Postgres APIBinding]
+        PGInstanceObsWs[Obs Postgres Instance]
     end
-
-    ELKExport -.-> ELKBinding
-    ELKInstance --> ELKInstanceProvider
-
-    subgraph ConsumerWs[Consumer]
-        ELKBinding[Elastic APIBinding]
-        ELKInstance[ELK Instance]
-        ELKBinding -.-> ELKInstance
-    end
+    PGExport -.-> PGBindingObs
 end
 
-subgraph DBKube[Database Team Clusters]
+subgraph DBCompute[Database Compute Cluster]
     PGCRD[Postgres CRD]
     PGCRD -.-> |api-syncagent| PGExport
-
-    PGInstanceKube[Postgres Instance]
+    PGInstanceObsReal[Obs Postgres Instance]
+    PGInstanceObsWs --> PGInstanceObsReal
 end
 
-PGInstanceDbWs -.-> |api-syncagent| PGInstanceKube
-
-subgraph ObservabilityKube[Observability Team Clusters]
-    ELKCRD[Elastic CRD]
-    ELKCRD -.-> |api-syncagent| ELKExport
-
-    ELKInstanceKube[Elastic Instance]
-    ELKInstanceKube -.-> ElasticResource
-    subgraph ElasticResource[Elastic Resources]
-        PGInstanceObsKube[Postgres Instance]
-    end
+subgraph ObsCompute[Observability Compute Cluster]
+    ElasticCRD[Elastic CRD]
+    ElasticCRD -.-> |api-syncagent| ElasticExport
 
     PGCRDObs[Postgres CRD]
-    PGCRDObs -.-> PGInstanceObsKube
-end
+    PGBindingObs -.-> |kube-bind| PGCRDObs
 
-ELKInstanceProvider -.-> |api-syncagent| ELKInstanceKube
-PGBinding -.-> |kube-bind| PGCRDObs
-PGInstanceObsKube --> |kube-bind| PGInstanceObsWs
+    ElasticInstance
+    ElasticCRD -.-> ElasticInstance
+
+    PGInstanceObs[Obs Postgres Instance]
+    ElasticInstance -.-> PGInstanceObs
+    PGCRDObs -.-> PGInstanceObs
+
+    PGInstanceObs --> |kube-bind| PGInstanceObsWs
+end
 ```
 
+### Operator Solution
+
+The Webshop team uses their own operator to manage their Webshop, which
+they wrote using multicluster-runtime, allowing them to interact with
+many clusters at once.
+
+The Webshop team maintains definitions of the Webshop instances in their
+KCP Workspace and are deploying resources based on these definitions
+where they are needed.
+
+```mermaid
+flowchart LR
+
+subgraph KCP
+    subgraph KCP_DB[root:team:database]
+        PGExport[Postgres APIExport]
+    end
+
+    subgraph KCP_Obs[root:team:observability]
+        ElasticExport[Elastic APIExport]
+    end
+
+    subgraph KCP_WS[root:team:webshop]
+        ElasticBinding[Elastic APIBinding]
+        PGBinding[Postgres APIBinding]
+
+        WebshopCRD[Webshop CRD]
+        WebshopInstance[Webshop Instance]
+        WebshopCRD -.-> WebshopInstance
+        WebshopInstanceDB[Webshop Instance PG]
+        WebshopInstanceDB --> PGBinding
+        WebshopInstanceElastic[Webshop Instance Elastic]
+        WebshopInstanceElastic --> ElasticBinding
+    end
+
+    PGBinding -.-> PGExport
+    ElasticBinding -.-> ElasticExport
+end
+
+subgraph WSCompute[Workshop Compute Cluster]
+    WebshopOperator[Webshop Operator]
+    Webshop
+end
+WebshopOperator -.-> WebshopInstance
+WebshopOperator --> WebshopInstanceDB
+WebshopOperator --> WebshopInstanceElastic
+WebshopOperator --> Webshop
+```
+
+The operator also provides the information from the database and elastic
+service to the webshop instance.
