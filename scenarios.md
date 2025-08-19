@@ -1,17 +1,2 @@
----
-outline: deep
----
-
-# Scenarios
-
-## Scenario 1
-
-TODO
-
-## Scenario 2
-
-TODO
-
-## Scenario 3
-
-TODO
+On the following pages some common scenarios, their problems and
+solutions in the context of the Platform Mesh.

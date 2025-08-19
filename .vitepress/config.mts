@@ -17,6 +17,7 @@ export default defineConfig({
         '/scenarios': {
             test: 'Scenarios',
             items:  [
+                { text: 'Scenarios', link: '/scenarios' },
                 { text: 'Provider to Consumer (P2C)', link: '/scenarios/provider-to-consumer' },
             ],
         },
