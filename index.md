@@ -4,7 +4,10 @@ layout: home
 
 hero:
   name: "Platform Mesh"
-  tagline: Platform Mesh establishes interoperability between multiple providers.
+  text:  "Building upon the Kubernetes API & Resource Model"
+  tagline: "Discover, order, and orchestrate services across any provider through the beloved kubectl ❤️"
+  image:
+    src: './assets/pm_logo.svg'
 
 features:
   - title: Feature A
