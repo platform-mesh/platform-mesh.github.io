@@ -105,7 +105,8 @@ The **Observability Team** leverages **KRO (Kubernetes Resource Orchestrator)** 
 
 * Instantiate Elastic services.
 * Pull Postgres CRDs from their APIBinding using **kube-bind**.
-* Define resource graphs that mirror Postgres instance requests back to KCP.
+* Define resource graphs that create Postgres instances using the pulled CRDs.
+* The ordered Postgres instances are mirrored back to KCP by **kube-bind**.
 
 ```mermaid
 flowchart TD
