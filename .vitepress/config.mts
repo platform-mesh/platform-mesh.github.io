@@ -8,7 +8,7 @@ export default withMermaid({
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
 
-  base: process.env.PAGES_BASE ? '/' + process.env.PAGES_BASE : '/',
+  base: process.env.PAGES_BASE ? '/' + process.env.PAGES_BASE : '',
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
