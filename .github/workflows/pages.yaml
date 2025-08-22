@@ -52,7 +52,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          PAGES_BASE: ${{ github.event_name == 'pull_request' && format('pr-preview/pr-{0}', github.event.pull_request.number) || '/' }}
+          PAGES_BASE: ${{ github.event_name == 'pull_request' && format('pr-preview/pr-{0}', github.event.pull_request.number) || '' }}
 
       # deploy the PR to a preview URL
       - uses: rossjrw/pr-preview-action@9f77b1d057b494e662c50b8ca40ecc63f21e0887 # v1
