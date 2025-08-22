@@ -56,7 +56,7 @@ jobs:
 
       # deploy the PR to a preview URL
       - uses: rossjrw/pr-preview-action@9f77b1d057b494e662c50b8ca40ecc63f21e0887 # v1
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork }}
         with:
           source-dir: .vitepress/dist
 
