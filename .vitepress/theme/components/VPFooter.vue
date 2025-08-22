@@ -43,7 +43,7 @@ const projectName = title || 'PlatformMesh'
         <div class="funding-image">
           <div class="funding-image-container">
             <div class="funding-image-bg"></div>
-            <img src="/eu-support.png" alt="EU and German government funding logos" class="funding-image-src">
+            <img src="/eu_support.png" alt="EU and German government funding logos" class="funding-image-src">
           </div>
         </div>
         <div class="funding-text">
