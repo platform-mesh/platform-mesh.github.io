@@ -25,18 +25,8 @@ concurrency:
 
 jobs:
 
-  delete-preview:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: rossjrw/pr-preview-action@9f77b1d057b494e662c50b8ca40ecc63f21e0887 # v1
-        with:
-          action: remove
-
   build:
     runs-on: ubuntu-latest
-    # only build on main or if the PR is open
-    if: github.ref == 'refs/heads/main' || (github.event_name == 'pull_request' && github.event.action != 'closed')
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
         with:
