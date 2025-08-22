@@ -151,7 +151,7 @@ end
 
 ### Operator Solution
 
-The **Webshop Team** uses its own **operator** built with **multicluster-runtime**:
+The **Webshop Team** uses its own **operator** built with [**multicluster-runtime**](https://github.com/kubernetes-sigs/multicluster-runtime/):
 
 * Webshop definitions live in their KCP workspace.
 * Operator deploys workloads across clusters.
