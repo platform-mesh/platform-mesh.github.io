@@ -29,8 +29,6 @@ Copied and adapted from: https://github.com/vuejs/vitepress/blob/828000099843c98
 <script setup lang="ts">
 import { useSidebar } from 'vitepress/theme';
 import { withBase, useData } from "vitepress";
-import euSupportImg from '../assets/eu-support.png'
-import neonephosLogo from '../assets/neonephos_logo.svg'
 
 const { hasSidebar } = useSidebar()
 const { isDark, title } = useData()
@@ -45,7 +43,7 @@ const projectName = title || 'PlatformMesh'
         <div class="funding-image">
           <div class="funding-image-container">
             <div class="funding-image-bg"></div>
-            <img :src="euSupportImg" alt="EU and German government funding logos" class="funding-image-src">
+            <img src="/eu_support.png" alt="EU and German government funding logos" class="funding-image-src">
           </div>
         </div>
         <div class="funding-text">
@@ -68,16 +66,16 @@ const projectName = title || 'PlatformMesh'
         </div>
 
       </div>
-      
+
       <!-- Neonephos Logo Section -->
       <div class="neonephos-logos">
         <a href="https://neonephos.org/" target="_blank" rel="noopener noreferrer" class="neonephos-link">
-          <img 
-            :src="neonephosLogo" 
-            alt="Neonephos Logo" 
+          <img
+            src="/neonephos_logo.svg"
+            alt="Neonephos Logo"
             class="neonephos-logo"
           >
-         
+
         </a>
       </div>
 
@@ -265,7 +263,7 @@ const projectName = title || 'PlatformMesh'
   .footer-columns {
     justify-content: flex-start;
   }
-  
+
   .neonephos-logo {
     max-height: 50px;
   }

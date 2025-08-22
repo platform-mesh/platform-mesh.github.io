@@ -7,7 +7,7 @@ hero:
   text:  "Building upon the Kubernetes API & Resource Model"
   tagline: "Discover, order, and orchestrate services across any provider through the beloved kubectl ❤️"
   image:
-    src: './assets/pm_logo.svg'
+    src: '/pm_logo.svg'
     alt: 'Platform Mesh'
   actions:
     - theme: brand
