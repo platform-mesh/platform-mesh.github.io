@@ -59,6 +59,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         with:
           source-dir: .vitepress/dist
+          token: ${{ secrets.PM_PUBLISH_TOKEN }}
 
       # deploy the build to GitHub Pages
       - uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 # v4
