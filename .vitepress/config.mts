@@ -4,7 +4,11 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   title: "Platform Mesh",
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }]
+  ],
 
+  base: process.env.PAGES_BASE ? '/' + process.env.PAGES_BASE : '/',
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
@@ -14,13 +18,13 @@ export default withMermaid({
         {
           find: /^.*\/VPFooter\.vue$/,
           replacement: fileURLToPath(
-              new URL('./theme/components/VPFooter.vue', import.meta.url)
+              new URL('theme/components/VPFooter.vue', import.meta.url)
           )
         },
         {
           find: /^.*\/VPFeature\.vue$/,
           replacement: fileURLToPath(
-              new URL('./theme/components/VPFeature.vue', import.meta.url)
+              new URL('theme/components/VPFeature.vue', import.meta.url)
           )
         },
       ]
@@ -32,16 +36,15 @@ export default withMermaid({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      {text: 'Overview', link: '/overview'},
+      { text: 'Overview', link: '/overview' },
       { text: 'Scenarios', link: '/scenarios' }
     ],
 
     logo: {
-      src: './assets/pm_logo.svg',
+      src: 'pm_logo.svg',
       width: 24,
       height: 24
     },
-  
 
     outline: [2, 3, 4, 5],
 
@@ -63,7 +66,7 @@ export default withMermaid({
             ]
         }
       ],
-      
+
         '/scenarios': {
             test: 'Scenarios',
             items:  [
@@ -72,13 +75,12 @@ export default withMermaid({
             ],
         },
 
-
     },
-  
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/platform-mesh' }
     ]
+
   },
- 
+
 })
