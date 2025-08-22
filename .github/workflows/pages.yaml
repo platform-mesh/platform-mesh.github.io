@@ -35,6 +35,14 @@ jobs:
       - run: npm run build
 
       - uses: rossjrw/pr-preview-action@v1
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.event_name == 'pull_request' }}
         with:
           source-dir: .vitepress/dist
+
+      - uses: JamesIves/github-pages-deploy-action@v4
+        if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
+        with:
+          folder: .vitepress/dist
+          branch: gh-pages
+          clean-exclude: pr-preview
+          force: false
