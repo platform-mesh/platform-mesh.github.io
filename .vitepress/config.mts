@@ -32,6 +32,7 @@ export default withMermaid({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
+      {text: 'Overview', link: '/overview'},
       { text: 'Scenarios', link: '/scenarios' }
     ],
 
@@ -49,6 +50,20 @@ export default withMermaid({
     },
 
     sidebar: {
+
+      '/overview/': [
+        {
+            text: 'Overview',
+            items: [
+            { text: 'Index', link: '/overview/' },
+            { text: 'Account Model', link: '/overview/account-model' },
+            { text: 'Guiding Principles', link: '/overview/principles' },
+            { text: 'Control Planes', link: '/overview/control-planes' },
+            { text: 'Design Decisions', link: '/overview/design-decision' },
+            ]
+        }
+      ],
+      
         '/scenarios': {
             test: 'Scenarios',
             items:  [
@@ -56,7 +71,10 @@ export default withMermaid({
                 { text: 'Provider to Consumer (P2C)', link: '/scenarios/provider-to-consumer' },
             ],
         },
+
+
     },
+  
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/platform-mesh' }

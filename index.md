@@ -8,13 +8,20 @@ hero:
   tagline: "Discover, order, and orchestrate services across any provider through the beloved kubectl ❤️"
   image:
     src: './assets/pm_logo.svg'
+    alt: 'Platform Mesh'
+  actions:
+    - theme: brand
+      text: Overview
+      link: /overview/
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Multi-tenant Control Planes
+    details: Supports complex multi-tenant scenarios without compromising security and provides a foundation for a scalable and regionally distributed service ecosystem.
+  - title: KRM-based API Management
+    details: KRM as the "lingua-franca" for declarative service management. Control Planes provide declarative API layer between providers and consumers.
+  - title: Service Provider Integration
+    details: Seamless provider integration through combination points between control planes of service providers and service consumers.
+  - title: Decentralised Marketplace Support
+    details: Export and Binding interfaces that back decentralised marketplaces for consumers to browse available APIs and providers to publish services.
 ---
 
