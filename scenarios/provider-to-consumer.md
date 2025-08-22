@@ -1,25 +1,28 @@
 ---
+
 outline: deep
 ---
 # Provider to Consumer (P2C)
+
+This section describes high-level scenarios of how the **Platform Mesh** enables secure, declarative, and flexible **Provider to Consumer** (P2C) interactions across clusters, organizations, and teams. It builds on concepts such as the [**Account Model**](../overview/account-model.md), [**Control Planes**](../overview/control-planes.md), and [**Managed Service Provider Pattern**](../overview/design-decision.md) to unify service exchange.
 
 ## Kube to Kube
 
 ### Problem Description
 
-In a provider to consumer setting a Provider wants to transfer technical
-information in a secure way to a Consumer for a Service.
+In a direct **provider to consumer** setting, a provider wants to transfer technical information in a secure way to a consumer for a given service.
 
-The Provider wants to expose as little information as needed while
-giving the Consumer the ability to automatically consume instances of
-the Service and retrieve the required information to interact with the
-Service.
+* The **Provider** must expose as little internal detail as possible.
+* The **Consumer** should be able to automatically discover and consume instances of the service.
+* Both parties must rely on a secure, declarative, contract-driven interaction.
 
 ### Solution
 
-The Provider can offer a kube-bind backend, allowing the Consumer to
-authenticate with OIDC and to bind the CRD of the Service into their
-Cluster - or any KRM API.
+The provider can offer a **kube-bind backend**, allowing the consumer to:
+
+* Authenticate with OIDC.
+* Bind the service’s CRD (or any KRM API) into their own cluster.
+* Automatically receive service instances and secrets.
 
 ```mermaid
 flowchart TD
@@ -43,21 +46,19 @@ subgraph Consumer
 end
 ```
 
+---
+
 ## Kube to KCP to Kube
 
 ### Problem Description
 
-The problem is specified on the example of an Internal Developer
-Platform (IDP). Teams can be Providers and Consumer of Services.
+Within an **Internal Developer Platform (IDP)** setup, multiple teams act both as providers and consumers.
 
-The Database Team (DB) offers a Postgres Service.
-The Observability Team (Obs) wants to use the Postgres Service as the
-database for their Elastic service.
-The Webshop Team (WS) wants to use the Postgres Services as the database
-for the Webshops they maintain for their customers and the Elastic
-Service for logging and metrics.
+* **Database Team (DB)** offers a Postgres service.
+* **Observability Team (Obs)** wants to consume Postgres for their Elastic service.
+* **Webshop Team (WS)** wants to consume both Postgres and Elastic services for their applications.
 
-This diagram shows the premise of the problem:
+This creates a mesh of dependencies where teams provide and consume services through shared contracts.
 
 ```mermaid
 flowchart LR
@@ -96,25 +97,16 @@ subgraph WSCompute[Workshop Compute Cluster]
 end
 ```
 
-Not pictures is the teams using e.g. GitOps to manage the components of
-their services, which are running in the respective clusters.
+Teams use GitOps and declarative manifests to manage components in their respective clusters.
 
 ### Tools Solution
 
-This solution focuses on using commonly available tools to manage and
-apply the manifests.
+The **Observability Team** leverages **KRO (Kubernetes Resource Orchestrator)** to:
 
-The Obersvability Team uses KRO (Kubernetes Resource Orchestrator) to
-instantiate their Elastic Service, including the Postgres Instance from
-the Database Team.
-
-Since KRO works only on one Cluster they are using kube-bind to pull the
-CRD of the Postgres Services from the APIBinding they created in their
-workspace to their compute cluster.
-
-The postgres instance for an elastic service is created as part of the
-KRO Resource Graph Definition, which is mirrored back to KCP by
-kube-bind.
+* Instantiate Elastic services.
+* Pull Postgres CRDs from their APIBinding using **kube-bind**.
+* Define resource graphs that create Postgres instances using the pulled CRDs.
+* The ordered Postgres instances are mirrored back to KCP by **kube-bind**.
 
 ```mermaid
 flowchart TD
@@ -159,13 +151,11 @@ end
 
 ### Operator Solution
 
-The Webshop team uses their own operator to manage their Webshop, which
-they wrote using multicluster-runtime, allowing them to interact with
-many clusters at once.
+The **Webshop Team** uses its own **operator** built with [**multicluster-runtime**](https://github.com/kubernetes-sigs/multicluster-runtime/):
 
-The Webshop team maintains definitions of the Webshop instances in their
-KCP Workspace and are deploying resources based on these definitions
-where they are needed.
+* Webshop definitions live in their KCP workspace.
+* Operator deploys workloads across clusters.
+* Operator consumes Postgres and Elastic bindings.
 
 ```mermaid
 flowchart LR
@@ -206,5 +196,24 @@ WebshopOperator --> WebshopInstanceElastic
 WebshopOperator --> Webshop
 ```
 
-The operator also provides the information from the database and elastic
-service to the webshop instance.
+The operator ensures database and observability service data flows securely into webshop workloads.
+
+---
+
+## How This Fits Into Platform Mesh
+
+The above flows illustrate how **Provider to Consumer** interactions are standardized in the Platform Mesh:
+
+* **Providers** expose declarative APIs using [**APIExports**](../overview/control-planes.md).
+* **Consumers** bind to those APIs using **APIBindings**, gaining seamless access through the [**Account Model**](../overview/account-model.md).
+* [**Control planes**](../overview/control-planes.md) reconcile declarative manifests into real-world capabilities.
+* **Operators and orchestration tools** (kube-bind, KRO, multicluster-runtime) implement automation across boundaries.
+
+This creates a secure, flexible, and decoupled ecosystem where services can be:
+
+* Exposed minimally.
+* Discovered and consumed declaratively.
+* Composed across organizational or cluster boundaries.
+* Governed through the [**Account Model**](../overview/account-model.md) and [**Managed Service Provider pattern**](../overview/design-decision.md).
+
+Ultimately, Platform Mesh provides the **P2C fabric** for multi-team, multi-cluster, and multi-organization service interactions.
