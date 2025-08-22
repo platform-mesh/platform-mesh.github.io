@@ -10,13 +10,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write # to write the built page to the branch
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -27,24 +28,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+
       - uses: actions/configure-pages@v4
+
       - run: npm ci
       - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .vitepress/dist
 
-  deploy:
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
-    name: deploy
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: rossjrw/pr-preview-action@v1
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        with:
+          source-dir: .vitepress/dist
