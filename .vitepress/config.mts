@@ -72,6 +72,7 @@ export default withMermaid({
             items:  [
                 { text: 'Scenarios', link: '/scenarios' },
                 { text: 'Provider to Consumer (P2C)', link: '/scenarios/provider-to-consumer' },
+                { text: 'Provider to Provider (P2P)', link: '/scenarios/provider-to-provider' },
             ],
         },
 

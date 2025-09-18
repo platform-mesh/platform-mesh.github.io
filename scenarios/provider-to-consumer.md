@@ -4,199 +4,62 @@ outline: deep
 ---
 # Provider to Consumer (P2C)
 
-This section describes high-level scenarios of how the **Platform Mesh** enables secure, declarative, and flexible **Provider to Consumer** (P2C) interactions across clusters, organizations, and teams. It builds on concepts such as the [**Account Model**](../overview/account-model.md), [**Control Planes**](../overview/control-planes.md), and [**Managed Service Provider Pattern**](../overview/design-decision.md) to unify service exchange.
-
-## Kube to Kube
+This section describes high-level scenarios of how the **Platform Mesh** enables secure, declarative, and flexible **Provider to Consumer** (P2C) interactions across clusters, organizations, and teams.
 
 ### Problem Description
 
-In a direct **provider to consumer** setting, a provider wants to transfer technical information in a secure way to a consumer for a given service.
+In a direct **provider to consumer** setting, a provider wants to transfer technical information in a secure way to a consumer for a given service. In this scenario platform mesh is not required, but this pattern can allow to bootstrap more complex scenarios, where teams could want to establish an internal relationship between the clusters.
 
 * The **Provider** must expose as little internal detail as possible.
 * The **Consumer** should be able to automatically discover and consume instances of the service.
 * Both parties must rely on a secure, declarative, contract-driven interaction.
 
+![P2P Kube Bind Diagram](/diagrams/copy-original.svg)
+
+To make diagrams simplier, we are using the following notation, where dashed lines represents copy of the resources, and solid lines represents source of truth or object source.
+
+---
+
+## Kube (provider) to Kube (consumer)
+
+First scenario describes a direct interaction between a service provider and a service consumers, when both sides are using vanilla Kubernetes clusters. This scenario is not strictly requiring Platform Mesh, but it can be used to bootstrap more complex scenarios.
+
 ### Solution
 
 The provider can offer a **kube-bind backend**, allowing the consumer to:
 
-* Authenticate with OIDC.
-* Bind the service’s CRD (or any KRM API) into their own cluster.
-* Automatically receive service instances and secrets.
+* Authenticate with **common trusted OIDC**.
+* Bind the service’s KRM API (CRDs in the traditional sense) into their own cluster.
+* Automatically receive service instances and secrets or other related resources to the service contract.
 
-```mermaid
-flowchart TD
+![P2P Kube Bind Diagram](/diagrams/p2p-kube-bind.svg)
 
-subgraph Provider
-    origCRD[Service CRD]
-    copyInstance[Service Instance]
-    origSecret[Service Secret]
-end
 
-origCRD -.-> copyCRD
-copyCRD -.-> consumerInstance
-consumerInstance --> copyInstance
-copyInstance -.-> origSecret
-origSecret --> copySecret
-
-subgraph Consumer
-    copyCRD[Service CRD]
-    consumerInstance[Service Instance]
-    copySecret[Service Secret]
-end
-```
+In this scenario there is established a direct trust between the two clusters, using OIDC authentication. The provider exposes only the necessary APIs, and the consumer can declaratively consume service instances. 
 
 ---
 
-## Kube to KCP to Kube
+## Kube (provider) to platform-mesh (consumer)
 
-### Problem Description
+In this scenario the consumer is using **platform mesh** as a control plane, which allows to manage multiple teams and clusters in a single place. This is a common scenario for **Internal Developer Platforms (IDP)**, where multiple teams are consuming services. In this case, provider is maintaining their own Kubernetes cluster, where all business logic is running, and exposing the service APIs using **api-syncagent**. The 1:n consumers are using **kcp** concepts of `APIExport` and `APIBinding` to declaratively consume the services in their own control-planes.
 
-Within an **Internal Developer Platform (IDP)** setup, multiple teams act both as providers and consumers.
+![P2C Kube to Mesh Diagram](/diagrams/p-to-c-kcp-mesh.svg)
 
-* **Database Team (DB)** offers a Postgres service.
-* **Observability Team (Obs)** wants to consume Postgres for their Elastic service.
-* **Webshop Team (WS)** wants to consume both Postgres and Elastic services for their applications.
+Here the provider is exposing only the necessary APIs using `APIExport` and `api-syncagent` machinery to manage API object remapping, and the consumer can declaratively consume service instances using `APIBinding`. The consumer can have multiple clusters, and the control-plane will reconcile the manifests into real-world capabilities.
 
-This creates a mesh of dependencies where teams provide and consume services through shared contracts.
+![P2C Kube to Mesh Diagram](/diagrams/p-to-c-kcp-mesh-multiple.svg)
 
-```mermaid
-flowchart LR
+Same concept would work in the same way with multiple providers, where consumer can bind multiple services from different providers into their own control-plane.
 
-subgraph KCP
-    subgraph KCP_DB[root:team:database]
-        PGExport[Postgres APIExport]
-    end
+![P2C Kube to Mesh Diagram](/diagrams/cross-consumption.svg)
 
-    subgraph KCP_Obs[root:team:observability]
-        PGBindingObs[Postgres APIBinding]
-        ElasticExport[Elastic APIExport]
-    end
-    PGExport -.-> PGBindingObs
+In the above example, the **Analytics Team** is consuming service from the **Database Team** to create their own services. Each team manages their own cluster(s) and uses `APIBinding` to consume services declaratively. And because the **Analytics Team** construct their own services inside their own Kubernetes cluster, they need declarative way to consume services from the **Database Team**. For this they are using `Kube-bind` to establish the relationship between platform mesh and their own cluster for **Database Team** services. This way the source of truth for the services is Analytics Team consume cluster.
 
-    subgraph KCP_WS[root:team:webshop]
-        ElasticBinding[Elastic APIBinding]
-        PGBindingWS[Postgres APIBinding]
-    end
-    PGExport -.-> PGBindingWS
-    ElasticExport -.-> ElasticBinding
-end
+## Kube (provider) to platform-mesh (consumer) to Kube (consumer)
 
-subgraph DBCompute[Database Compute Cluster]
-    PGCRD[Postgres CRD]
-    PGCRD -.-> |api-syncagent| PGExport
-end
+The nature of Kubernetes is declarative, and the above scenario works well for many use-cases. But it has a challenge. In most cases consumers want to be able to declare services, close where the workloads are running. In this case, similar to frist scenario, extend their platfrom-mesh control-plane to their own clusters. For this **kube-bind** can be used between consumer owned **platfrom-mesh** and their own clusters.
 
-subgraph ObsCompute[Observability Compute Cluster]
-    ElasticCRD[Elastic CRD]
-    ElasticCRD -.-> |api-syncagent| ElasticExport
-end
-
-subgraph WSCompute[Workshop Compute Cluster]
-    Webshop
-end
-```
-
-Teams use GitOps and declarative manifests to manage components in their respective clusters.
-
-### Tools Solution
-
-The **Observability Team** leverages **KRO (Kubernetes Resource Orchestrator)** to:
-
-* Instantiate Elastic services.
-* Pull Postgres CRDs from their APIBinding using **kube-bind**.
-* Define resource graphs that create Postgres instances using the pulled CRDs.
-* The ordered Postgres instances are mirrored back to KCP by **kube-bind**.
-
-```mermaid
-flowchart TD
-
-subgraph KCP
-    subgraph KCP_DB[root:team:database]
-        PGExport[Postgres APIExport]
-    end
-
-    subgraph KCP_Obs[root:team:observability]
-        ElasticExport[Elastic APIExport]
-        PGBindingObs[Postgres APIBinding]
-        PGInstanceObsWs[Obs Postgres Instance]
-    end
-    PGExport -.-> PGBindingObs
-end
-
-subgraph DBCompute[Database Compute Cluster]
-    PGCRD[Postgres CRD]
-    PGCRD -.-> |api-syncagent| PGExport
-    PGInstanceObsReal[Obs Postgres Instance]
-    PGInstanceObsWs --> PGInstanceObsReal
-end
-
-subgraph ObsCompute[Observability Compute Cluster]
-    ElasticCRD[Elastic CRD]
-    ElasticCRD -.-> |api-syncagent| ElasticExport
-
-    PGCRDObs[Postgres CRD]
-    PGBindingObs -.-> |kube-bind| PGCRDObs
-
-    ElasticInstance
-    ElasticCRD -.-> ElasticInstance
-
-    PGInstanceObs[Obs Postgres Instance]
-    ElasticInstance -.-> PGInstanceObs
-    PGCRDObs -.-> PGInstanceObs
-
-    PGInstanceObs --> |kube-bind| PGInstanceObsWs
-end
-```
-
-### Operator Solution
-
-The **Webshop Team** uses its own **operator** built with [**multicluster-runtime**](https://github.com/kubernetes-sigs/multicluster-runtime/):
-
-* Webshop definitions live in their KCP workspace.
-* Operator deploys workloads across clusters.
-* Operator consumes Postgres and Elastic bindings.
-
-```mermaid
-flowchart LR
-
-subgraph KCP
-    subgraph KCP_DB[root:team:database]
-        PGExport[Postgres APIExport]
-    end
-
-    subgraph KCP_Obs[root:team:observability]
-        ElasticExport[Elastic APIExport]
-    end
-
-    subgraph KCP_WS[root:team:webshop]
-        ElasticBinding[Elastic APIBinding]
-        PGBinding[Postgres APIBinding]
-
-        WebshopCRD[Webshop CRD]
-        WebshopInstance[Webshop Instance]
-        WebshopCRD -.-> WebshopInstance
-        WebshopInstanceDB[Webshop Instance PG]
-        WebshopInstanceDB --> PGBinding
-        WebshopInstanceElastic[Webshop Instance Elastic]
-        WebshopInstanceElastic --> ElasticBinding
-    end
-
-    PGBinding -.-> PGExport
-    ElasticBinding -.-> ElasticExport
-end
-
-subgraph WSCompute[Workshop Compute Cluster]
-    WebshopOperator[Webshop Operator]
-    Webshop
-end
-WebshopOperator -.-> WebshopInstance
-WebshopOperator --> WebshopInstanceDB
-WebshopOperator --> WebshopInstanceElastic
-WebshopOperator --> Webshop
-```
-
-The operator ensures database and observability service data flows securely into webshop workloads.
+![P2C Kube to Mesh Diagram](/diagrams/extended-export.svg)
 
 ---
 
