@@ -16,13 +16,13 @@ In a direct **provider to consumer** setting, a provider wants to transfer techn
 
 ![P2P Kube Bind Diagram](/diagrams/copy-original.svg)
 
-To make diagrams simplier, we are using the following notation, where dashed lines represents copy of the resources, and solid lines represents source of truth or object source.
+To make diagrams simpler, we are using the following notation, where dashed lines represent copies of the resources, and solid lines represent the source of truth or object source.
 
 ---
 
 ## Kube (provider) to Kube (consumer)
 
-First scenario describes a direct interaction between a service provider and a service consumers, when both sides are using vanilla Kubernetes clusters. This scenario is not strictly requiring Platform Mesh, but it can be used to bootstrap more complex scenarios.
+The first scenario describes a direct interaction between a service provider and service consumers, when both sides are using vanilla Kubernetes clusters. This scenario is not strictly requiring Platform Mesh, but it can be used to bootstrap more complex scenarios.
 
 ### Solution
 
@@ -35,13 +35,13 @@ The provider can offer a **kube-bind backend**, allowing the consumer to:
 ![P2P Kube Bind Diagram](/diagrams/p2p-kube-bind.svg)
 
 
-In this scenario there is established a direct trust between the two clusters, using OIDC authentication. The provider exposes only the necessary APIs, and the consumer can declaratively consume service instances. 
+In this scenario, there is an established direct trust between the two clusters using OIDC authentication. The provider exposes only the necessary APIs, and the consumer can declaratively consume service instances. 
 
 ---
 
 ## Kube (provider) to platform-mesh (consumer)
 
-In this scenario the consumer is using **platform mesh** as a control plane, which allows to manage multiple teams and clusters in a single place. This is a common scenario for **Internal Developer Platforms (IDP)**, where multiple teams are consuming services. In this case, provider is maintaining their own Kubernetes cluster, where all business logic is running, and exposing the service APIs using **api-syncagent**. The 1:n consumers are using **kcp** concepts of `APIExport` and `APIBinding` to declaratively consume the services in their own control-planes.
+In this scenario the consumer is using **platform mesh** as a control plane, which allows to manage multiple teams and clusters in a single place. This is a common scenario for **Internal Developer Platforms (IDP)**, where multiple teams are consuming services. In this case, the provider is maintaining their own Kubernetes cluster, where all business logic is running, and exposing the service APIs using **api-syncagent**. The 1:n consumers are using **kcp** concepts of `APIExport` and `APIBinding` to declaratively consume the services in their own control-planes.
 
 ![P2C Kube to Mesh Diagram](/diagrams/p-to-c-kcp-mesh.svg)
 
@@ -53,11 +53,11 @@ Same concept would work in the same way with multiple providers, where consumer 
 
 ![P2C Kube to Mesh Diagram](/diagrams/cross-consumption.svg)
 
-In the above example, the **Analytics Team** is consuming service from the **Database Team** to create their own services. Each team manages their own cluster(s) and uses `APIBinding` to consume services declaratively. And because the **Analytics Team** construct their own services inside their own Kubernetes cluster, they need declarative way to consume services from the **Database Team**. For this they are using `Kube-bind` to establish the relationship between platform mesh and their own cluster for **Database Team** services. This way the source of truth for the services is Analytics Team consume cluster.
+In the above example, the **Analytics Team** is consuming service from the **Database Team** to create their own services. Each team manages their own cluster(s) and uses `APIBinding` to consume services declaratively. And because the **Analytics Team** constructs their own services inside their own Kubernetes cluster, they need a declarative way to consume services from the **Database Team**. For this they are using `Kube-bind` to establish the relationship between platform mesh and their own cluster for **Database Team** services. This way the source of truth for the services is the Analytics Team's consumer cluster.
 
 ## Kube (provider) to platform-mesh (consumer) to Kube (consumer)
 
-The nature of Kubernetes is declarative, and the above scenario works well for many use-cases. But it has a challenge. In most cases consumers want to be able to declare services, close where the workloads are running. In this case, similar to frist scenario, extend their platfrom-mesh control-plane to their own clusters. For this **kube-bind** can be used between consumer owned **platfrom-mesh** and their own clusters.
+The nature of Kubernetes is declarative, and the above scenario works well for many use-cases. But it has a challenge. In most cases, consumers want to be able to declare services close to where the workloads are running. In this case, similar to the first scenario, they extend their platform-mesh control-plane to their own clusters. For this, **kube-bind** can be used between the consumer-owned **platform-mesh** and their own clusters.
 
 ![P2C Kube to Mesh Diagram](/diagrams/extended-export.svg)
 

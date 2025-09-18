@@ -2,7 +2,7 @@
 
 outline: deep
 ---
-# Provider to Consumer (P2C)
+# Provider to Provider (P2P)
 
 This section describes high-level scenarios of how cross-provider service exchange can be achieved using **Platform Mesh**.
 
@@ -16,23 +16,23 @@ In a direct **provider to consumer** setting, a provider wants to transfer techn
 
 ![P2P Kube Bind Diagram](/diagrams/copy-original.svg)
 
-To make diagrams simplier, we are using the following notation, where dashed lines represents copy of the resources, and solid lines represents source of truth or object source.
+To make diagrams simpler, we are using the following notation, where dashed lines represent copies of the resources, and solid lines represent the source of truth or object source.
 
 ---
 
 ## Kube (provider) to n*Kube (provider)
 
-In this scenarion provider, owning kubernetes clusters, wants to cross-sell or resell their services to other providers, who in turn will resell or cross-sell these services to their own consumers. This is a common scenario in telco or SaaS world, where multiple providers are offering combined or derivative services to their consumers.
+In this scenario, a provider owning Kubernetes clusters wants to cross-sell or resell their services to other providers, who in turn will resell or cross-sell these services to their own consumers. This is a common scenario in telco or SaaS world, where multiple providers are offering combined or derivative services to their consumers.
 
 ![P2P Kube Bind Diagram](/diagrams/kube-to-kube-provider.svg)
 
-In this case, because we use Kubernetes clusters on both sides, **kube-bind** can be used to establish the relationship between the two providers. And the level of isolation on the main providers is `namespace`.
+In this case, because we use Kubernetes clusters on both sides, **kube-bind** can be used to establish the relationship between the two providers. The level of isolation on the main provider is `namespace`.
 
 ---
 
 ## How This Fits Into Platform Mesh
 
-The above flows illustrate how **Provider to Consumer** interactions are standardized in the Platform Mesh:
+The above flows illustrate how **Provider to Provider** interactions are standardized in the Platform Mesh:
 
 * **Providers** expose declarative APIs using [**APIExports**](../overview/control-planes.md).
 * **Consumers** bind to those APIs using **APIBindings**, gaining seamless access through the [**Account Model**](../overview/account-model.md).
@@ -46,4 +46,4 @@ This creates a secure, flexible, and decoupled ecosystem where services can be:
 * Composed across organizational or cluster boundaries.
 * Governed through the [**Account Model**](../overview/account-model.md) and [**Managed Service Provider pattern**](../overview/design-decision.md).
 
-Ultimately, Platform Mesh provides the **P2C fabric** for multi-team, multi-cluster, and multi-organization service interactions.
+Ultimately, Platform Mesh provides the **P2P fabric** for multi-team, multi-cluster, and multi-organization service interactions.
