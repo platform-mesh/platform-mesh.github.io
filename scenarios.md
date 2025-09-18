@@ -5,7 +5,7 @@ outline: deep
 
 # Scenarios
 
-This section demonstrates how the **Platform Mesh** enables real-world service interactions across clusters, organizations, and teams. Each scenario showcases practical implementations using the [Account Model](../overview/account-model.md), [Control Planes](../overview/control-planes.md), and ecosystem tools, like **kube-bind**, **API-Syncagent**, **KRO**, and **multicluster-runtime**.
+This section demonstrates how the **Platform Mesh** enables real-world service interactions across clusters, organizations, and teams. Each scenario showcases practical implementations using the [Account Model](./overview/account-model.md), [Control Planes](./overview/control-planes.md), and ecosystem tools, like **kube-bind**, **API-Syncagent**, **KRO**, and **multicluster-runtime**.
 
 ## Available Scenarios
 
@@ -40,9 +40,9 @@ Implementation patterns using:
 
 ## Related Concepts
 
-- [Account Model](../overview/account-model.md) - How identity and access work in Platform Mesh
-- [Control Planes](../overview/control-planes.md) - Architecture of distributed control plane management  
-- [Design Decisions](../overview/design-decision.md) - Managed Service Provider patterns
+- [Account Model](./overview/account-model.md) - How identity and access work in Platform Mesh
+- [Control Planes](./overview/control-planes.md) - Architecture of distributed control plane management
+- [Design Decisions](./overview/design-decision.md) - Managed Service Provider patterns
 - [kube-bind](https://kube-bind.io) - Tool for binding Kubernetes APIs across clusters
 - [KRO (Kubernetes Resource Orchestrator)](https://github.com/kubernetes-sigs/kro) - Tools for abstracting and managing Kubernetes resources
 - [multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) - Framework for managing multi-cluster Kubernetes applications using Controller-Runtime operator patterns.
