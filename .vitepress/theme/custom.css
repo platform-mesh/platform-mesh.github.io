@@ -11,7 +11,24 @@
             #47caff 50%
     );
     --vp-home-hero-image-filter: blur(44px);
+    
+    /* Increase the main content area width */
+    --vp-layout-max-width: 1600px;
 }
+
+
+.VPDoc:not(.has-sidebar) .container {
+  max-width: 1584px !important;
+}
+
+.VPDoc:not(.has-sidebar) .content {
+  max-width: 1264px !important;
+}
+
+.VPDoc.has-aside .content-container {
+  max-width: 1168px !important;
+}
+
 
 @media (min-width: 640px) {
     :root {
@@ -34,4 +51,10 @@
 img[src='/search.png'] {
     width: 100%;
     aspect-ratio: 1 / 1;
+}
+
+
+/* Wrap the text in the right-hand sidebar */
+.VPDocAsideOutline .outline-link {
+    white-space: normal !important;
 }
