@@ -13,3 +13,9 @@ suggestions, improvements, or bug fixes, please follow these steps:
 4. Test your changes with the local dev server: `npm run dev`
 5. Push your changes to your fork
 6. Create a pull request against the `main` branch of this repository
+
+
+## Diagrams
+
+Diagrams are done excalidraw and can be found here (read-only link):
+https://link.excalidraw.com/readonly/NGxHb0Dkpp1pZKTFeW1h?darkMode=true
