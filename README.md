@@ -26,8 +26,8 @@ suggestions, improvements, or bug fixes, please follow these steps:
 ## Deployment (local and github)
 
 For detailed documentation on versioning, local testing, and GitHub Pages deployment, see the documentation:
-- [Deployment How-To Guide](how-to-deploy/how-to.md) - Complete guide for local testing, version switching, and deploying to GitHub Pages
-- [Verifying Deployment](how-to-deploy/verify-deployment.md) - Step-by-step verification checklist and troubleshooting
+- [Deployment How-To Guide](hack/how-to.md) - Complete guide for local testing, version switching, and deploying to GitHub Pages
+- [Verifying Deployment](hack/verify-deployment.md) - Step-by-step verification checklist and troubleshooting
 
 
 ## Diagrams
