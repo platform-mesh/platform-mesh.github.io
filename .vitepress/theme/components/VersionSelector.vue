@@ -1,5 +1,6 @@
 <template>
-  <div class="version-selector">
+  <!-- Don't show version selector in PR previews -->
+  <div v-if="!isPreview" class="version-selector">
     <select
       v-model="currentVersion"
       @change="switchVersion"
@@ -34,6 +35,17 @@ const versions: Version[] = [
 ]
 
 const currentVersion = ref<string>('')
+const isPreview = ref<boolean>(false)
+
+function isPreviewContext(): boolean {
+  if (typeof window === 'undefined') return false
+
+  const path = window.location.pathname
+  const segments = path.split('/').filter(Boolean)
+
+  // Check if we're in a PR preview (path starts with pr-preview/)
+  return segments.length > 0 && segments[0] === 'pr-preview'
+}
 
 function getCurrentVersion(): string {
   if (typeof window === 'undefined') return 'main'
@@ -82,6 +94,7 @@ function switchVersion(): void {
 }
 
 onMounted(() => {
+  isPreview.value = isPreviewContext()
   currentVersion.value = getCurrentVersion()
 })
 </script>
