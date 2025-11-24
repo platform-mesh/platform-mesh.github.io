@@ -8,7 +8,12 @@ export default withMermaid({
     ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
 
-  base: 'PAGES_BASE' in process.env && process.env.PAGES_BASE != '' ? '/' + process.env.PAGES_BASE : '',
+  // Support versioning: DOCS_VERSION takes precedence, then PAGES_BASE (PR previews), then root
+  base: 'DOCS_VERSION' in process.env && process.env.DOCS_VERSION != ''
+    ? '/' + process.env.DOCS_VERSION + '/'
+    : ('PAGES_BASE' in process.env && process.env.PAGES_BASE != ''
+      ? '/' + process.env.PAGES_BASE + '/'
+      : '/'),
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
@@ -68,7 +73,7 @@ export default withMermaid({
       ],
 
         '/scenarios': {
-            test: 'Scenarios',
+            text: 'Scenarios',
             items:  [
                 { text: 'Scenarios', link: '/scenarios' },
                 { text: 'Provider to Consumer (P2C)', link: '/scenarios/details.html#provider-to-consumer-p2c' },
