@@ -155,12 +155,12 @@ For detailed certificate trust instructions for different platforms (WSL2, Windo
 
 The local setup deploys the following components:
 
-### Platform Mesh Prerequisites
+### Prerequisites
 - **Flux**: GitOps toolkit for continuous delivery
 - **KRO**: Kubernetes Resource Orchestrator
 - **OCM Controller**: Open Cluster Management controller
 
-### Platform Mesh Infrastructure
+### Platform Mesh
 
 The **Platform Mesh Operator** is the core component that deploys and manages all Platform Mesh infrastructure. The complete list of components for a given version is defined in the OCM (Open Component Model) component descriptor.
 
