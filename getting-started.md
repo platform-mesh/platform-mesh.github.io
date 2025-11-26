@@ -18,6 +18,11 @@ The local setup scripts and configuration are located in the [platform-mesh/helm
 
 Before you begin, ensure you have the following tools installed:
 
+### System Requirements
+
+- **Minimum**: 8 GB RAM, 6 CPUs
+- Ensure your Docker/Podman has sufficient resources allocated
+
 ### Required Tools
 
 - **Docker** or **Podman** - Container runtime
