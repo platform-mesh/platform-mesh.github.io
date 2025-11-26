@@ -11,6 +11,9 @@ hero:
     alt: 'Platform Mesh'
   actions:
     - theme: brand
+      text: Getting Started
+      link: /getting-started
+    - theme: alt
       text: Overview
       link: /overview/
 
