@@ -73,6 +73,19 @@ export default withMermaid({
         }
       ],
 
+      '/getting-started/': [
+        {
+            text: 'Getting Started',
+            items: [
+            { text: 'Index', link: '/getting-started/' },
+            { text: 'Quick Start', link: '/getting-started/quick-start' },
+            { text: 'Next Steps', link: '/getting-started/next-steps' },
+            { text: 'Troubleshooting', link: '/getting-started/troubleshooting' },
+            ]
+        }
+      ],
+
+
         '/scenarios': {
             text: 'Scenarios',
             items:  [
