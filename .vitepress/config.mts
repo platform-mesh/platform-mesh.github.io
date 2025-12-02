@@ -1,19 +1,34 @@
 import { withMermaid } from "vitepress-plugin-mermaid";
 import { fileURLToPath, URL } from 'node:url'
 
+// Base path is required because GitHub Pages serves multiple doc versions from subdirectories:
+//   - https://platform-mesh.github.io/main/          (main branch docs)
+//   - https://platform-mesh.github.io/release-0.1/   (release branch docs)
+//   - https://platform-mesh.github.io/pr-preview/pr-123/  (PR previews)
+//
+// VitePress needs to know this base path at build time so all asset URLs (JS, CSS, images)
+// and internal links are prefixed correctly. Without it, a page at /main/overview/ would
+// try to load assets from / instead of /main/, causing 404 errors.
+//
+// The GitHub Actions workflow sets these env vars before running `npm run build`:
+//   - DOCS_VERSION: Set for version branches (main, release-*)
+//   - PAGES_BASE: Set for PR preview builds
+//
+// Priority: DOCS_VERSION > PAGES_BASE > "/" (local dev fallback)
+const base = 'DOCS_VERSION' in process.env && process.env.DOCS_VERSION != ''
+  ? '/' + process.env.DOCS_VERSION + '/'
+  : ('PAGES_BASE' in process.env && process.env.PAGES_BASE != ''
+    ? '/' + process.env.PAGES_BASE + '/'
+    : '/');
+
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   title: "Platform Mesh",
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ['link', { rel: 'icon', href: `${base}favicon.ico` }]
   ],
 
-  // Support versioning: DOCS_VERSION takes precedence, then PAGES_BASE (PR previews), then root
-  base: 'DOCS_VERSION' in process.env && process.env.DOCS_VERSION != ''
-    ? '/' + process.env.DOCS_VERSION + '/'
-    : ('PAGES_BASE' in process.env && process.env.PAGES_BASE != ''
-      ? '/' + process.env.PAGES_BASE + '/'
-      : '/'),
+  base,
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
