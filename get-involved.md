@@ -28,3 +28,11 @@ Model.
 The best starting point to get in touch is the [#kube-bind](https://kubernetes.slack.com/archives/C046PRXNJ4W) channel on Kubernetes Slack.
 
 For more information on getting involved with kube-bind, please see the [Getting in Touch](https://docs.kube-bind.io/main/#getting-in-touch) section of the kube-bind documentation.
+
+## multicluster-runtime
+
+[multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime)
+is a library to write Kubernetes controllers that reconcile resource
+across Kubernetes-like control planes. The project is hosted by SIG Multicluster.
+
+Discussions happen in the [#sig-multicluster](https://kubernetes.slack.com/archives/C09R1PJR3) channel on Kubernetes Slack.
