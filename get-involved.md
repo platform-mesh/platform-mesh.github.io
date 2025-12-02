@@ -19,6 +19,12 @@ The best starting point to get in touch is the [#kcp-users](https://kubernetes.s
 
 For more information on getting involved with kcp, please see the [Getting in Touch](https://docs.kcp.io/kcp/latest/#getting-in-touch) section of the kcp documentation.
 
+### api-syncagent
+
+[api-syncagent](https://docs.kcp.io/api-syncagent/) is an operator that
+allows publishing CRDs from a control plane to APIExports in a kcp
+workspace. It is part of the kcp project.
+
 ## kube-bind
 
 [kube-bind](https://kube-bind.io/) is a project that enables providers to offer their APIs to
