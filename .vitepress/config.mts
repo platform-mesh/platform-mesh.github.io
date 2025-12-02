@@ -42,7 +42,8 @@ export default withMermaid({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Overview', link: '/overview' },
-      { text: 'Scenarios', link: '/scenarios' }
+      { text: 'Scenarios', link: '/scenarios' },
+      { text: 'Get Involved', link: '/get-involved' },
     ],
 
     logo: {
