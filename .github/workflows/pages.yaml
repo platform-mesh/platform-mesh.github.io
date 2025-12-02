@@ -64,9 +64,17 @@ jobs:
         with:
           source-dir: .vitepress/dist
 
-      # deploy the build to GitHub Pages
+      # Deploy versioned docs to GitHub Pages
+      # This creates a folder structure on gh-pages branch for each version:
+      #   gh-pages/
+      #   ├── main/           ← from main branch
+      #   ├── release-0.1/    ← from release-0.1 branch
+      #   └── pr-preview/     ← PR previews (preserved via clean-exclude)
+      #
+      # Each version is independent - deploying main/ won't affect release-0.1/
+      # The target-folder determines which subdirectory receives the build output
       - uses: JamesIves/github-pages-deploy-action@4a3abc783e1a24aeb44c16e869ad83caf6b4cc23 # v4
-        if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
+        if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-')) }}
         with:
           folder: .vitepress/dist
           branch: gh-pages
