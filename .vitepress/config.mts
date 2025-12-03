@@ -80,6 +80,7 @@ export default withMermaid({
             { text: 'Index', link: '/getting-started/' },
             { text: 'Quick Start', link: '/getting-started/quick-start' },
             { text: 'Next Steps', link: '/getting-started/next-steps' },
+            { text: 'Example MSP', link: '/getting-started/example-msp' },
             { text: 'Troubleshooting', link: '/getting-started/troubleshooting' },
             ]
         }
