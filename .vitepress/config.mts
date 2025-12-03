@@ -56,6 +56,7 @@ export default withMermaid({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
+      { text: 'Getting Started', link: '/getting-started' },
       { text: 'Overview', link: '/overview' },
       { text: 'Scenarios', link: '/scenarios' },
       { text: 'Get Involved', link: '/get-involved' },
@@ -87,6 +88,20 @@ export default withMermaid({
             ]
         }
       ],
+
+      '/getting-started/': [
+        {
+            text: 'Getting Started',
+            items: [
+            { text: 'Index', link: '/getting-started/' },
+            { text: 'Quick Start', link: '/getting-started/quick-start' },
+            { text: 'Next Steps', link: '/getting-started/next-steps' },
+            { text: 'Example MSP', link: '/getting-started/example-msp' },
+            { text: 'Troubleshooting', link: '/getting-started/troubleshooting' },
+            ]
+        }
+      ],
+
 
         '/scenarios': {
             text: 'Scenarios',

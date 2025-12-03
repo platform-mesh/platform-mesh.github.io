@@ -7,3 +7,6 @@ CLAUDE.md
 .claude/
 test-deploy/
 .idea/
+.claude
+CLAUDE.local.md
+.DS_Store
