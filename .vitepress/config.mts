@@ -63,7 +63,7 @@ export default withMermaid({
     ],
 
     logo: {
-      src: 'pm_logo.svg',
+      src: '/pm_logo.svg',
       width: 24,
       height: 24
     },
