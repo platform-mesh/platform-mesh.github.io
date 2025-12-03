@@ -1,5 +1,11 @@
 ## Quick Start
 
+::: warning Development Preview
+This local setup is under active development and intended for evaluation and development purposes only. The local environment differs from production deployments in architecture, security configuration, and scalability.
+
+Track progress and upcoming improvements on our [project dashboard](https://github.com/orgs/platform-mesh/projects/7).
+:::
+
 ### 1. Clone the Repository
 
 ```bash
