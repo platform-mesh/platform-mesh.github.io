@@ -47,10 +47,10 @@ Image caching speeds up cluster recreation by using local Docker registry mirror
 task local-setup-start-docker-registries
 
 # Full setup with caching
-task local-setup-cached
+task local-setup:cached
 
 # Iterate on existing cluster
-task local-setup-cached:iterate
+task local-setup:cached:iterate
 ```
 
 ```bash [Script]
