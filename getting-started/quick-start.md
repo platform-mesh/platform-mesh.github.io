@@ -6,10 +6,11 @@ This local setup is under active development and intended for evaluation and dev
 Track progress and upcoming improvements on our [project dashboard](https://github.com/orgs/platform-mesh/projects/7).
 :::
 
-### 1. Clone the Repository
+### 1. Download the Release
 
+Clone the 0.1.0 release
 ```bash
-git clone https://github.com/platform-mesh/helm-charts.git
+git clone --depth 1 --branch 0.1.0 https://github.com/platform-mesh/helm-charts.git
 cd helm-charts/local-setup
 ```
 
@@ -49,9 +50,6 @@ Image caching speeds up cluster recreation by using local Docker registry mirror
 ::: code-group
 
 ```bash [Task]
-# Setup image proxies (run only once)
-task local-setup-start-docker-registries
-
 # Full setup with caching
 task local-setup:cached
 
