@@ -4,10 +4,10 @@
 The local setup is currently under active development. Features and workflows may change.
 :::
 
-### 1. Download the Release
+### 1. Clone the Repository
 
+Clone the 0.1.0 release
 ```bash
-# Clone the 0.1.0 release
 git clone --depth 1 --branch 0.1.0 https://github.com/platform-mesh/helm-charts.git
 cd helm-charts/local-setup
 ```
