@@ -9,9 +9,9 @@ Track progress and upcoming improvements on our [project dashboard](https://gith
 ### 1. Download the Release
 
 ```bash
-# Download and extract the 0.1.0 release
-curl -L https://github.com/platform-mesh/helm-charts/archive/refs/tags/0.1.0.tar.gz | tar xz
-cd helm-charts-0.1.0/local-setup
+# Clone the 0.1.0 release
+git clone --depth 1 --branch 0.1.0 https://github.com/platform-mesh/helm-charts.git
+cd helm-charts/local-setup
 ```
 
 ### 2. Run the Setup
