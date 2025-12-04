@@ -29,7 +29,6 @@ For detailed documentation on versioning, local testing, and GitHub Pages deploy
 - [Deployment How-To Guide](hack/how-to.md) - Complete guide for local testing, version switching, and deploying to GitHub Pages
 - [Verifying Deployment](hack/verify-deployment.md) - Step-by-step verification checklist and troubleshooting
 
-
 ## Diagrams
 
 Diagrams are done excalidraw and can be found here (read-only link):
