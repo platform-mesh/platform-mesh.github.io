@@ -1,8 +1,12 @@
 ## Next Steps
 
-### Working with KCP Workspaces
+### Accessing KCP Admin
 
-Platform Mesh uses KCP (Kubernetes Control Plane) to provide multi-tenant control planes. After successful setup, export the KCP kubeconfig to interact with workspaces:
+Platform Mesh uses KCP (Kubernetes-like Control Plane) to provide multi-tenant control planes. The admin kubeconfig provides full visibility into all KCP workspaces across the entire Platform Mesh instance.
+
+::: tip Admin Access
+The admin kubeconfig shown here is for platform administrators who need visibility across all workspaces.
+:::
 
 ```bash
 export KUBECONFIG=$(pwd)/.secret/kcp/admin.kubeconfig
@@ -36,3 +40,37 @@ Access Mailpit at: `https://portal.dev.local:8443/mailpit/`
 You can use Mailpit to view all sent emails and test email workflows without needing a real email server.
 :::
 
+
+## Accessing Keycloak
+
+Keycloak is the default identity provider used for authentication in Platform Mesh. Administrators can access the Keycloak admin console to manage users, roles, and authentication settings.
+
+**URL**: `https://portal.dev.local:8443/keycloak`
+
+**Credentials**:
+- **Username**: `keycloak-admin`
+- **Password**: `admin`
+
+::: warning Local Setup Only
+These default credentials are for the local development environment only. In production deployments, use secure credentials and follow your organization's security policies.
+:::
+
+The screenshot below shows a "default" realm that was automatically created when an organization named "default" was onboarded to Platform Mesh. After completing the [Example MSP](./example-msp.md) walkthrough, you can return here to see how your organization appears as a dedicated realm in Keycloak.
+
+![Keycloak Admin](/img/keycloak-admin.png)
+
+## Accessing OpenFGA
+
+OpenFGA is the central relationship-based authorization system used by Platform Mesh. You can access the OpenFGA Playground to explore and test authorization models and relationships.
+
+First, set up port forwarding to the OpenFGA service:
+
+```bash
+kubectl port-forward -n platform-mesh-system svc/openfga 3000 8080 8081
+```
+
+Then access the OpenFGA Playground at: `http://localhost:3000/playground`
+
+The screenshot below displays the "default" organization's authorization data in OpenFGA, created during organization onboarding. Once you complete the [Example MSP](./example-msp.md) tutorial and create your own organization, you can explore how Platform Mesh provisions the corresponding authorization relationships here.
+
+![OpenFGA Admin](/img/openfga-admin.png)
