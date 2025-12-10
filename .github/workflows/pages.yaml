@@ -68,6 +68,7 @@ jobs:
       # Deploy versioned docs to GitHub Pages
       # This creates a folder structure on gh-pages branch for each version:
       #   gh-pages/
+      #   ├── index.html      ← root redirect (deployed from main branch)
       #   ├── main/           ← from main branch
       #   ├── release-0.1/    ← from release-0.1 branch
       #   └── pr-preview/     ← PR previews (preserved via clean-exclude)
@@ -82,3 +83,19 @@ jobs:
           target-folder: ${{ steps.set-version.outputs.version }}
           clean-exclude: pr-preview
           force: false
+
+      # Deploy root index.html redirect from main branch only
+      # This ensures the site root redirects to the default version (release-0.1)
+      - uses: JamesIves/github-pages-deploy-action@4a3abc783e1a24aeb44c16e869ad83caf6b4cc23 # v4
+        if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
+        with:
+          folder: .
+          branch: gh-pages
+          target-folder: .
+          clean: false
+          clean-exclude: |
+            pr-preview
+            main
+            release-*
+          force: false
+          include: index.html
