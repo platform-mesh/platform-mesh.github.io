@@ -14,7 +14,31 @@ git clone --depth 1 --branch 0.1.0 https://github.com/platform-mesh/helm-charts.
 cd helm-charts/local-setup
 ```
 
-### 2. Run the Setup
+### 2. Configure Local DNS
+
+Before running the setup script, add the following entries to your `/etc/hosts` file:
+
+```
+127.0.0.1 portal.dev.local kcp.api.portal.dev.local
+```
+
+::: tip WSL Users
+Also add these entries to the Windows hosts file at `C:\Windows\System32\drivers\etc\hosts`
+:::
+
+The setup script will verify these entries are properly configured and provide platform-specific guidance if they're missing.
+
+::: warning Organization Subdomains
+Each created organization gets its own subdomain (e.g., `<organization-name>.portal.dev.local`) that must be added to your `/etc/hosts` file:
+
+```
+127.0.0.1 <organization-name>.portal.dev.local
+```
+
+Remember to add a hosts entry for every organization you create in the platform.
+:::
+
+### 3. Run the Setup
 
 The setup script automates the entire bootstrap process. Choose one of the following options:
 
@@ -70,28 +94,6 @@ kind delete cluster --name platform-mesh
 
 ::: info Setup Duration
 The initial setup typically takes 5-10 minutes, depending on your internet connection and machine performance.
-:::
-
-### 3. Configure Local DNS
-
-Add the following entries to your `/etc/hosts` file:
-
-```
-127.0.0.1 portal.dev.local kcp.api.portal.dev.local
-```
-
-::: tip WSL Users
-Also add these entries to the Windows hosts file at `C:\Windows\System32\drivers\etc\hosts`
-:::
-
-::: warning Organization Subdomains
-Each created organization gets its own subdomain (e.g., `<organization-name>.portal.dev.local`) that must be added to your `/etc/hosts` file:
-
-```
-127.0.0.1 <organization-name>.portal.dev.local
-```
-
-Remember to add a hosts entry for every organization you create in the platform.
 :::
 
 ### 4. Access the Services
@@ -197,7 +199,7 @@ For the complete and up-to-date component list, always refer to the OCM componen
 
 The setup script automates the entire bootstrap process:
 
-1. **Environment Validation** - Checks for required dependencies and system compatibility
+1. **Environment Validation** - Checks for required dependencies, system compatibility, hosts entries, and KCP kubectl plugin (when using `--example-data`)
 2. **Cluster Creation** - Creates a Kind cluster with the necessary configuration
 3. **Certificate Setup** - Generates local SSL certificates for secure access
 4. **Platform Mesh Prerequisites** - Installs Flux, KRO, and OCM
