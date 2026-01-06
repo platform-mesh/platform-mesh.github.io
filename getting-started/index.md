@@ -12,7 +12,7 @@ The local setup creates a complete Platform Mesh environment including:
 - **Local SSL certificates** for secure communication
 - **Onboarding Portal** for managing organizations and services
 
-The local setup scripts and configuration are available in the [platform-mesh/helm-charts release 0.1.0](https://github.com/platform-mesh/helm-charts/releases/tag/0.1.0), `local-setup` directory.
+The local setup scripts and configuration are available in the [platform-mesh/helm-charts release 0.1.1](https://github.com/platform-mesh/helm-charts/releases/tag/0.1.1), `local-setup` directory.
 
 ## Prerequisites
 
@@ -45,14 +45,14 @@ Before you begin, ensure you have the following tools installed:
 ### Platform-Specific Notes
 
 ::: tip WSL2 Users
-WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration enabled. You'll need to set up mkcert to work across both WSL2 and Windows. See the [WSL2 setup guide](https://github.com/platform-mesh/helm-charts/blob/0.1.0/local-setup/README.md#wsl2--windows-mkcert-setup-guide) for detailed instructions.
+WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration enabled. You'll need to set up mkcert to work across both WSL2 and Windows. See the [WSL2 setup guide](https://github.com/platform-mesh/helm-charts/blob/0.1.1/local-setup/README.md#wsl2--windows-mkcert-setup-guide) for detailed instructions.
 :::
 
 ::: tip macOS Podman Users
 Set the environment variable: `KIND_EXPERIMENTAL_PROVIDER=podman`
 :::
 
-For detailed installation instructions for each prerequisite, refer to the [helm-charts local-setup README](https://github.com/platform-mesh/helm-charts/blob/0.1.0/local-setup/README.md#prerequisites).
+For detailed installation instructions for each prerequisite, refer to the [helm-charts local-setup README](https://github.com/platform-mesh/helm-charts/blob/0.1.1/local-setup/README.md#prerequisites).
 
 ## Bootstrap process
 
@@ -61,8 +61,8 @@ For detailed installation instructions for each prerequisite, refer to the [helm
 
 ## Additional Resources
 
-- [Full Local Setup Documentation](https://github.com/platform-mesh/helm-charts/blob/0.1.0/local-setup/README.md) - Comprehensive guide for version 0.1.0
-- [Platform Mesh Helm Charts Release 0.1.0](https://github.com/platform-mesh/helm-charts/releases/tag/0.1.0) - Release download
+- [Full Local Setup Documentation](https://github.com/platform-mesh/helm-charts/blob/0.1.1/local-setup/README.md) - Comprehensive guide for version 0.1.1
+- [Platform Mesh Helm Charts Release 0.1.1](https://github.com/platform-mesh/helm-charts/releases/tag/0.1.1) - Release download
 - [Platform Mesh Helm Charts Repository](https://github.com/platform-mesh/helm-charts) - Source repository
 - [Platform Mesh Operator](https://github.com/platform-mesh/platform-mesh-operator) - Operator documentation and API reference
 - [Overview](/overview/) - Learn about Platform Mesh architecture
