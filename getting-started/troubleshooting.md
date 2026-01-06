@@ -32,7 +32,7 @@ Check available disk space (need ~10GB) and verify your container runtime has su
 mkcert -install
 ```
 
-If you continue to see certificate warnings in your browser, you may need platform-specific setup. See the [certificate troubleshooting guide](https://github.com/platform-mesh/helm-charts/blob/0.1.0/local-setup/README.md#certificate-issues) for detailed instructions for WSL2, Windows, Linux, and Firefox users.
+If you continue to see certificate warnings in your browser, you may need platform-specific setup. See the [certificate troubleshooting guide](https://github.com/platform-mesh/helm-charts/blob/0.1.1/local-setup/README.md#certificate-issues) for detailed instructions for WSL2, Windows, Linux, and Firefox users.
 
 #### DNS Resolution Not Working
 

@@ -8,9 +8,9 @@ Track progress and upcoming improvements on our [project dashboard](https://gith
 
 ### 1. Download the Release
 
-Clone the 0.1.0 release
+Clone the 0.1.1 release
 ```bash
-git clone --depth 1 --branch 0.1.0 https://github.com/platform-mesh/helm-charts.git
+git clone --depth 1 --branch 0.1.1 https://github.com/platform-mesh/helm-charts.git
 cd helm-charts/local-setup
 ```
 
