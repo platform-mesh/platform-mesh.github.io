@@ -128,16 +128,6 @@ After provisioning completes, the HttpBin service becomes available in your acco
 
 Access the service via the provided link.
 
-::: tip Host Configuration Required
-Add the following entry to your `/etc/hosts` file:
-
-```
-127.0.0.1 httpbin.services.portal.dev.local
-```
-
-For detailed host configuration, refer to the [Quick Start](./quick-start.md) guide.
-:::
-
 ![Local HttpBin](/img/httpbin-local.png)
 
 You can also access the HttpBin service running within the local cluster. Note that this is for demonstration purposes only. In production environments, Managed Service Providers operate outside the Platform Mesh scope and are hosted externally. This example illustrates the integration capabilities of Platform Mesh.
