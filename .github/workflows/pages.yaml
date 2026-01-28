@@ -70,10 +70,10 @@ jobs:
       #   gh-pages/
       #   ├── index.html      ← root redirect (deployed from main branch)
       #   ├── main/           ← from main branch
-      #   ├── release-0.1/    ← from release-0.1 branch
+      #   ├── release-0.2/    ← from release-0.2 branch
       #   └── pr-preview/     ← PR previews (preserved via clean-exclude)
       #
-      # Each version is independent - deploying main/ won't affect release-0.1/
+      # Each version is independent - deploying main/ won't affect release-0.2/
       # The target-folder determines which subdirectory receives the build output
       - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
         if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-')) }}
@@ -85,7 +85,7 @@ jobs:
           force: false
 
       # Deploy root index.html redirect from main branch only
-      # This ensures the site root redirects to the default version (release-0.1)
+      # This ensures the site root redirects to the default version (release-0.2)
       - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
         if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
         with:

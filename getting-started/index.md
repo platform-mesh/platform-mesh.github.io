@@ -6,7 +6,7 @@ This guide will help you set up a local Platform Mesh environment using a Kind (
 
 The local setup creates a complete Platform Mesh environment including:
 
-- **Kind cluster** running Kubernetes v1.33.1
+- **Kind cluster** running Kubernetes v1.35.0
 - **Core infrastructure**: Flux, Cert-Manager, OCM controller
 - **Platform Mesh operator** and all required components
 - **Local SSL certificates** for secure communication
@@ -34,6 +34,7 @@ Before you begin, ensure you have the following tools installed:
 - **openssl** - Required for SSL certificate generation (typically pre-installed on Linux/macOS)
 - **base64** - Required for encoding/decoding operations (standard Unix utility, typically pre-installed)
 - **mkcert** - Local certificate generation tool ([Installation](https://github.com/FiloSottile/mkcert?tab=readme-ov-file#installation))
+- **kubectl-kcp plugin** - Required only for `--example-data` setup ([Installation](https://docs.kcp.io/kcp/main/setup/kubectl-plugin/))
 
 ### Optional Tools
 
@@ -50,6 +51,10 @@ WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration ena
 
 ::: tip macOS Podman Users
 Set the environment variable: `KIND_EXPERIMENTAL_PROVIDER=podman`
+:::
+
+::: tip macOS Virtualization Framework
+For optimal performance on macOS, we recommend using Apple's Virtualization Framework (VZ) with your container runtime. Docker Desktop users should enable "Use Virtualization framework" in Settings → General. Podman users should create a new machine with `podman machine init --vm-type=applehv`.
 :::
 
 For detailed installation instructions for each prerequisite, refer to the [helm-charts local-setup README](https://github.com/platform-mesh/helm-charts/blob/main/local-setup/README.md#prerequisites).
