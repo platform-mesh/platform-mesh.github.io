@@ -47,6 +47,21 @@ type C:\Windows\System32\drivers\etc\hosts | findstr portal.dev.local
 
 For WSL2 users, check both Linux and Windows hosts files.
 
+#### WSL2 Specific Issues
+
+If Kubernetes is crashing because of a conflict between Cgroup v1 and v2 (a "hybrid" state),
+you can force WSL2 to use **Cgroup v2 exclusively** (Unified Mode).
+This is the modern standard starting from **Kubernetes v1.25**, where Cgroup v2 graduated to General Availability (GA).
+- Open PowerShell on Windows.
+- Edit your `.wslconfig` file: `notepad $env:USERPROFILE\.wslconfig`
+- Add these lines:
+
+```
+[wsl2]
+# Disable Cgroup V1 to force the kernel into "unified" (v2 only) mode
+kernelCommandLine = cgroup_no_v1=all
+```
+
 #### Component Timeout Issues
 - Try to use the cached version, as it needs less image pulling and try again using `task local-setup-cached`
 - Verify all required images can be pulled
