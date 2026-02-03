@@ -67,11 +67,11 @@ Once onboarding is complete, the newly created organization will be visible in t
 
 Enter your email and the default password from last step. After login, the browser redirects to the password update page.
 
-![Platform Mesh Organisation Update password](public/img/pm-org-update-password.png)
+![Platform Mesh Organisation Update password](/img/pm-org-update-password.png)
 
 Set a new password for the user in the newly created organization. Another redirect shows the account information update page.
 
-![Platform Mesh Organisation Update account information](public/img/pm-org-update-accountinformation.png)
+![Platform Mesh Organisation Update account information](/img/pm-org-update-accountinformation.png)
 
 After completing this step, log in to access the Platform Mesh Portal UI.
 
