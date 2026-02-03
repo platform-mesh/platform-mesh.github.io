@@ -8,7 +8,8 @@ The local setup is currently under active development. Features and workflows ma
 
 ```bash
 git clone https://github.com/platform-mesh/helm-charts.git
-cd helm-charts/local-setup
+cd helm-charts
+git checkout v0.2.0
 ```
 
 ### 2. Run the Setup
@@ -30,7 +31,7 @@ task local-setup:example-data:iterate
 ```bash [Script]
 # Full setup (deletes existing cluster and creates new one)
 kind delete cluster --name platform-mesh
-./scripts/start.sh
+./local-setup/scripts/start.sh --example-data
 ```
 
 :::
@@ -61,7 +62,7 @@ After logging in, you can onboard your first organisation.
 
 ![Platform Mesh Organisation](/img/pm-portal-org.png)
 
-Once onboarding is complete, the newly created organization will be visible in the `Switch to a different organization` drop down menu and a popup with default password will appear. Copy the default password to be used in the next step.
+Once onboarding is complete, the newly created organization will be visible in the `Switch to a different organization` drop down menu and a popup with default password **password** will appear. Copy the default password to be used in the next step.
 
 ![Platform Mesh Organisation Login](/img/pm-org-login.png)
 
@@ -98,7 +99,7 @@ Note that each account operates as its own [control plane](../overview/control-p
 
 ![Platform Mesh Demo Kubeconfig](/img/pm-demo-account-kc.png)
 
-A default namespace is automatically created for you within the account. This namespace corresponds to a Kubernetes Namespace in the Control Plane.
+The default and kube-system namespaces are automatically created for you within the account. This namespace corresponds to a Kubernetes Namespace in the Control Plane.
 
 ![Platform Mesh Account Namespace](/img/pm-namespace.png)
 ---
