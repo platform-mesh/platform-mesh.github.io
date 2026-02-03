@@ -29,9 +29,8 @@ interface Version {
 // Define available versions - update this list when adding new versions
 const versions: Version[] = [
   { name: 'main', label: 'main (latest)' },
+  { name: 'release-0.2', label: 'v0.2' },
   { name: 'release-0.1', label: 'v0.1' },
-  // Add more versions here as they're created:
-  // { name: 'release-0.2', label: 'v0.2' },
 ]
 
 const currentVersion = ref<string>('')

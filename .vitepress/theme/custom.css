@@ -58,3 +58,12 @@ img[src='/search.png'] {
 .VPDocAsideOutline .outline-link {
     white-space: normal !important;
 }
+
+/* Medium zoom styles */
+.medium-zoom-overlay {
+  z-index: 100;
+}
+
+.medium-zoom-image--opened {
+  z-index: 101;
+}

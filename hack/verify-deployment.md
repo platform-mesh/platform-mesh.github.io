@@ -37,7 +37,7 @@ gh-pages (branch)
 │   ├── overview/
 │   ├── scenarios/
 │   └── ...
-├── release-0.1/
+├── release-0.2/
 │   ├── index.html
 │   ├── assets/
 │   └── ...
@@ -55,14 +55,14 @@ git checkout gh-pages
 
 # List directory structure
 ls -la
-# Should show: main/, release-0.1/, etc.
+# Should show: main/, release-0.2/, etc.
 
 # Check main version files
 ls -la main/
 # Should show: index.html, assets/, overview/, scenarios/, etc.
 
 # Check release version files
-ls -la release-0.1/
+ls -la release-0.2/
 # Should show: index.html, assets/, overview/, scenarios/, etc.
 
 # Switch back to your working branch
@@ -87,21 +87,21 @@ Visit: `https://platform-mesh.github.io/main/`
 - Click logo → Should return to `https://platform-mesh.github.io/main/`
 
 ### Release Version
-Visit: `https://platform-mesh.github.io/release-0.1/`
+Visit: `https://platform-mesh.github.io/release-0.2/`
 
 **Check:**
 - ✅ Page loads without 404 error
 - ✅ All styling and navigation works
-- ✅ Version selector shows both "main (latest)" and "v0.1"
+- ✅ Version selector shows both "main (latest)" and "v0.2"
 
 ### Version Switching
 From `https://platform-mesh.github.io/main/overview/`:
 1. Click version dropdown
-2. Select "v0.1"
-3. Should navigate to `https://platform-mesh.github.io/release-0.1/overview/`
+2. Select "v0.2"
+3. Should navigate to `https://platform-mesh.github.io/release-0.2/overview/`
 4. Current page path is preserved!
 
-From `https://platform-mesh.github.io/release-0.1/`:
+From `https://platform-mesh.github.io/release-0.2/`:
 1. Click version dropdown
 2. Select "main (latest)"
 3. Should navigate to `https://platform-mesh.github.io/main/`
@@ -210,9 +210,9 @@ ls -la main/assets/
 5. Select "v0.1"
 
 **If 404 occurs:**
-- Verify `release-0.1` branch was deployed
-- Check `https://platform-mesh.github.io/release-0.1/` loads independently
-- Check gh-pages branch has `release-0.1/` directory
+- Verify `release-0.2` branch was deployed
+- Check `https://platform-mesh.github.io/release-0.2/` loads independently
+- Check gh-pages branch has `release-0.2/` directory
 
 ### Issue: Workflow Not Triggering
 
@@ -220,7 +220,7 @@ ls -la main/assets/
 
 **Check workflow file on that branch:**
 ```bash
-git checkout release-0.1
+git checkout release-0.2
 cat .github/workflows/pages.yaml
 ```
 
@@ -229,10 +229,10 @@ The workflow file must exist on the branch for it to trigger!
 **If missing:**
 ```bash
 # Merge the workflow changes to the release branch
-git checkout release-0.1
+git checkout release-0.2
 git merge main .github/workflows/pages.yaml
 git commit -m "Add versioning workflow"
-git push origin release-0.1
+git push origin release-0.2
 ```
 
 ## 6. GitHub Pages Settings
@@ -247,7 +247,7 @@ Verify your GitHub Pages configuration:
 
 **Important:** The URL shown there is just `https://platform-mesh.github.io/`, but your docs are at:
 - `https://platform-mesh.github.io/main/`
-- `https://platform-mesh.github.io/release-0.1/`
+- `https://platform-mesh.github.io/release-0.2/`
 
 The root URL (`https://platform-mesh.github.io/`) might show a directory listing or 404 unless you add an index.html there.
 
@@ -278,7 +278,7 @@ Use this checklist after each deployment:
 - [ ] Links work correctly
 - [ ] Search works
 
-**Release Version (`/release-0.1/`):**
+**Release Version (`/release-0.2/`):**
 - [ ] Homepage loads
 - [ ] Navigation works
 - [ ] Version dropdown appears
@@ -308,7 +308,7 @@ If something isn't working, use these commands:
 git clone -b gh-pages https://github.com/platform-mesh/platform-mesh.github.io.git gh-pages-check
 cd gh-pages-check
 ls -la
-# Should see: main/, release-0.1/, pr-preview/, etc.
+# Should see: main/, release-0.2/, pr-preview/, etc.
 ```
 
 **Check recent commits on gh-pages:**
@@ -321,14 +321,14 @@ git log origin/gh-pages --oneline -10
 **Compare two versions:**
 ```bash
 git checkout gh-pages
-diff -r main/ release-0.1/
+diff -r main/ release-0.2/
 # Shows differences between versions
 ```
 
 **Check file sizes:**
 ```bash
 git checkout gh-pages
-du -sh main/ release-0.1/
+du -sh main/ release-0.2/
 # Both should be similar size (a few MB)
 ```
 
@@ -349,7 +349,7 @@ Your deployment is successful when:
 
 ✅ **URLs Work:**
 - `https://platform-mesh.github.io/main/` → loads correctly
-- `https://platform-mesh.github.io/release-0.1/` → loads correctly
+- `https://platform-mesh.github.io/release-0.2/` → loads correctly
 - No 404 errors
 
 ✅ **Functionality Works:**
@@ -373,7 +373,7 @@ gh-pages/
 ├── main/              ← Main branch deployment
 │   ├── index.html
 │   └── assets/
-├── release-0.1/       ← Release branch deployment
+├── release-0.2/       ← Release branch deployment
 │   ├── index.html
 │   └── assets/
 └── pr-preview/        ← PR preview deployments

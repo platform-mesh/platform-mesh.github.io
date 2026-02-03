@@ -26,9 +26,9 @@ npm run preview
 
 ```bash
 # Test release version
-DOCS_VERSION=release-0.1 npm run build
+DOCS_VERSION=release-0.2 npm run build
 npm run preview
-# Open: http://localhost:4173/release-0.1/
+# Open: http://localhost:4173/release-0.2/
 ```
 
 **What to check:**
@@ -50,10 +50,10 @@ DOCS_VERSION=main npm run build
 mkdir -p test-deploy/main
 cp -r .vitepress/dist/* test-deploy/main/
 
-# 2. Build release-0.1 version
-DOCS_VERSION=release-0.1 npm run build
-mkdir -p test-deploy/release-0.1
-cp -r .vitepress/dist/* test-deploy/release-0.1/
+# 2. Build release-0.2 version
+DOCS_VERSION=release-0.2 npm run build
+mkdir -p test-deploy/release-0.2
+cp -r .vitepress/dist/* test-deploy/release-0.2/
 
 # 3. Serve both versions
 cd test-deploy
@@ -62,14 +62,14 @@ python3 -m http.server 8080
 
 **Open in browser:**
 - `http://localhost:8080/main/` - Main version
-- `http://localhost:8080/release-0.1/` - Release version
+- `http://localhost:8080/release-0.2/` - Release version
 
 **What to check:**
 - ✅ Both URLs load correctly
 - ✅ Version selector shows all versions
 - ✅ Switching versions works (dropdown navigates to different version)
 - ✅ Current version is highlighted in dropdown
-- ✅ Switching preserves current page path (e.g., `/main/overview/` → `/release-0.1/overview/`)
+- ✅ Switching preserves current page path (e.g., `/main/overview/` → `/release-0.2/overview/`)
 
 **Cleanup after testing:**
 ```bash
@@ -142,23 +142,23 @@ git checkout main
 git pull origin main
 
 # 2. Create release branch (use pattern: release-X.Y)
-git checkout -b release-0.1
+git checkout -b release-0.2
 
 # 3. Push to GitHub
-git push -u origin release-0.1
+git push -u origin release-0.2
 ```
 
 **What happens:**
 1. GitHub Actions workflow automatically triggers (matches `release-*` pattern)
-2. Extracts version from branch name: `release-0.1`
-3. Builds with `DOCS_VERSION=release-0.1`
-4. Deploys to `gh-pages` branch under `/release-0.1/` directory
-5. Available at: `https://platform-mesh.github.io/release-0.1/`
+2. Extracts version from branch name: `release-0.2`
+3. Builds with `DOCS_VERSION=release-0.2`
+4. Deploys to `gh-pages` branch under `/release-0.2/` directory
+5. Available at: `https://platform-mesh.github.io/release-0.2/`
 
 **Verify deployment:**
 1. Check **Actions** tab for workflow run
 2. Wait for completion
-3. Visit `https://platform-mesh.github.io/release-0.1/`
+3. Visit `https://platform-mesh.github.io/release-0.2/`
 4. Verify content is correct
 
 ### Updating the Version Selector
@@ -175,7 +175,8 @@ Edit `.vitepress/theme/components/VersionSelector.vue`:
 ```typescript
 const versions: Version[] = [
   { name: 'main', label: 'main (latest)' },
-  { name: 'release-0.2', label: 'v0.2' },  // Add new versions here
+  { name: 'release-0.3', label: 'v0.3' },  // Add new versions here
+  { name: 'release-0.2', label: 'v0.2' },
   { name: 'release-0.1', label: 'v0.1' },
 ]
 ```
@@ -183,16 +184,16 @@ const versions: Version[] = [
 ```bash
 # 2. Commit and push
 git add .vitepress/theme/components/VersionSelector.vue
-git commit -m "Add release-0.2 to version selector"
+git commit -m "Add release-0.3 to version selector"
 git push origin main
 ```
 
 **Apply to other branches (optional):**
 ```bash
 # Update the dropdown on release branches too
-git checkout release-0.1
+git checkout release-0.2
 git cherry-pick <commit-hash-from-main>
-git push origin release-0.1
+git push origin release-0.2
 ```
 
 ### Updating Release Documentation
@@ -201,22 +202,22 @@ To fix or update a specific release version:
 
 ```bash
 # 1. Checkout the release branch
-git checkout release-0.1
+git checkout release-0.2
 
 # 2. Make changes
 # ... edit markdown files ...
 
 # 3. Commit and push
 git add .
-git commit -m "Fix typo in release-0.1 docs"
-git push origin release-0.1
+git commit -m "Fix typo in release-0.2 docs"
+git push origin release-0.2
 ```
 
 **What happens:**
 - Workflow triggers automatically
-- Rebuilds only the `release-0.1` version
-- Redeploys to `/release-0.1/` (overwrites previous deployment)
-- Other versions (main, release-0.2, etc.) are unaffected
+- Rebuilds only the `release-0.2` version
+- Redeploys to `/release-0.2/` (overwrites previous deployment)
+- Other versions (main, release-0.3, etc.) are unaffected
 
 ## Pull Request Previews
 
@@ -344,7 +345,7 @@ git push origin test-pr-preview
 - Check Actions tab for successful deployments
 - Verify URLs work independently:
   - `https://platform-mesh.github.io/main/`
-  - `https://platform-mesh.github.io/release-0.1/`
+  - `https://platform-mesh.github.io/release-0.2/`
 
 ### Workflow Not Triggering
 
@@ -353,10 +354,10 @@ git push origin test-pr-preview
 **Check:**
 1. Branch name matches pattern:
    - ✅ `main` - triggers
-   - ✅ `release-0.1` - triggers (matches `release-*`)
+   - ✅ `release-0.2` - triggers (matches `release-*`)
    - ✅ `release-1.0` - triggers
-   - ❌ `rel-0.1` - doesn't match pattern
-   - ❌ `v0.1` - doesn't match pattern
+   - ❌ `rel-0.2` - doesn't match pattern
+   - ❌ `v0.2` - doesn't match pattern
 
 2. Workflow file is on the branch:
    ```bash
@@ -429,7 +430,7 @@ The workflow automatically sets these based on context:
 | Branch | `DOCS_VERSION` | `PAGES_BASE` | Deploy Path |
 |--------|----------------|--------------|-------------|
 | `main` | `main` | (empty) | `/main/` |
-| `release-0.1` | `release-0.1` | (empty) | `/release-0.1/` |
+| `release-0.2` | `release-0.2` | (empty) | `/release-0.2/` |
 | PR to main | (empty) | `pr-preview/pr-{number}` | `/pr-preview/pr-{number}/` |
 
 ### Concurrency Groups
@@ -437,7 +438,7 @@ The workflow automatically sets these based on context:
 Deployments use separate concurrency groups to prevent conflicts:
 
 - Main: `pages-main`
-- Release branches: `pages-release-0.1`, `pages-release-0.2`, etc.
+- Release branches: `pages-release-0.2`, `pages-release-0.3`, etc.
 - PR previews: `pages-preview-123`, `pages-preview-456`, etc.
 
 This allows:
@@ -465,9 +466,9 @@ Useful for:
 ### Version Naming
 
 Use consistent naming for release branches:
-- ✅ `release-0.1`, `release-0.2`, `release-1.0`
+- ✅ `release-0.2`, `release-0.3`, `release-1.0`
 - ✅ `release-2024.1`, `release-2024.2`
-- ❌ `v0.1`, `0.1`, `rel-0.1` (won't trigger workflow)
+- ❌ `v0.2`, `0.2`, `rel-0.2` (won't trigger workflow)
 
 ### When to Create Release Branches
 
@@ -503,13 +504,13 @@ git commit -m "Fix critical typo"
 git push origin main
 
 # Cherry-pick to release branches
-git checkout release-0.1
-git cherry-pick <commit-hash>
-git push origin release-0.1
-
 git checkout release-0.2
 git cherry-pick <commit-hash>
 git push origin release-0.2
+
+git checkout release-0.3
+git cherry-pick <commit-hash>
+git push origin release-0.3
 ```
 
 ### Version Selector Management
@@ -517,7 +518,7 @@ git push origin release-0.2
 **Keep it updated:**
 - Add new versions to dropdown when created
 - List versions in reverse chronological order (newest first, except main)
-- Use clear labels (`main (latest)`, `v0.2`, `v0.1`)
+- Use clear labels (`main (latest)`, `v0.3`, `v0.2`)
 
 **Remove old versions:**
 1. Delete the branch: `git push origin --delete release-0.1`

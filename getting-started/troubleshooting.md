@@ -34,19 +34,17 @@ mkcert -install
 
 If you continue to see certificate warnings in your browser, you may need platform-specific setup. See the [certificate troubleshooting guide](https://github.com/platform-mesh/helm-charts/blob/main/local-setup/README.md#certificate-issues) for detailed instructions for WSL2, Windows, Linux, and Firefox users.
 
-#### DNS Resolution Not Working
+#### Component Timeout Issues
+- Try to use the cached version, as it needs less image pulling and try again using `task local-setup:cached`
+- Verify all required images can be pulled
 
-Verify your hosts file entries:
+### Debug Mode
+
+For more verbose output, prepend `DEBUG=true` to any task:
+
 ```bash
-# On Linux/macOS
-cat /etc/hosts | grep portal.dev.local
-
-# On Windows
-type C:\Windows\System32\drivers\etc\hosts | findstr portal.dev.local
+DEBUG=true task local-setup:iterate
 ```
-
-For WSL2 users, check both Linux and Windows hosts files.
-
 #### WSL2 Specific Issues
 
 If Kubernetes is crashing because of a conflict between Cgroup v1 and v2 (a "hybrid" state),
