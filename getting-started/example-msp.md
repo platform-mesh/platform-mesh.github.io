@@ -8,7 +8,8 @@ The local setup is currently under active development. Features and workflows ma
 
 ```bash
 git clone https://github.com/platform-mesh/helm-charts.git
-cd helm-charts/local-setup
+cd helm-charts
+git checkout v0.2.0
 ```
 
 ### 2. Run the Setup
@@ -30,7 +31,7 @@ task local-setup:example-data:iterate
 ```bash [Script]
 # Full setup (deletes existing cluster and creates new one)
 kind delete cluster --name platform-mesh
-./scripts/start.sh
+./local-setup/scripts/start.sh --example-data
 ```
 
 :::
@@ -51,15 +52,7 @@ For first-time access, you must register a new user. Click the **Register** link
 
 ![Platform Mesh Register](/img/pm-register.png)
 
-After registration, email verification is required.
-
-![Platform Mesh Registered](/img/pm-register-complete.png)
-
-Verify your email through the Mailpit instance. The terminal output from the setup task includes the Mailpit URL.
-
-![Platform Mesh Mail Verify](/img/pm-mailpit.png)
-
-After verification, follow the redirect links to the login page. Sign in with your newly created credentials to access the organisation page.
+In the local-setup environment, your email from the registration is automatically confirmed. The browser then redirects to the organization onboarding page.
 
 ---
 
@@ -69,9 +62,17 @@ After logging in, you can onboard your first organisation.
 
 ![Platform Mesh Organisation](/img/pm-portal-org.png)
 
-Once onboarding is complete, you will receive an email in Mailpit containing a link to set your account credentials.
+Once onboarding is complete, the newly created organization will be visible in the `Switch to a different organization` drop down menu and a popup with default password **password** will appear. Copy the default password to be used in the next step.
 
-![Platform Mesh Onboard Org Completed](/img/pm-mailpit-org.png)
+![Platform Mesh Organisation Login](/img/pm-org-login.png)
+
+Enter your email and the default password from last step. After login, the browser redirects to the password update page.
+
+![Platform Mesh Organisation Update password](/img/pm-org-update-password.png)
+
+Set a new password for the user in the newly created organization. Another redirect shows the account information update page.
+
+![Platform Mesh Organisation Update account information](/img/pm-org-update-accountinformation.png)
 
 After completing this step, log in to access the Platform Mesh Portal UI.
 
@@ -98,23 +99,14 @@ Note that each account operates as its own [control plane](../overview/control-p
 
 ![Platform Mesh Demo Kubeconfig](/img/pm-demo-account-kc.png)
 
-A default namespace is automatically created for you within the account. This namespace corresponds to a Kubernetes Namespace in the Control Plane.
+The default and kube-system namespaces are automatically created for you within the account. This namespace corresponds to a Kubernetes Namespace in the Control Plane.
 
 ![Platform Mesh Account Namespace](/img/pm-namespace.png)
-
----
-
-## Marketplace
-
-The Marketplace displays available services that have been provisioned and are ready for binding and consumption within your account.
-
-![Platform Mesh Marketplace](/img/pm-acc-marketplace.png)
-
 ---
 
 ## Managed Service Provider: HttpBin
 
-Within the namespace, you can view and provision services from the Marketplace. The HttpBin service demonstrates managed service provider capabilities.
+Within the namespace, you can view and provision services. The HttpBin service demonstrates managed service provider capabilities.
 
 ![Platform Mesh Default Namespace](/img/pm-demo-ns.png)
 
@@ -127,16 +119,6 @@ After provisioning completes, the HttpBin service becomes available in your acco
 ![Platform Mesh Bin Ready](/img/pm-bin-ready.png)
 
 Access the service via the provided link.
-
-::: tip Host Configuration Required
-Add the following entry to your `/etc/hosts` file:
-
-```
-127.0.0.1 httpbin.services.portal.dev.local
-```
-
-For detailed host configuration, refer to the [Quick Start](./quick-start.md) guide.
-:::
 
 ![Local HttpBin](/img/httpbin-local.png)
 
