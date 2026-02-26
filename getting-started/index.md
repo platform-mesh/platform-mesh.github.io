@@ -30,6 +30,7 @@ Before you begin, ensure you have the following tools installed:
   - Ensure the container daemon is running before starting setup
 - **Kind** - Kubernetes in Docker ([Installation](https://kind.sigs.k8s.io/docs/user/quick-start/))
 - **kubectl** - Kubernetes command-line tool (usually installed with Docker Desktop or Kind)
+- **kubectl-kcp plugin** - Required when using `--example-data` flag for workspace management ([Installation](https://docs.kcp.io/kcp/main/setup/kubectl-plugin/))
 - **Helm** - Kubernetes package manager ([Installation](https://helm.sh/docs/intro/install/))
 - **openssl** - Required for SSL certificate generation (typically pre-installed on Linux/macOS)
 - **base64** - Required for encoding/decoding operations (standard Unix utility, typically pre-installed)
