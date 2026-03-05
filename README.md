@@ -34,3 +34,5 @@ For detailed documentation on versioning, local testing, and GitHub Pages deploy
 
 Diagrams are done excalidraw and can be found here (read-only link):
 https://link.excalidraw.com/readonly/NGxHb0Dkpp1pZKTFeW1h?darkMode=true
+
+<p align="center"><img alt="Bundesministerium für Wirtschaft und Energie (BMWE)-EU funding logo" src="https://apeirora.eu/assets/img/BMWK-EU.png" width="400"/></p>
