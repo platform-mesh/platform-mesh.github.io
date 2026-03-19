@@ -11,7 +11,7 @@ Track progress and upcoming improvements on our [project dashboard](https://gith
 ```bash
 git clone https://github.com/platform-mesh/helm-charts.git
 cd helm-charts
-git checkout v0.2.0
+git checkout 0.2.0
 cd local-setup
 ```
 
