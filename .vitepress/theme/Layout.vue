@@ -4,6 +4,11 @@
     <template #nav-bar-content-after>
       <VersionSelector />
     </template>
+
+    <!-- Add YouTube video above homepage feature tiles -->
+    <template #home-features-before>
+      <YouTubeEmbed />
+    </template>
   </Layout>
 </template>
 
@@ -13,6 +18,7 @@ import VersionSelector from './components/VersionSelector.vue'
 import mediumZoom from 'medium-zoom'
 import { onMounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vitepress'
+import YouTubeEmbed from './components/YouTubeEmbed.vue'
 
 const { Layout } = DefaultTheme
 
