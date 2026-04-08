@@ -179,8 +179,12 @@ kind: APIExport
 metadata:
   name: mongodb-provider
 spec:
-  latestResourceSchemas:
-    - v1.mongodbcommunity.mongodbcommunity.mongodb.com
+  resources:
+  - group: mongodbcommunity.mongodb.com
+    name: mongodbcommunity
+    schema: v1.mongodbcommunity.mongodbcommunity.mongodb.com
+    storage:
+      crd: {}
 ```
 
 Once created in a provider workspace, any consumer workspace can create an [APIBinding](/overview/api-export-binding) referencing this export to gain access to the MongoDB API. The APIExport also gets an automatically generated identity (an SHA-256 hash) that uniquely identifies this provider's MongoDB API, preventing conflicts with other providers who might export the same group/resource/version combination.
@@ -199,20 +203,29 @@ The entry point creates a multi-cluster manager using the kcp `apiexport` provid
 
 ```go
 import (
+    "github.com/kcp-dev/multicluster-provider/apiexport"
     mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
-    kcpprovider "github.com/kcp-dev/multicluster-provider/apiexport"
+    "k8s.io/client-go/tools/clientcmd"
+    "sigs.k8s.io/controller-runtime/pkg/manager"
 )
 
 func main() {
+    // Build a rest.Config from the kcp kubeconfig
+    kcpConfig, err := clientcmd.BuildConfigFromFlags("", kcpKubeconfig)
+    if err != nil {
+        log.Fatal(err)
+    }
+
     // The kcp apiexport provider discovers consumer workspaces
     // that have bound to the MongoDB APIExport
-    provider, err := kcpprovider.New(kcpKubeconfig, "mongodb-provider")
+    provider, err := apiexport.New(kcpConfig, apiexport.Options{})
     if err != nil {
         log.Fatal(err)
     }
 
     // Create a multi-cluster manager backed by this provider
-    mgr, err := mcmanager.New(targetKubeconfig, provider, manager.Options{})
+    // targetKubeconfig points to the downstream cluster
+    mgr, err := mcmanager.New(targetConfig, provider, manager.Options{})
     if err != nil {
         log.Fatal(err)
     }
@@ -367,11 +380,10 @@ A production implementation would use finalizers to ensure that the downstream r
 
 ### Apply the API Definitions
 
-First, apply the `APIResourceSchema` and `APIExport` to your provider workspace in kcp:
+First, apply the `APIResourceSchema` and `APIExport` to your provider workspace in kcp. The sample files are in the `sample/` directory of the repository:
 
 ```bash
-kubectl --kubeconfig kcp.kubeconfig apply -f apiresourceschema.yaml
-kubectl --kubeconfig kcp.kubeconfig apply -f apiexport.yaml
+KUBECONFIG=kcp.kubeconfig kubectl apply -f sample/mongo-api.yaml
 ```
 
 ### Build and Run the Controller

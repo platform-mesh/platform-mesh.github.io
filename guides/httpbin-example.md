@@ -127,8 +127,12 @@ kind: APIExport
 metadata:
   name: orchestrate.platform-mesh.io
 spec:
-  latestResourceSchemas:
-  - v250407.httpbins.orchestrate.platform-mesh.io
+  resources:
+  - group: orchestrate.platform-mesh.io
+    name: httpbins
+    schema: v250407.httpbins.orchestrate.platform-mesh.io
+    storage:
+      crd: {}
   # Permission claims are managed automatically by the agent
   permissionClaims:
   - group: ""
@@ -149,7 +153,7 @@ The api-syncagent is deployed on the service cluster via Helm chart into the `ex
 
 ```yaml
 # api-syncagent Helm values (from local-setup)
-apiExportName: orchestrate.platform-mesh.io
+apiExportEndpointSliceName: orchestrate.platform-mesh.io
 agentName: kcp-api-syncagent
 kcpKubeconfig: httpbin-kubeconfig
 ```
