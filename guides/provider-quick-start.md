@@ -4,30 +4,38 @@ This guide walks you through building your first service provider in Platform Me
 
 By the end of this guide, you will have:
 
-- An **APIExport** in kcp that advertises the httpbin API
-- The **api-syncagent** running on your service cluster, connecting it to kcp
-- A **PublishedResource** that tells the agent exactly which CRD to publish
-- A working **consumer flow** where creating an HttpBin resource in a kcp workspace results in a running httpbin pod on the service cluster, with status syncing back to the consumer
+- A **provider workspace** in kcp with an APIExport advertising the httpbin API
+- The **httpbin operator** running on your service cluster, managing HttpBin resources
+- The **api-syncagent** bridging kcp and the service cluster
+- A **PublishedResource** that tells the agent which CRD to expose
+- A working **consumer flow** where creating an HttpBin resource in a kcp workspace results in a running httpbin pod on the service cluster, with status syncing back
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 
-- A **running Platform Mesh instance** -- follow the [Quick Start](/getting-started/quick-start) if you haven't set one up yet
-- **kubectl** configured to access both the kcp API and the service cluster (you will switch contexts throughout this guide)
-- The **kubectl-kcp plugin** for workspace management -- install it from the [kcp releases page](https://github.com/kcp-dev/kcp/releases)
-- **Helm** installed for deploying the api-syncagent chart
+- A **running Platform Mesh local setup** without example data -- follow the [Quick Start](/getting-started/quick-start) to clone the helm-charts repo, check out **v0.2.0**, and run the setup
+- **kubectl** with the **kubectl-kcp plugin** installed -- get it from the [kcp releases page](https://github.com/kcp-dev/kcp/releases)
+- **Helm** v3 installed
 - Basic familiarity with Kubernetes CRDs and operators
 
-::: tip Two kubeconfigs
-Throughout this guide, you will work with two different API servers. We will use `KUBECONFIG` environment variables to make it clear which one each command targets:
-- `kcp.kubeconfig` -- your kcp instance
-- `service-cluster.kubeconfig` -- the Kubernetes cluster running the httpbin operator
+If you haven't run the Quick Start yet:
+
+```bash
+git clone https://github.com/platform-mesh/helm-charts.git
+cd helm-charts
+git checkout v0.2.0
+cd local-setup
+task local-setup
+```
+
+::: warning Do not use --example-data
+If you ran `task local-setup:example-data`, the httpbin provider is already deployed automatically. This guide assumes you start from a clean setup so you can build everything yourself. Run `task local-setup` (without `--example-data`) to get a fresh environment.
 :::
 
 ## What You'll Build
 
-The httpbin provider is a simple service that lets consumers create `HttpBin` resources in their kcp workspace. Each HttpBin resource results in a running httpbin pod on the service cluster, accessible via a service endpoint. The api-syncagent handles all the synchronization -- spec flows down from kcp to the service cluster, and status flows back up.
+The httpbin provider is a simple service that lets consumers create `HttpBin` resources in their kcp workspace. Each HttpBin resource results in a running httpbin pod on the service cluster, accessible via a URL. The api-syncagent handles all the synchronization -- spec flows down from kcp to the service cluster, and status flows back up.
 
 ```mermaid
 flowchart LR
@@ -40,7 +48,7 @@ flowchart LR
         end
     end
 
-    subgraph sc["Service Cluster"]
+    subgraph sc["Service Cluster (Kind)"]
         agent["api-syncagent"]
         httpbin_local["HttpBin CR"]
         operator["httpbin-operator"]
@@ -64,218 +72,328 @@ flowchart LR
 
 The consumer never interacts with the service cluster directly. From their perspective, HttpBin is just another Kubernetes resource type available in their workspace.
 
-## Step 1: Understand the Service CRD
+## Environment Setup
 
-The httpbin operator runs on the service cluster and defines a `HttpBin` CustomResourceDefinition. When a user creates an HttpBin resource, the operator reconciles it by deploying an httpbin pod and service. This is a standard Kubernetes operator pattern -- nothing Platform Mesh-specific yet.
+In the local development setup, a single Kind cluster named `platform-mesh` serves as both the Platform Mesh host and the service cluster. kcp runs inside this cluster as a pod, but exposes its own API server on `https://localhost:8443`.
 
-Here is the CRD that the operator installs on the service cluster:
+You will work with **two kubeconfigs** throughout this guide:
 
-```yaml
-apiVersion: apiextensions.k8s.io/v1
-kind: CustomResourceDefinition
-metadata:
-  name: httpbins.httpbin.io
-spec:
-  group: httpbin.io
-  names:
-    kind: HttpBin
-    listKind: HttpBinList
-    plural: httpbins
-    singular: httpbin
-  scope: Namespaced
-  versions:
-  - name: v1alpha1
-    served: true
-    storage: true
-    schema:
-      openAPIV3Schema:
-        type: object
-        properties:
-          spec:
-            type: object
-            properties:
-              replicas:
-                type: integer
-                description: "Number of httpbin replicas to run"
-                default: 1
-          status:
-            type: object
-            properties:
-              ready:
-                type: boolean
-              url:
-                type: string
-                description: "URL where the httpbin service is accessible"
-    subresources:
-      status: {}
-```
+| Target | Kubeconfig | What it connects to |
+|--------|-----------|---------------------|
+| **kcp** | `.secret/kcp/admin.kubeconfig` | The kcp API server (workspaces, APIExports, APIBindings) |
+| **Kind cluster** | Default Kind kubeconfig | The Kubernetes cluster (operators, pods, CRDs) |
 
-The key detail here: the CRD defines a **status subresource**. This is important because the api-syncagent uses the status subresource to sync status back from the service cluster to kcp. Without it, status synchronization would not work.
-
-For this guide, we assume the httpbin operator and its CRD are already installed on your service cluster. You can verify this:
+Set up both now from the `helm-charts/local-setup` directory (where you ran the setup):
 
 ```bash
-export KUBECONFIG=service-cluster.kubeconfig
+# Export the kcp admin kubeconfig (generated by task local-setup)
+# Run this from the helm-charts/local-setup directory
+export KCP_KUBECONFIG=$(pwd)/.secret/kcp/admin.kubeconfig
 
-kubectl get crd httpbins.httpbin.io
+# Export the Kind cluster kubeconfig
+kind export kubeconfig --name platform-mesh
+export KIND_KUBECONFIG=$HOME/.kube/config
+```
+
+::: tip Switching contexts
+Throughout this guide, commands targeting kcp use `KUBECONFIG=$KCP_KUBECONFIG` as an environment variable prefix, and commands targeting the Kind cluster use `--kubeconfig $KIND_KUBECONFIG` as a flag. The kcp plugin commands (`kubectl kcp`, `kubectl create-workspace`) do not accept `--kubeconfig` as a flag — you must set the `KUBECONFIG` environment variable instead.
+:::
+
+Verify both connections work:
+
+```bash
+# Test kcp access
+KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root
+# Expected: Current workspace is "root" (type root).
+
+# Test Kind cluster access
+kubectl --kubeconfig $KIND_KUBECONFIG get nodes
+# Expected: One or more nodes in Ready state
+```
+
+## Step 1: Create the Provider Workspace
+
+Provider workspaces in kcp are organized under `root:providers`. You need to create the `providers` container workspace first, then the `httpbin-provider` workspace inside it.
+
+```bash
+# Create the providers workspace under root
+KUBECONFIG=$KCP_KUBECONFIG kubectl create-workspace providers \
+  --type=root:providers \
+  --ignore-existing \
+  --server="https://localhost:8443/clusters/root"
+
+# Create the httpbin-provider workspace under providers
+KUBECONFIG=$KCP_KUBECONFIG kubectl create-workspace httpbin-provider \
+  --type=root:provider \
+  --ignore-existing \
+  --server="https://localhost:8443/clusters/root:providers"
+```
+
+Verify the workspace exists:
+
+```bash
+KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
 ```
 
 Expected output:
 
 ```
-NAME                 CREATED AT
-httpbins.httpbin.io  2026-04-01T10:00:00Z
+Current workspace is "root:providers:httpbin-provider" (type root:provider).
 ```
+
+::: info Workspace types
+The workspace types `root:providers` and `root:provider` are created by the Platform Mesh operator during setup. `root:providers` is a container for all provider workspaces, while `root:provider` is the type for an individual provider workspace with the correct RBAC and initialization.
+:::
 
 ## Step 2: Create an APIExport in kcp
 
-The APIExport is how your service becomes visible to the Platform Mesh. It will be created in your **provider workspace** in kcp and will eventually hold the httpbin API schema. The api-syncagent populates the schema automatically -- you just need to create the empty shell.
+The APIExport is how your service becomes visible to consumers. Create it in the provider workspace. The api-syncagent will populate its schema automatically later -- you just need the empty shell.
 
-First, switch to your provider workspace in kcp:
+First, make sure you are in the provider workspace:
 
 ```bash
-export KUBECONFIG=kcp.kubeconfig
-
-kubectl kcp workspace use root:providers:httpbin-provider
+KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
 ```
 
-Now create the APIExport:
+Create the APIExport:
 
-```yaml
-# apiexport.yaml
-apiVersion: apis.kcp.io/v1alpha2
+```bash
+KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
-  name: httpbin.io
+  name: orchestrate.platform-mesh.io
 spec: {}
+EOF
 ```
 
-Apply it:
+The APIExport name (`orchestrate.platform-mesh.io`) matches the API group of the httpbin CRD. This is a convention -- the api-syncagent uses this name to locate the APIExport.
+
+You also need to grant bind permissions so that consumer workspaces can create APIBindings to this export:
 
 ```bash
-kubectl apply -f apiexport.yaml
+KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: apiexport-bind
+rules:
+  - apiGroups: ["apis.kcp.io"]
+    resources: ["apiexports"]
+    verbs: ["bind"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: anonymous-view
+subjects:
+  - kind: User
+    name: system:anonymous
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: apiexport-bind
+  apiGroup: rbac.authorization.k8s.io
+EOF
 ```
-
-The APIExport starts empty -- no schemas, no resources. The api-syncagent will fill it in once it discovers the PublishedResource on the service cluster.
 
 Verify the APIExport was created:
 
 ```bash
-kubectl get apiexports
+KUBECONFIG=$KCP_KUBECONFIG kubectl get apiexports
 ```
 
 Expected output:
 
 ```
-NAME         AGE
-httpbin.io   5s
+NAME                             AGE
+orchestrate.platform-mesh.io     5s
 ```
+
+## Step 3: Deploy the httpbin Operator
+
+The httpbin operator is a standard Kubernetes operator that manages HttpBin resources. It runs on the Kind cluster (the service cluster) and knows nothing about kcp -- the api-syncagent handles all the integration.
+
+Install it using the Helm chart from the helm-charts repository (run from the `helm-charts` root, not `local-setup`):
+
+```bash
+# Go to the helm-charts repo root
+cd ..
+
+helm install example-httpbin-operator \
+  ./charts/example-httpbin-operator \
+  --kubeconfig $KIND_KUBECONFIG \
+  -n example-httpbin-provider \
+  --create-namespace
+```
+
+Verify the operator is running:
+
+```bash
+kubectl --kubeconfig $KIND_KUBECONFIG \
+  get pods -n example-httpbin-provider
+```
+
+Expected output:
+
+```
+NAME                                                         READY   STATUS    RESTARTS   AGE
+example-httpbin-operator-controller-manager-xxxxx-xxxxx      1/1     Running   0          30s
+```
+
+Verify the CRD was installed:
+
+```bash
+kubectl --kubeconfig $KIND_KUBECONFIG \
+  get crd httpbins.orchestrate.platform-mesh.io
+```
+
+```
+NAME                                    CREATED AT
+httpbins.orchestrate.platform-mesh.io   2026-04-07T10:00:00Z
+```
+
+### The HttpBin CRD
+
+The CRD defines an HttpBin resource with a `spec.region` field and a status subresource:
+
+```yaml
+apiVersion: orchestrate.platform-mesh.io/v1alpha1
+kind: HttpBin
+metadata:
+  name: my-httpbin
+spec:
+  region: eu-west-1    # optional: filter which httpbin instance to serve
+status:
+  ready: false         # set by the operator when the pod is running
+  url: ""              # the HTTPS URL for accessing the httpbin service
+  conditions: []       # standard Kubernetes conditions
+```
+
+The **status subresource** is critical -- the api-syncagent uses it to sync status back from the service cluster to kcp. Without it, consumers would never see the `ready` or `url` fields update.
+
+## Step 4: Deploy api-syncagent
+
+The api-syncagent runs on the Kind cluster and connects it to kcp. It needs a kubeconfig Secret to authenticate with kcp.
 
 ### Create the kcp Kubeconfig Secret
 
-The api-syncagent needs credentials to access kcp from the service cluster. Create a kubeconfig that points to the provider workspace and store it as a Secret on the service cluster:
+The api-syncagent needs credentials to access the kcp API server. Create a Secret from the admin kubeconfig:
 
 ```bash
-export KUBECONFIG=service-cluster.kubeconfig
-
-kubectl create namespace kcp-system --dry-run=client -o yaml | kubectl apply -f -
-
-kubectl create secret generic kcp-kubeconfig \
-  --namespace kcp-system \
-  --from-file "kubeconfig=kcp.kubeconfig"
+kubectl --kubeconfig $KIND_KUBECONFIG \
+  create secret generic httpbin-kubeconfig \
+  -n example-httpbin-provider \
+  --from-file=kubeconfig=$KCP_KUBECONFIG
 ```
 
-::: warning Kubeconfig scope
-The kubeconfig must point to the **provider workspace** where the APIExport lives. The server URL in the kubeconfig should include the workspace path (e.g., `https://kcp.example.com/clusters/root:providers:httpbin-provider`). The api-syncagent uses this to locate the APIExport and manage APIResourceSchemas.
-:::
+### Install the api-syncagent Helm chart
 
-## Step 3: Deploy api-syncagent
+The admin kubeconfig uses `https://localhost:8443`, but from inside a pod `localhost` is the pod itself. kcp also returns virtual workspace URLs with `localhost:8443`. The api-syncagent chart supports `hostAliases` to solve this — mapping `localhost` to Traefik's in-cluster IP so all kcp URLs work from inside the pod.
 
-The api-syncagent runs on the service cluster and connects it to kcp. Deploy it using the Helm chart.
+First, look up the Traefik service ClusterIP:
 
-Create a values file for the Helm deployment:
-
-```yaml
-# syncagent-values.yaml
-agentName: httpbin
-apiExportName: httpbin.io
-kcpKubeconfigSecretName: kcp-kubeconfig
-kcpKubeconfigSecretKey: kubeconfig
+```bash
+TRAEFIK_IP=$(kubectl --kubeconfig $KIND_KUBECONFIG \
+  get svc traefik -n default -o jsonpath='{.spec.clusterIP}')
+echo "Traefik ClusterIP: $TRAEFIK_IP"
 ```
 
-Install the agent:
+Now install the agent:
 
-::: code-group
-
-```bash [Helm]
+```bash
 helm repo add kcp https://kcp-dev.github.io/helm-charts
 helm repo update
 
-helm install httpbin-syncagent kcp/api-syncagent \
-  --values syncagent-values.yaml \
-  --namespace kcp-system
+helm install api-syncagent kcp/api-syncagent \
+  --kubeconfig $KIND_KUBECONFIG \
+  -n example-httpbin-provider \
+  --set apiExportEndpointSliceName=orchestrate.platform-mesh.io \
+  --set agentName=kcp-api-syncagent \
+  --set kcpKubeconfig=httpbin-kubeconfig \
+  --set hostAliases.enabled=true \
+  --set "hostAliases.values[0].ip=$TRAEFIK_IP" \
+  --set "hostAliases.values[0].hostnames[0]=localhost"
 ```
 
-```bash [Task (if available)]
-task deploy-syncagent -- \
-  --agent-name httpbin \
-  --api-export httpbin.io
-```
-
+::: info Why hostAliases?
+In the local Kind setup, kcp is exposed via Traefik on `localhost:8443`. Pods cannot reach `localhost` on the host, but `hostAliases` adds an entry to the pod's `/etc/hosts` that maps `localhost` to Traefik's ClusterIP. This makes both the kubeconfig connection and the virtual workspace URLs (returned by kcp in APIExportEndpointSlices) work correctly from inside the pod.
 :::
+
+### Grant RBAC for the api-syncagent
+
+The api-syncagent service account needs permissions to list, watch, and manage httpbin resources on the Kind cluster:
+
+```bash
+kubectl --kubeconfig $KIND_KUBECONFIG apply -f - <<EOF
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: api-syncagent-httpbin
+rules:
+  - apiGroups: ["orchestrate.platform-mesh.io"]
+    resources: ["httpbins", "httpbins/status"]
+    verbs: ["*"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: api-syncagent-httpbin
+subjects:
+  - kind: ServiceAccount
+    name: api-syncagent
+    namespace: example-httpbin-provider
+roleRef:
+  kind: ClusterRole
+  name: api-syncagent-httpbin
+  apiGroup: rbac.authorization.k8s.io
+EOF
+```
 
 Verify the agent is running:
 
 ```bash
-kubectl get pods -n kcp-system -l app.kubernetes.io/name=api-syncagent
+kubectl --kubeconfig $KIND_KUBECONFIG \
+  get pods -n example-httpbin-provider -l app.kubernetes.io/name=kcp-api-syncagent
 ```
 
 Expected output:
 
 ```
-NAME                                  READY   STATUS    RESTARTS   AGE
-httpbin-syncagent-6f8d4b7c9a-x2k4m   1/1     Running   0          30s
+NAME                              READY   STATUS    RESTARTS   AGE
+api-syncagent-xxxxx-xxxxx         1/1     Running   0          30s
 ```
 
 ### Key Configuration Options
 
 | Option | Description |
 |--------|-------------|
-| `agentName` | Unique name for this agent. Combined with the API group to form the FQDN (`httpbin.httpbin.io`). Must follow Kubernetes label syntax. |
-| `apiExportName` | Name of the APIExport in kcp that this agent manages. One APIExport per agent. |
-| `kcpKubeconfigSecretName` | The Secret containing the kubeconfig for kcp access. |
-| `publishedResourceSelector` | Optional label selector to scope this agent to specific PublishedResources (useful when running multiple agents on one cluster). |
+| `apiExportEndpointSliceName` | Name of the APIExportEndpointSlice in kcp that this agent manages. Must match the APIExport name exactly. |
+| `agentName` | Unique identifier for this agent instance. Combined with the API group to form the FQDN. |
+| `kcpKubeconfig` | Name of the Secret containing the kubeconfig for kcp access. |
 
-## Step 4: Create a PublishedResource
+## Step 5: Create a PublishedResource
 
-The `PublishedResource` tells the api-syncagent which CRD to publish into kcp. It is a cluster-scoped resource that you create on the **service cluster**.
+The `PublishedResource` tells the api-syncagent which CRD to publish into kcp. It is a cluster-scoped resource created on the **Kind cluster** (the service cluster).
 
-```yaml
-# published-resource.yaml
+```bash
+kubectl --kubeconfig $KIND_KUBECONFIG apply -f - <<EOF
 apiVersion: syncagent.kcp.io/v1alpha1
 kind: PublishedResource
 metadata:
-  name: httpbins
+  name: httpbin-local-provider
 spec:
   resource:
-    apiGroup: httpbin.io
     kind: HttpBin
-    versions:
-    - name: v1alpha1
-  naming:
-    namespace:
-      template: "{{ .ClusterName }}"
-  synchronization:
-    enabled: true
+    apiGroup: orchestrate.platform-mesh.io
+    version: v1alpha1
+EOF
 ```
 
-Apply it on the service cluster:
-
-```bash
-export KUBECONFIG=service-cluster.kubeconfig
-
-kubectl apply -f published-resource.yaml
-```
+This tells the agent: "Take the `HttpBin` CRD from API group `orchestrate.platform-mesh.io`, version `v1alpha1`, and publish it as an APIResourceSchema in the kcp APIExport."
 
 ### Key Fields
 
@@ -283,34 +401,28 @@ kubectl apply -f published-resource.yaml
 |-------|---------|
 | `spec.resource.apiGroup` | The API group of the CRD on the service cluster |
 | `spec.resource.kind` | The Kind to publish |
-| `spec.resource.versions` | Which versions to make available in kcp |
-| `spec.naming.namespace.template` | Controls where objects land on the service cluster. <code v-pre>{{ .ClusterName }}</code> gives each kcp workspace its own namespace, preventing collisions. |
-| `spec.synchronization.enabled` | Activates bidirectional sync. Without this, the schema is published but no data flows. |
+| `spec.resource.version` | Which version to make available in kcp |
 
-::: info Immutability
-PublishedResources are **immutable** after creation. This prevents cascading schema changes across all consumer workspaces that have already bound to the APIExport. If you need to change the published schema, delete the PublishedResource and create a new one.
+::: info Naming and namespace isolation
+By default, the api-syncagent creates a namespace per kcp workspace on the service cluster (using the workspace's cluster name). This prevents collisions when multiple consumers create resources with the same name. You can customize this with `spec.naming` in the PublishedResource.
 :::
 
-For advanced features like resource projection (renaming kinds, changing scope), filtering (syncing only specific namespaces), and mutations (transforming fields during sync), see the [api-syncagent documentation](/overview/api-syncagent).
+## Step 6: Verify the Setup
 
-## Step 5: Verify the Setup
-
-Within a few seconds of creating the PublishedResource, the api-syncagent will create an APIResourceSchema in kcp and update the APIExport. Let's verify each piece.
+Within a few seconds of creating the PublishedResource, the api-syncagent creates an APIResourceSchema in kcp and updates the APIExport. Verify each piece.
 
 ### Check the APIResourceSchema in kcp
 
 ```bash
-export KUBECONFIG=kcp.kubeconfig
-
-kubectl kcp workspace use root:providers:httpbin-provider
-kubectl get apiresourceschemas
+KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
+KUBECONFIG=$KCP_KUBECONFIG kubectl get apiresourceschemas
 ```
 
 You should see a schema with a hash-based name:
 
 ```
-NAME                                   AGE
-v1alpha1-a3b2c1.httpbins.httpbin.io    15s
+NAME                                                           AGE
+v1alpha1.httpbins.orchestrate.platform-mesh.io.xxxxxxx         15s
 ```
 
 The hash-based name makes schemas immutable and revertible -- if the CRD changes on the service cluster, the agent creates a new schema rather than modifying the existing one.
@@ -318,7 +430,7 @@ The hash-based name makes schemas immutable and revertible -- if the CRD changes
 ### Check the APIExport
 
 ```bash
-kubectl get apiexport httpbin.io -o yaml
+KUBECONFIG=$KCP_KUBECONFIG kubectl get apiexport orchestrate.platform-mesh.io -o yaml
 ```
 
 Look for the `spec.resources` section -- it should now reference the schema:
@@ -326,235 +438,159 @@ Look for the `spec.resources` section -- it should now reference the schema:
 ```yaml
 spec:
   resources:
-  - group: httpbin.io
+  - group: orchestrate.platform-mesh.io
     name: httpbins
-    schema: v1alpha1-a3b2c1.httpbins.httpbin.io
+    schema: v1alpha1.httpbins.orchestrate.platform-mesh.io.xxxxxxx
     storage:
       crd: {}
-```
-
-The APIExport status should also show a virtual workspace URL:
-
-```yaml
-status:
-  virtualWorkspaces:
-  - url: https://kcp.example.com/services/apiexport/root:providers:httpbin-provider/httpbin.io
 ```
 
 ### Check the agent logs
 
 ```bash
-export KUBECONFIG=service-cluster.kubeconfig
-
-kubectl logs -n kcp-system -l app.kubernetes.io/name=api-syncagent --tail=20
+kubectl --kubeconfig $KIND_KUBECONFIG \
+  logs -n example-httpbin-provider -l app.kubernetes.io/name=kcp-api-syncagent --tail=20
 ```
 
-Look for log lines confirming successful schema creation and sync readiness:
+Look for log lines confirming the agent resolved the APIExport and started syncing:
 
-```
-INFO  Created APIResourceSchema  {"name": "v1alpha1-a3b2c1.httpbins.httpbin.io"}
-INFO  Updated APIExport          {"name": "httpbin.io", "schemas": 1}
-INFO  Virtual workspace ready    {"url": "https://kcp.example.com/services/apiexport/..."}
-INFO  Starting sync controller   {"resource": "httpbins.httpbin.io"}
+```json
+{"level":"info","msg":"Resolved APIExport","name":"orchestrate.platform-mesh.io","workspace":"root:providers:httpbin-provider"}
+{"level":"info","msg":"Starting kcp Sync Agent…"}
 ```
 
 If you see these messages, your provider is connected and ready for consumers.
 
-## Step 6: Test the Consumer Flow
+## Step 7: Test the Consumer Flow
 
-Now switch to a consumer role. In a separate kcp workspace, bind to the httpbin APIExport and create a resource.
+Now test the full flow from the consumer side. There are two ways to do this:
 
-### Create an APIBinding
+- **Option A: Portal UI** -- register a user, create an organization, and create an account through the web portal at `https://portal.localhost:8443`. The account workspace automatically gets an APIBinding to your provider. This is the intended production workflow.
+- **Option B: kubectl** -- create a consumer workspace and APIBinding directly. This is faster for testing.
+
+This guide covers Option B. For the Portal UI approach, see [Example MSP](/getting-started/example-msp).
+
+### Create a consumer workspace
+
+```bash
+# Create a test consumer workspace under root
+KUBECONFIG=$KCP_KUBECONFIG kubectl create-workspace test-consumer \
+  --server="https://localhost:8443/clusters/root"
+```
 
 Switch to the consumer workspace:
 
 ```bash
-export KUBECONFIG=kcp.kubeconfig
-
-kubectl kcp workspace use root:consumers:my-team
+KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:test-consumer
 ```
 
-Create an APIBinding to import the httpbin API:
+### Create an APIBinding
 
-```yaml
-# apibinding.yaml
-apiVersion: apis.kcp.io/v1alpha2
+The APIBinding imports the httpbin API into the consumer workspace:
+
+```bash
+KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: apis.kcp.io/v1alpha1
 kind: APIBinding
 metadata:
-  name: httpbin.io
+  name: orchestrate.platform-mesh.io
 spec:
   reference:
     export:
-      name: httpbin.io
+      name: orchestrate.platform-mesh.io
       path: "root:providers:httpbin-provider"
   permissionClaims:
   - resource: namespaces
     state: Accepted
-    selector:
-      matchAll: true
+    all: true
   - resource: events
     state: Accepted
-    selector:
-      matchAll: true
-```
-
-Apply it:
-
-```bash
-kubectl apply -f apibinding.yaml
+    all: true
+EOF
 ```
 
 ::: tip Permission claims
-The api-syncagent requires `namespaces` and `events` permission claims at minimum. Rejecting the namespace claim will prevent the agent from creating the workspace-specific namespace on the service cluster, breaking synchronization entirely. If your provider uses related resources (e.g., Secrets), you will see additional claims to accept.
+The api-syncagent requires `namespaces` and `events` permission claims at minimum. Rejecting the namespace claim will prevent the agent from creating the workspace-specific namespace on the service cluster, breaking synchronization entirely.
 :::
-
-Alternatively, use the kubectl-kcp plugin to bind with a single command:
-
-```bash
-kubectl kcp bind apiexport root:providers:httpbin-provider:httpbin.io
-```
 
 Verify the binding is active:
 
 ```bash
-kubectl get apibindings
+KUBECONFIG=$KCP_KUBECONFIG kubectl get apibindings
 ```
 
 Expected output:
 
 ```
-NAME         APIEXPORT    READY   AGE
-httpbin.io   httpbin.io   True    10s
+NAME                             APIEXPORT                        READY   AGE
+orchestrate.platform-mesh.io     orchestrate.platform-mesh.io     True    10s
 ```
 
 ### Create an HttpBin resource
 
-The httpbin API is now available in the consumer workspace. Verify it shows up as a known resource type:
+The httpbin API is now available in the consumer workspace. Verify:
 
 ```bash
-kubectl api-resources | grep httpbin
+KUBECONFIG=$KCP_KUBECONFIG kubectl api-resources | grep httpbin
 ```
 
 ```
-httpbins   httpbin.io/v1alpha1   true   HttpBin
+httpbins   orchestrate.platform-mesh.io/v1alpha1   true   HttpBin
 ```
 
-Now create an HttpBin instance:
+Create an HttpBin instance:
 
-```yaml
-# my-httpbin.yaml
-apiVersion: httpbin.io/v1alpha1
+```bash
+KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: orchestrate.platform-mesh.io/v1alpha1
 kind: HttpBin
 metadata:
   name: my-httpbin
   namespace: default
 spec:
-  replicas: 2
+  region: eu-west-1
+EOF
 ```
 
-Apply it:
+### Verify the resource on the service cluster
+
+The api-syncagent syncs the resource to the Kind cluster, where the httpbin operator picks it up and creates a pod. Check the service cluster:
 
 ```bash
-kubectl apply -f my-httpbin.yaml
+kubectl --kubeconfig $KIND_KUBECONFIG get httpbins --all-namespaces
 ```
 
-### Verify the pod on the service cluster
+You should see the synced resource in a namespace named after the consumer workspace's cluster ID:
 
-The api-syncagent syncs the resource to the service cluster, where the httpbin operator picks it up and creates the pod. Check the service cluster:
+```
+NAMESPACE                  NAME         AGE
+2a7f3b4c5d6e7f8a9b0c1d2e  my-httpbin   15s
+```
+
+Check that the operator created the pod:
 
 ```bash
-export KUBECONFIG=service-cluster.kubeconfig
-
-# The namespace corresponds to the consumer's kcp workspace cluster name
-kubectl get httpbins --all-namespaces
+kubectl --kubeconfig $KIND_KUBECONFIG get pods --all-namespaces | grep httpbin
 ```
 
-You should see the synced resource:
+### Verify status syncs back to kcp
 
-```
-NAMESPACE                  NAME        AGE
-2a7f3b4c5d6e7f8a9b0c1d2e  my-httpbin  15s
-```
-
-The namespace name is derived from the consumer workspace's cluster name (the <code v-pre>{{ .ClusterName }}</code> naming template). Check that the operator created the pods:
+Once the operator reconciles the httpbin pod, the api-syncagent syncs status back to the consumer workspace:
 
 ```bash
-kubectl get pods -n 2a7f3b4c5d6e7f8a9b0c1d2e
+KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:test-consumer
+KUBECONFIG=$KCP_KUBECONFIG kubectl get httpbin my-httpbin -n default -o yaml
 ```
 
-```
-NAME                          READY   STATUS    RESTARTS   AGE
-my-httpbin-6f8d4b7c9a-x2k4m  1/1     Running   0          10s
-my-httpbin-6f8d4b7c9a-r7p3n  1/1     Running   0          10s
-```
+Look for the `status` section. The httpbin operator populates status fields like `ready`, `url`, and `conditions` as the pod starts up. If the status section is empty, wait a few seconds and check again — the sync loop runs continuously.
 
-Two replicas, as specified in the consumer's resource.
-
-## Step 7: Verify Bidirectional Sync
-
-The sync loop runs continuously. Let's confirm both directions work.
-
-### Status sync: service cluster to kcp
-
-Once the operator reconciles the httpbin pods, it writes status back to the local HttpBin resource. The api-syncagent picks this up and syncs it to kcp.
-
-Check the resource status in the consumer workspace:
-
-```bash
-export KUBECONFIG=kcp.kubeconfig
-
-kubectl kcp workspace use root:consumers:my-team
-kubectl get httpbin my-httpbin -o yaml
-```
-
-Look for the status section:
-
-```yaml
-status:
-  ready: true
-  url: "http://my-httpbin.2a7f3b4c5d6e7f8a9b0c1d2e.svc.cluster.local:80"
-```
-
-The consumer can see the service is ready and what URL it is accessible at -- all without direct access to the service cluster.
-
-### Spec sync: kcp to service cluster
-
-Update the replica count in the consumer workspace:
-
-```bash
-kubectl patch httpbin my-httpbin --type merge -p '{"spec":{"replicas":3}}'
-```
-
-Then verify the change propagated to the service cluster:
-
-```bash
-export KUBECONFIG=service-cluster.kubeconfig
-
-kubectl get httpbin my-httpbin -n 2a7f3b4c5d6e7f8a9b0c1d2e -o jsonpath='{.spec.replicas}'
-```
-
-```
-3
-```
-
-The operator will reconcile the change and scale to three replicas:
-
-```bash
-kubectl get pods -n 2a7f3b4c5d6e7f8a9b0c1d2e
-```
-
-```
-NAME                          READY   STATUS    RESTARTS   AGE
-my-httpbin-6f8d4b7c9a-x2k4m  1/1     Running   0          2m
-my-httpbin-6f8d4b7c9a-r7p3n  1/1     Running   0          2m
-my-httpbin-6f8d4b7c9a-k8j5v  1/1     Running   0          5s
-```
-
-The full loop works: consumer writes spec in kcp, the agent syncs it down, the operator acts on it, and the resulting status flows back up to the consumer's workspace.
+::: info Status sync timing
+Status sync depends on the httpbin operator updating the status subresource on the Kind cluster, and the api-syncagent picking up that change. If `status` remains empty, check that the httpbin pods are running on the Kind cluster and that the operator logs show successful reconciliation.
+:::
 
 ## What You Just Built
 
-You have a working service provider in the Platform Mesh. Here is the complete architecture:
+Here is the complete data flow you set up:
 
 ```mermaid
 sequenceDiagram
@@ -562,7 +598,7 @@ sequenceDiagram
     participant kcp as kcp (APIExport)
     participant Agent as api-syncagent
     participant Operator as httpbin-operator
-    participant Cluster as Service Cluster
+    participant Cluster as Service Cluster (Kind)
 
     Note over Consumer,Cluster: Setup (one-time)
     kcp->>kcp: APIExport created
@@ -579,21 +615,20 @@ sequenceDiagram
     Consumer->>Consumer: Sees ready: true, url: ...
 ```
 
-To summarize what each component does:
-
 | Component | Role |
 |-----------|------|
-| **APIExport** | Advertises the httpbin API from the provider workspace in kcp |
+| **Provider workspace** | Hosts the APIExport in kcp at `root:providers:httpbin-provider` |
+| **APIExport** | Advertises the `orchestrate.platform-mesh.io` API to consumers |
+| **httpbin-operator** | Standard Kubernetes operator that reconciles HttpBin resources into pods |
 | **api-syncagent** | Bridges kcp and the service cluster with bidirectional sync |
 | **PublishedResource** | Declares which CRD the agent should publish and how |
-| **APIBinding** | Imports the httpbin API into the consumer workspace |
-| **httpbin-operator** | Reconciles HttpBin resources into running pods (standard Kubernetes operator) |
+| **APIBinding** | Imports the httpbin API into a consumer workspace |
 
 The httpbin operator required **zero modifications** to work with Platform Mesh. The api-syncagent handles all the integration, making this the lowest-effort path for bringing existing Kubernetes operators into the mesh.
 
 ## Next Steps
 
+- **Add provider metadata for the Portal UI** -- register display name, contacts, and icon so consumers can discover your service in the marketplace
 - **Customize with projections and mutations** -- rename kinds, transform fields, filter namespaces: [api-syncagent](/overview/api-syncagent)
-- **Deep dive into the httpbin provider** -- full architecture, CRD design, and reconciliation flow: [HttpBin Provider Example](/guides/httpbin-example)
-- **Try the advanced multi-cluster-runtime approach** -- build a custom Go controller for MongoDB: [MongoDB Example](/guides/mongodb-example)
-- **Understand the API mechanism** -- identity hashing, permission claims, virtual workspaces: [APIExport & APIBinding](/overview/api-export-binding)
+- **Deep dive into the httpbin provider** -- full architecture, CRD design, and reconciliation flow: [HttpBin Example](/guides/httpbin-example)
+- **Understand the API mechanism** -- identity hashing, permission claims, virtual workspaces: [APIExport and APIBinding](/overview/api-export-binding)
