@@ -58,6 +58,7 @@ export default withMermaid({
       { text: 'Home', link: '/' },
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Overview', link: '/overview' },
+      { text: 'Guides', link: '/guides/' },
       { text: 'Scenarios', link: '/scenarios' },
       { text: 'Get Involved', link: '/get-involved' },
     ],
@@ -78,15 +79,39 @@ export default withMermaid({
 
       '/overview/': [
         {
-            text: 'Overview',
-            items: [
-            { text: 'Index', link: '/overview/' },
+          text: 'Overview',
+          items: [
+            { text: 'Introduction', link: '/overview/' },
+            { text: 'Architecture', link: '/overview/architecture' },
+          ]
+        },
+        {
+          text: 'Core Concepts',
+          collapsed: false,
+          items: [
             { text: 'Account Model', link: '/overview/account-model' },
-            { text: 'Guiding Principles', link: '/overview/principles' },
             { text: 'Control Planes', link: '/overview/control-planes' },
+            { text: 'APIExport & APIBinding', link: '/overview/api-export-binding' },
+            { text: 'Guiding Principles', link: '/overview/principles' },
             { text: 'Design Decisions', link: '/overview/design-decision' },
-            ]
-        }
+          ]
+        },
+        {
+          text: 'Integration',
+          collapsed: false,
+          items: [
+            { text: 'api-syncagent', link: '/overview/api-syncagent' },
+            { text: 'multi-cluster-runtime', link: '/overview/multi-cluster-runtime' },
+          ]
+        },
+        {
+          text: 'Personas',
+          collapsed: false,
+          items: [
+            { text: 'Service Providers', link: '/overview/providers' },
+            { text: 'Service Consumers', link: '/overview/consumers' },
+          ]
+        },
       ],
 
       '/getting-started/': [
@@ -102,6 +127,18 @@ export default withMermaid({
         }
       ],
 
+
+      '/guides/': [
+        {
+          text: 'Guides',
+          items: [
+            { text: 'Overview', link: '/guides/' },
+            { text: 'Provider Quick Start', link: '/guides/provider-quick-start' },
+            { text: 'HttpBin Provider Example', link: '/guides/httpbin-example' },
+            { text: 'MongoDB Provider Example', link: '/guides/mongodb-example' },
+          ]
+        }
+      ],
 
         '/scenarios': {
             text: 'Scenarios',
