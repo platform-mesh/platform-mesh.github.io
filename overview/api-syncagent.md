@@ -132,9 +132,6 @@ flowchart LR
 
     spec_kcp -- "Consumer writes spec" --> spec_sc
     status_sc -- "Provider writes status" --> status_kcp
-
-    style kcp fill:#1a3a5c,color:#fff
-    style sc fill:#3a1a5c,color:#fff
 ```
 
 - **Spec** flows from kcp to the service cluster. The consumer writes the desired state in their kcp workspace; the agent replicates it to the service cluster where the operator acts on it.

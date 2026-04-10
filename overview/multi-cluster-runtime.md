@@ -6,7 +6,7 @@ multi-cluster-runtime ([`kubernetes-sigs/multicluster-runtime`](https://github.c
 
 Most providers should start with [api-syncagent](/overview/api-syncagent), which handles synchronization through YAML configuration alone. Reach for multi-cluster-runtime when you need one or more of the following:
 
-- **Non-CRD API extensions** -- the service cluster exposes APIs through aggregated or custom API servers rather than CRDs. Since api-syncagent publishes CRDs to kcp via `PublishedResource`, it cannot handle these API types.
+- **Non-CRD API extensions** -- the service cluster exposes APIs through aggregated or custom API servers rather than CRDs. While not a fundamental limitation, the api-syncagent's publishing pipeline currently discovers and extracts schemas from CRD objects specifically, so non-CRD API types require a custom controller.
 - **Fine-grained sync control** -- custom transformation logic, multi-step orchestration, or conditional sync behavior that goes beyond api-syncagent's projection and mutation capabilities.
 - **Complex lifecycle management** -- handling object collisions, coordinating related resources across boundaries, or implementing domain-specific reconciliation sequences.
 - **Multi-cluster-aware coordination** -- the controller needs to watch and coordinate state across multiple clusters simultaneously, rather than mirroring resources between two fixed endpoints.
@@ -124,13 +124,13 @@ The two integration mechanisms serve different points on the effort-vs-flexibili
 
 | Aspect | api-syncagent | multi-cluster-runtime |
 |--------|--------------|----------------------|
-| **Integration mechanism** | Generic, CRD-based agent | Custom Go controller |
-| **Sync logic** | Handled by the agent | Developer writes the reconciler |
+| **What you build** | Kubernetes operator + deploy and configure the sync agent | Kubernetes operator (using mcr instead of standard controller-runtime) |
+| **Sync logic** | Handled by the agent automatically | Built into the operator -- no separate sync layer needed |
 | **API type** | CRDs via `PublishedResource` | Developer defines `APIResourceSchema` directly |
-| **Code required** | Configuration only (YAML) | Go code |
+| **Code required** | Operator code + agent YAML configuration | Operator code (Go) |
 | **Flexibility** | Moderate (projection, mutation, filtering) | Full control over every aspect |
-| **Effort** | Low to medium | High |
-| **Best for** | Standard CRD-based services | Non-CRD APIs, complex lifecycle, custom orchestration |
+| **Added effort over standard operator** | Deploy, configure, and maintain the sync agent alongside your operator | Minimal -- use mcr packages instead of standard controller-runtime |
+| **Best for** | Standard CRD-based services where sync logic is straightforward | Non-CRD APIs, complex lifecycle, custom orchestration |
 
 ### Architecture Comparison
 
@@ -138,10 +138,12 @@ The two integration mechanisms serve different points on the effort-vs-flexibili
 flowchart LR
     subgraph syncagent["api-syncagent Path"]
         direction LR
-        SC1["Service Cluster\n(CRD + Operator)"]
-        ASA["api-syncagent\n(generic sync)"]
-        KCP1["kcp\n(APIExport)"]
-        CW1["Consumer\nWorkspace"]
+        OP1["Your Operator<br>(reconciles CRDs)"]
+        SC1["Service Cluster"]
+        ASA["api-syncagent<br>(generic sync)"]
+        KCP1["kcp<br>(APIExport)"]
+        CW1["Consumer<br>Workspace"]
+        OP1 --- SC1
         SC1 <--> ASA
         ASA <--> KCP1
         KCP1 <--> CW1
@@ -149,17 +151,17 @@ flowchart LR
 
     subgraph mcr["multi-cluster-runtime Path"]
         direction LR
-        SC2["Service Cluster\n(Operator)"]
-        CC["Custom Controller\n(using mcr)"]
-        KCP2["kcp\n(APIExport)"]
-        CW2["Consumer\nWorkspace"]
-        SC2 <--> CC
-        CC <--> KCP2
+        OP2["Your Operator<br>(built with mcr)"]
+        SC2["Service Cluster"]
+        KCP2["kcp<br>(APIExport)"]
+        CW2["Consumer<br>Workspace"]
+        OP2 --- SC2
+        OP2 <--> KCP2
         KCP2 <--> CW2
     end
 ```
 
-The key difference: api-syncagent acts as a generic intermediary that reads `PublishedResource` configuration and handles all sync mechanics. With multi-cluster-runtime, the custom controller has direct access to both sides, deciding exactly what to sync, when, and how.
+In both paths, you need a Kubernetes operator that reconciles your service's CRDs. The key difference is where sync happens: with api-syncagent, the agent runs as a **separate component** alongside your operator and handles all sync mechanics via `PublishedResource` configuration. With multi-cluster-runtime, sync logic is **built directly into your operator** -- the operator itself watches kcp and manages the service cluster, eliminating the need for a separate sync layer.
 
 ## What's Next
 

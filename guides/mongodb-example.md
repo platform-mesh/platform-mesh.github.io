@@ -31,18 +31,18 @@ The architecture has three components communicating through two connections:
 flowchart TB
     subgraph kcp["kcp"]
         direction TB
-        ARS["APIResourceSchema\n(MongoDB)"]
-        AE["APIExport\n(mongodb-provider)"]
+        ARS["APIResourceSchema<br>(MongoDB)"]
+        AE["APIExport<br>(mongodb-provider)"]
         AE --> ARS
 
         subgraph cw1["Consumer Workspace A"]
             AB1["APIBinding"]
-            MDB1["MongoDB\n(desired state)"]
+            MDB1["MongoDB<br>(desired state)"]
         end
 
         subgraph cw2["Consumer Workspace B"]
             AB2["APIBinding"]
-            MDB2["MongoDB\n(desired state)"]
+            MDB2["MongoDB<br>(desired state)"]
         end
 
         AB1 -.-> AE
@@ -50,21 +50,21 @@ flowchart TB
     end
 
     subgraph controller["Custom Controller"]
-        MCR["multi-cluster-runtime\n+ kcp apiexport provider"]
+        MCR["multi-cluster-runtime<br>+ kcp apiexport provider"]
     end
 
     subgraph downstream["Downstream Kubernetes Cluster"]
-        OP["MongoDB Community\nOperator"]
-        MDBC1["MongoDBCommunity\n(Workspace A)"]
-        MDBC2["MongoDBCommunity\n(Workspace B)"]
+        OP["MongoDB Community<br>Operator"]
+        MDBC1["MongoDBCommunity<br>(Workspace A)"]
+        MDBC2["MongoDBCommunity<br>(Workspace B)"]
         OP --> MDBC1
         OP --> MDBC2
     end
 
-    MCR -- "watches all bound\nworkspaces via\nvirtual workspace" --> AE
-    MCR -- "creates/updates\nMongoDBCommunity" --> downstream
+    MCR -- "watches all bound<br>workspaces via<br>virtual workspace" --> AE
+    MCR -- "creates/updates<br>MongoDBCommunity" --> downstream
     downstream -- "status feedback" --> MCR
-    MCR -- "syncs status back\nto consumer" --> kcp
+    MCR -- "syncs status back<br>to consumer" --> kcp
 
     style kcp fill:#1a3a5c,color:#fff
     style controller fill:#5a4b8a,color:#fff

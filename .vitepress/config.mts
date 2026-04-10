@@ -100,6 +100,7 @@ export default withMermaid({
           text: 'Integration',
           collapsed: false,
           items: [
+            { text: 'Integration Paths', link: '/overview/integration-paths' },
             { text: 'api-syncagent', link: '/overview/api-syncagent' },
             { text: 'multi-cluster-runtime', link: '/overview/multi-cluster-runtime' },
           ]
@@ -108,6 +109,7 @@ export default withMermaid({
           text: 'Personas',
           collapsed: false,
           items: [
+            { text: 'Platform Personas', link: '/overview/personas' },
             { text: 'Service Providers', link: '/overview/providers' },
             { text: 'Service Consumers', link: '/overview/consumers' },
           ]

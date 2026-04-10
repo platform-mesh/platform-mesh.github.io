@@ -1,6 +1,6 @@
 # Service Consumers
 
-Service consumers are the developers, data scientists, and application owners who discover and use services through Platform Mesh. They are one of the two primary personas in the ecosystem, alongside [service providers](/overview/providers). Whether using the OpenMFP portal, `kubectl`, or GitOps workflows, consumers interact with services through a uniform Kubernetes-native API -- the same declarative model regardless of what the service is, who provides it, or where it runs.
+Service consumers are the developers, data scientists, and application owners who discover and use services through Platform Mesh. They are one of the three [platform personas](/overview/personas), alongside [service providers](/overview/providers) and [platform owners](/overview/personas#platform-owner). Whether using the Platform Mesh Portal, `kubectl`, or GitOps workflows, consumers interact with services through a uniform Kubernetes-native API -- the same declarative model regardless of what the service is, who provides it, or where it runs.
 
 Platform Mesh gives consumers a single mechanism for ordering and managing capabilities across providers, environments, and service tiers. From a managed database to a Kubernetes cluster to an AI inference endpoint, the consumer experience is always: declare what you want, and the platform makes it so.
 
@@ -20,7 +20,7 @@ The [Account Model](/overview/account-model) supports deep nesting, so organizat
 
 ### 3. Find Services
 
-Consumers browse available services through a marketplace or by listing APIExports directly. The service catalog may be exposed through the OpenMFP portal UI, through `kubectl` commands, or through programmatic API queries. Each service listing includes its API schema -- the contract that defines what resources the consumer can create and what fields they can configure.
+Consumers browse available services through a marketplace or by listing APIExports directly. The service catalog may be exposed through the Platform Mesh Portal, through `kubectl` commands, or through programmatic API queries. Each service listing includes its API schema -- the contract that defines what resources the consumer can create and what fields they can configure.
 
 Multiple marketplaces can coexist, and a single orchestration environment can connect to several of them. Consumers are not locked into a single service catalog.
 
@@ -58,7 +58,7 @@ The following diagram shows the complete flow from service discovery through pro
 ```mermaid
 sequenceDiagram
     participant Consumer
-    participant Portal as OpenMFP Portal
+    participant Portal as Platform Mesh Portal
     participant kcp as kcp Control Plane
     participant Provider as Service Provider
 
@@ -81,9 +81,9 @@ The key insight is that the consumer never communicates directly with the provid
 
 Platform Mesh supports multiple ways for consumers to interact with their workspace and services.
 
-### OpenMFP Portal
+### Platform Mesh Portal
 
-The web-based portal provides a graphical interface for service discovery, account management, and resource provisioning. It is built as a modular micro-frontend using Luigi, so providers can extend the portal with custom UIs for their services. The portal is the most accessible entry point for consumers who are new to the ecosystem or who prefer visual browsing over command-line workflows.
+The web-based portal provides a graphical interface for service discovery, account management, and resource provisioning. Built on [OpenMFP](https://openmfp.io) and the Luigi micro-frontend framework, it serves as the reference implementation of a consumer-facing portal. Providers can extend the portal with custom UIs for their services, and consumers can use the provided UI libraries to build a fully customized portal. The portal is the most accessible entry point for consumers who are new to the ecosystem or who prefer visual browsing over command-line workflows.
 
 Best for: exploring available services, initial setup, monitoring resource status.
 

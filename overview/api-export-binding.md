@@ -242,18 +242,6 @@ This means providers can enforce validation and mutation rules on their exported
 
 Two limitations apply: conversion webhooks are not supported, and webhook configurations must use URL-based `clientConfigs` (service-based references are not supported).
 
-## etcd Storage Layout
-
-Understanding how kcp stores resources helps explain why the identity hash matters. kcp uses three storage path patterns in etcd:
-
-| Pattern | Used For | Path Structure |
-|---------|----------|----------------|
-| Built-in APIs | Namespaces, ConfigMaps, etc. | `/registry/<group>/<resource>/<logical-cluster>/<ns>/<name>` |
-| Standard CRDs | CRD instances | `/registry/<group>/<resource>/customresources/<logical-cluster>/<ns>/<name>` |
-| Bound APIs | APIExport resources | `/registry/<group>/<resource>/<identity-hash>/<logical-cluster>/<ns>/<name>` |
-
-The identity hash in the third pattern physically separates resources from different APIExports of the same group and resource. This means a consumer can bind to two different providers that both export a `widgets.example.io` resource, and their data will never collide. It also enables safe wildcard requests scoped to a single provider's identity.
-
 ## What's Next
 
 - **[api-syncagent](/overview/api-syncagent)** -- The primary tool for publishing CRDs from a Kubernetes service cluster as APIExports in kcp, with bidirectional sync and related resource handling
