@@ -66,7 +66,7 @@ Select the path that matches your situation using the [Integration Paths](/overv
 
 ### Step 4: Register in the Marketplace
 
-Once your CRDs are published as an [APIExport](/overview/api-export-binding), they become discoverable in the Platform Mesh. Consumers can browse available APIExports, review the API schema (which serves as the service contract), and bind to the ones they need. When a consumer creates an APIBinding, your controller starts seeing their resources through the APIExport's virtual workspace endpoint.
+Once your CRDs are published as an [APIExport](/concepts/api-export-binding), they become discoverable in the Platform Mesh. Consumers can browse available APIExports, review the API schema (which serves as the service contract), and bind to the ones they need. When a consumer creates an APIBinding, your controller starts seeing their resources through the APIExport's virtual workspace endpoint.
 
 ### Step 5: Fulfill Orders
 
@@ -107,5 +107,5 @@ Platform Mesh provides hands-on examples for both integration paths:
 - [Personas Overview](/overview/personas) -- all three personas and how they interact
 - [Integration Paths](/overview/integration-paths) -- decision flowchart for choosing your integration mechanism
 - [Service Consumers](/overview/consumers) -- understand the other side of the marketplace
-- [APIExport and APIBinding](/overview/api-export-binding) -- the cross-workspace sharing mechanism that powers the marketplace
+- [APIExport and APIBinding](/concepts/api-export-binding) -- the cross-workspace sharing mechanism that powers the marketplace
 - [Provider Quick Start](/guides/provider-quick-start) -- step-by-step guide to deploying your first service provider

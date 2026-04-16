@@ -1,6 +1,6 @@
 # Integration Paths
 
-There are two ways to bring a service into the Platform Mesh today. The right choice depends on what you have and how much control you need. Both paths result in the same consumer experience: declarative APIs available through [APIExport/APIBinding](/overview/api-export-binding).
+There are two ways to bring a service into the Platform Mesh today. The right choice depends on what you have and how much control you need. Both paths result in the same consumer experience: declarative APIs available through [APIExport/APIBinding](/concepts/api-export-binding).
 
 ## Comparison
 
@@ -15,7 +15,7 @@ Both paths require a Kubernetes operator that reconciles your service's resource
 
 ## Path 1: api-syncagent
 
-The [api-syncagent](/overview/api-syncagent) is the primary integration mechanism and the right choice for most providers. If you already have a Kubernetes operator with CRDs, the api-syncagent publishes those CRDs as [APIExports](/overview/api-export-binding) in kcp. It handles bidirectional sync (spec flows down from kcp, status flows back up), related resource synchronization, and schema evolution automatically.
+The [api-syncagent](/overview/api-syncagent) is the primary integration mechanism and the right choice for most providers. If you already have a Kubernetes operator with CRDs, the api-syncagent publishes those CRDs as [APIExports](/concepts/api-export-binding) in kcp. It handles bidirectional sync (spec flows down from kcp, status flows back up), related resource synchronization, and schema evolution automatically.
 
 You deploy the agent alongside your operator on the service cluster and create `PublishedResource` objects that declare which CRDs to expose. No custom controller code is needed for the sync layer -- the agent handles that entirely.
 
@@ -33,5 +33,5 @@ Use it when your service exposes non-CRD APIs (aggregated or custom API servers)
 
 - [api-syncagent](/overview/api-syncagent) -- deep dive into the CRD-based sync agent
 - [multi-cluster-runtime](/overview/multi-cluster-runtime) -- architecture and patterns for custom syncers
-- [APIExport & APIBinding](/overview/api-export-binding) -- the cross-workspace sharing mechanism all paths build on
+- [APIExport & APIBinding](/concepts/api-export-binding) -- the cross-workspace sharing mechanism all paths build on
 - [Provider Quick Start](/guides/provider-quick-start) -- step-by-step guide to deploying your first service provider

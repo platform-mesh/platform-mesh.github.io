@@ -8,6 +8,17 @@ The full source code is available at [`platform-mesh/example-mongodb-multicluste
 This example is intentionally minimal and does not handle object collisions or related resources. Production implementations would need additional logic for conflict resolution, finalizer management, error recovery, and multi-namespace support.
 :::
 
+::: info Vanilla kcp pattern — not a drop-in PM provider
+The YAML and Go code below show the **upstream kcp pattern** end to end so you can see how multi-cluster-runtime works against a plain APIExport/APIBinding. To run a MongoDB provider against a real Platform Mesh cluster, the resources also need PM-specific wiring:
+
+- The provider workspace must be provisioned under an [Account](/concepts/account-cr) in the PM hierarchy (the platform owner does this; you do not pick an arbitrary path).
+- An [IAM Store](/concepts/iam-store) must exist for the consumer Account so OpenFGA can authorize access to the bound MongoDB API.
+- Optional: a [ContentConfiguration](/concepts/content-configuration) registers a Portal UI for managing MongoDB instances.
+- See [Platform Mesh Metadata](/concepts/pm-annotations) for the API groups, labels, and finalizers PM expects on managed objects.
+
+Treat this guide as the *concept walkthrough*. The [Provider Quick Start](/guides/provider-quick-start) shows the full PM-wired flow using api-syncagent.
+:::
+
 ## Why multi-cluster-runtime for MongoDB?
 
 Most providers should start with [api-syncagent](/overview/api-syncagent), which handles bidirectional synchronization through YAML configuration alone. The MongoDB example uses multi-cluster-runtime instead because it demonstrates a class of integration where you need more control:
@@ -21,7 +32,7 @@ Most providers should start with [api-syncagent](/overview/api-syncagent), which
 
 The [HttpBin example](/guides/httpbin-example) uses api-syncagent: you configure `PublishedResource` objects in YAML, and the agent handles schema creation, sync, and status feedback automatically. The MongoDB example takes the opposite approach: you hand-craft the API schema, write the reconciler in Go, and control every step of the data flow.
 
-Both paths produce the same result from the consumer's perspective -- a Kubernetes API available through an [APIBinding](/overview/api-export-binding) in their workspace. The difference is in how the provider builds and operates the integration.
+Both paths produce the same result from the consumer's perspective -- a Kubernetes API available through an [APIBinding](/concepts/api-export-binding) in their workspace. The difference is in how the provider builds and operates the integration.
 
 ## Architecture
 
@@ -90,6 +101,18 @@ flowchart TB
 ## Defining the API in kcp
 
 Unlike api-syncagent -- where the agent automatically creates `APIResourceSchema` objects from CRDs on the service cluster -- with multi-cluster-runtime the developer hand-crafts both the schema and the export. This gives full control over what the consumer API looks like, independent of what the downstream CRD looks like.
+
+::: tip Don't write APIResourceSchemas by hand in production
+The YAML below is shown to illustrate the structure. In practice you should use kcp's [`apigen` CLI](https://github.com/kcp-dev/sdk/tree/main/cmd/apigen), which generates an APIResourceSchema 1:1 from an existing CRD:
+
+```bash
+go run github.com/kcp-dev/sdk/cmd/apigen \
+  --input-dir ./crds \
+  --output-dir ./apiresourceschemas
+```
+
+Hand-writing the schema only makes sense when you intentionally want a *different* API shape than the downstream CRD — for example, hiding implementation-detail fields. In that case you start from the apigen output and trim it.
+:::
 
 ### APIResourceSchema
 
@@ -195,7 +218,7 @@ spec:
       crd: {}
 ```
 
-Once created in a provider workspace, any consumer workspace can create an [APIBinding](/overview/api-export-binding) referencing this export to gain access to the MongoDB API. The APIExport also gets an automatically generated identity (an SHA-256 hash) that uniquely identifies this provider's MongoDB API, preventing conflicts with other providers who might export the same group/resource/version combination.
+Once created in a provider workspace, any consumer workspace can create an [APIBinding](/concepts/api-export-binding) referencing this export to gain access to the MongoDB API. The APIExport also gets an automatically generated identity (an SHA-256 hash) that uniquely identifies this provider's MongoDB API, preventing conflicts with other providers who might export the same group/resource/version combination.
 
 ## The Custom Controller
 
@@ -475,7 +498,7 @@ If none of these apply, start with [api-syncagent](/overview/api-syncagent). You
 ## What's Next
 
 - [multi-cluster-runtime](/overview/multi-cluster-runtime) -- understand the library architecture, providers, and reconciliation patterns
-- [APIExport and APIBinding](/overview/api-export-binding) -- the cross-workspace sharing mechanism that makes the consumer API work
+- [APIExport and APIBinding](/concepts/api-export-binding) -- the cross-workspace sharing mechanism that makes the consumer API work
 - [Provider Quick Start](/guides/provider-quick-start) -- try the simpler api-syncagent path first
 - [HttpBin Provider Example](/guides/httpbin-example) -- see the api-syncagent integration in action
 - [Service Providers](/overview/providers) -- the three integration paths and how to choose between them

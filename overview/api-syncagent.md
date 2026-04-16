@@ -1,6 +1,6 @@
 # api-syncagent
 
-The **api-syncagent** is a Kubernetes controller that publishes CRDs from a service cluster as [APIExports](/overview/api-export-binding) in kcp, enabling bidirectional synchronization between many kcp workspaces and a single service cluster.
+The **api-syncagent** is a Kubernetes controller that publishes CRDs from a service cluster as [APIExports](/concepts/api-export-binding) in kcp, enabling bidirectional synchronization between many kcp workspaces and a single service cluster.
 It is the **primary, lowest-effort integration path** for bringing existing Kubernetes operators and CRD-based services into the Platform Mesh.
 If you already run an operator on a Kubernetes cluster (Crossplane, cert-manager, a custom controller), the api-syncagent lets you expose its APIs to Platform Mesh consumers without modifying the operator itself.
 For non-CRD APIs or scenarios requiring full control over sync logic, see [multi-cluster-runtime](/overview/multi-cluster-runtime) as the alternative approach.
@@ -225,7 +225,7 @@ Consider [multi-cluster-runtime](/overview/multi-cluster-runtime) instead when:
 
 ## What's Next
 
-- [APIExport and APIBinding](/overview/api-export-binding) -- understand the cross-workspace service sharing mechanism that the api-syncagent builds on
+- [APIExport and APIBinding](/concepts/api-export-binding) -- understand the cross-workspace service sharing mechanism that the api-syncagent builds on
 - [multi-cluster-runtime](/overview/multi-cluster-runtime) -- the alternative integration path for non-CRD APIs and custom sync logic
 - [Provider Quick Start](/guides/provider-quick-start) -- step-by-step guide to deploying your first service provider
 - [HttpBin Provider Example](/guides/httpbin-example) -- a hands-on tutorial walking through a complete api-syncagent integration

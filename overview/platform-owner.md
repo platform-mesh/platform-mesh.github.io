@@ -16,7 +16,7 @@ The platform owner decides which components to deploy based on scale and require
 
 ## Account Hierarchy Management
 
-The platform owner structures the [account model](/overview/account-model) to mirror organizational boundaries. Each node in the hierarchy is a kcp workspace with its own API surface, identity realm, and authorization store.
+The platform owner structures the [account model](/concepts/account-model) to mirror organizational boundaries. Each node in the hierarchy is a kcp workspace with its own API surface, identity realm, and authorization store.
 
 Typical hierarchy patterns include:
 
@@ -88,7 +88,7 @@ flowchart TD
 ## What's Next
 
 - [Personas Overview](/overview/personas) -- all three personas and how they interact
-- [Account Model](/overview/account-model) -- detailed look at the workspace hierarchy
-- [Control Planes](/overview/control-planes) -- how kcp workspaces provide isolation and multi-tenancy
+- [Account Model](/concepts/account-model) -- detailed look at the workspace hierarchy
+- [Control Planes](/concepts/control-planes) -- how kcp workspaces provide isolation and multi-tenancy
 - [Service Providers](/overview/providers) -- how providers publish and fulfill services
 - [Service Consumers](/overview/consumers) -- how consumers discover and use services

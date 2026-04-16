@@ -4,7 +4,7 @@ Platform Mesh recognizes three distinct personas that together form the ecosyste
 
 ## Platform Owner
 
-The platform owner operates the Platform Mesh infrastructure itself -- kcp, identity (Keycloak), authorization (OpenFGA), and the service marketplace. They onboard service providers, manage the [account hierarchy](/overview/account-model), and define the organizational policies that govern the ecosystem. Think of them as the operator of the marketplace.
+The platform owner operates the Platform Mesh infrastructure itself -- kcp, identity (Keycloak), authorization (OpenFGA), and the service marketplace. They onboard service providers, manage the [account hierarchy](/concepts/account-model), and define the organizational policies that govern the ecosystem. Think of them as the operator of the marketplace.
 
 [Read more: Platform Owner →](/overview/platform-owner)
 
@@ -37,7 +37,7 @@ flowchart TD
     MP -- "hosted in" --> PM
 ```
 
-The platform owner sets up the infrastructure and onboards providers. Providers publish their service APIs as [APIExports](/overview/api-export-binding). Consumers discover these services and bind to them, creating a self-service ecosystem where the control plane mediates all interactions.
+The platform owner sets up the infrastructure and onboards providers. Providers publish their service APIs as [APIExports](/concepts/api-export-binding). Consumers discover these services and bind to them, creating a self-service ecosystem where the control plane mediates all interactions.
 
 ## What's Next
 
@@ -45,4 +45,4 @@ The platform owner sets up the infrastructure and onboards providers. Providers 
 - [Service Providers](/overview/providers) -- how providers publish and fulfill services
 - [Service Consumers](/overview/consumers) -- how consumers discover and use services
 - [Integration Paths](/overview/integration-paths) -- technical options for bringing services into the mesh
-- [Account Model](/overview/account-model) -- how organizational structure maps to workspaces
+- [Account Model](/concepts/account-model) -- how organizational structure maps to workspaces

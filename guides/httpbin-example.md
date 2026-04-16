@@ -363,5 +363,5 @@ See [api-syncagent](/overview/api-syncagent) for the full PublishedResource docu
 - [Provider Quick Start](/guides/provider-quick-start) -- step-by-step guide to deploying your own service provider from scratch
 - [MongoDB Provider Example](/guides/mongodb-example) -- advanced example using multi-cluster-runtime instead of api-syncagent, with a custom Go controller
 - [api-syncagent](/overview/api-syncagent) -- full reference for PublishedResource configuration, the five-phase sync loop, and operational details
-- [APIExport and APIBinding](/overview/api-export-binding) -- the cross-workspace service sharing mechanism that underpins the entire provider integration
+- [APIExport and APIBinding](/concepts/api-export-binding) -- the cross-workspace service sharing mechanism that underpins the entire provider integration
 - [Example MSP](/getting-started/example-msp) -- the consumer perspective: provisioning an httpbin instance through the Portal UI

@@ -32,9 +32,9 @@ html:not(.dark) .onion-dark, html:not(.dark) .arch-dark { display: none; }
 
 ### Core Control Plane
 
-**kcp** is the heart of Platform Mesh. It extracts the Kubernetes declarative API server and strips away container orchestration, repurposing it for service management. kcp provides hierarchical [workspaces](/overview/control-planes) (each behaving like an independent Kubernetes API endpoint), the [APIExport/APIBinding](/overview/api-export-binding) mechanism for cross-workspace service sharing, and horizontal scaling through sharding. A key property is that kcp workspaces are cheap -- multiple logical clusters share a single process and etcd instance, isolated by storage prefix rather than separate infrastructure.
+**kcp** is the heart of Platform Mesh. It extracts the Kubernetes declarative API server and strips away container orchestration, repurposing it for service management. kcp provides hierarchical [workspaces](/concepts/control-planes) (each behaving like an independent Kubernetes API endpoint), the [APIExport/APIBinding](/concepts/api-export-binding) mechanism for cross-workspace service sharing, and horizontal scaling through sharding. A key property is that kcp workspaces are cheap -- multiple logical clusters share a single process and etcd instance, isolated by storage prefix rather than separate infrastructure.
 
-**Account Controller** manages the [Account Model](/overview/account-model), which maps organizational structure (organizations, teams, environments) into kcp's workspace hierarchy. Each account node is an isolated control plane with its own API surface, identity realm, and authorization store. Policies flow downward through the hierarchy.
+**Account Controller** manages the [Account Model](/concepts/account-model), which maps organizational structure (organizations, teams, environments) into kcp's workspace hierarchy. Each account node is an isolated control plane with its own API surface, identity realm, and authorization store. Policies flow downward through the hierarchy.
 
 **Extension Controller** processes ContentConfiguration CRDs that register micro-frontend extensions with the Platform Mesh Portal. It validates configurations asynchronously and stores the result so the portal can serve them at request time.
 
@@ -77,15 +77,15 @@ Three mechanisms bridge the gap between service provider clusters and the Platfo
 
 A typical request flows through the stack as follows. A developer opens the Platform Mesh Portal, which loads micro-frontend modules registered through ContentConfiguration CRDs. The portal calls the Kubernetes GraphQL Gateway, which translates the request into standard KRM operations against a kcp workspace. kcp authenticates the request via Keycloak (OIDC token validation) and authorizes it through its authorizer chain, which includes Kubernetes RBAC and OpenFGA for fine-grained relationship-based decisions.
 
-When a consumer creates a resource in their workspace -- for example, a `DatabaseClaim` -- that resource exists in kcp's declarative API surface via an [APIBinding](/overview/api-export-binding). The corresponding service provider has published a matching APIExport, and one of the three connectivity mechanisms (typically api-syncagent) synchronizes the resource down to the provider's service cluster. The provider's operator reconciles the resource, provisions the actual database, and writes status back through the same sync path. The consumer sees the updated status in their workspace, whether they check via `kubectl`, the GraphQL gateway, or the portal UI.
+When a consumer creates a resource in their workspace -- for example, a `DatabaseClaim` -- that resource exists in kcp's declarative API surface via an [APIBinding](/concepts/api-export-binding). The corresponding service provider has published a matching APIExport, and one of the three connectivity mechanisms (typically api-syncagent) synchronizes the resource down to the provider's service cluster. The provider's operator reconciles the resource, provisions the actual database, and writes status back through the same sync path. The consumer sees the updated status in their workspace, whether they check via `kubectl`, the GraphQL gateway, or the portal UI.
 
 This architecture means that providers and consumers never interact directly. The control plane mediates all communication, providing isolation, authorization, and a uniform declarative interface regardless of what the underlying service actually is.
 
 ## What's Next
 
-- [Account Model](/overview/account-model) -- how organizational hierarchy maps to workspaces
-- [Control Planes](/overview/control-planes) -- kcp workspaces and the control plane concept
-- [APIExport and APIBinding](/overview/api-export-binding) -- the service sharing mechanism
+- [Account Model](/concepts/account-model) -- how organizational hierarchy maps to workspaces
+- [Control Planes](/concepts/control-planes) -- kcp workspaces and the control plane concept
+- [APIExport and APIBinding](/concepts/api-export-binding) -- the service sharing mechanism
 - [api-syncagent](/overview/api-syncagent) -- publishing CRDs into the mesh
 - [multi-cluster-runtime](/overview/multi-cluster-runtime) -- building custom syncers
 - [Guiding Principles](/overview/principles) -- the design philosophy behind Platform Mesh

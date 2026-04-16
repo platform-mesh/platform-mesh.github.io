@@ -90,9 +90,9 @@ In this case, because we use Kubernetes clusters on both sides, **kube-bind** ca
 
 The above flows illustrate how **Provider to Consumer** interactions are standardized in the Platform Mesh:
 
-* **Providers** expose declarative APIs using [**APIExports**](../overview/control-planes.md).
-* **Consumers** bind to those APIs using **APIBindings**, gaining seamless access through the [**Account Model**](../overview/account-model.md).
-* [**Control planes**](../overview/control-planes.md) reconcile declarative manifests into real-world capabilities.
+* **Providers** expose declarative APIs using [**APIExports**](../concepts/control-planes.md).
+* **Consumers** bind to those APIs using **APIBindings**, gaining seamless access through the [**Account Model**](../concepts/account-model.md).
+* [**Control planes**](../concepts/control-planes.md) reconcile declarative manifests into real-world capabilities.
 * **Operators and orchestration tools** (kube-bind, KRO, multicluster-runtime) implement automation across boundaries.
 
 This creates a secure, flexible, and decoupled ecosystem where services can be:
@@ -100,6 +100,6 @@ This creates a secure, flexible, and decoupled ecosystem where services can be:
 * Exposed minimally.
 * Discovered and consumed declaratively.
 * Composed across organizational or cluster boundaries.
-* Governed through the [**Account Model**](../overview/account-model.md) and [**Managed Service Provider pattern**](../overview/design-decision.md).
+* Governed through the [**Account Model**](../concepts/account-model.md) and [**Managed Service Provider pattern**](../overview/design-decision.md).
 
 Ultimately, Platform Mesh provides the **P2C fabric** for multi-team, multi-cluster, and multi-organization service interactions.

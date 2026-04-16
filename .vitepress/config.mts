@@ -58,6 +58,7 @@ export default withMermaid({
       { text: 'Home', link: '/' },
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Overview', link: '/overview' },
+      { text: 'Concepts', link: '/concepts/' },
       { text: 'Guides', link: '/guides/' },
       { text: 'Scenarios', link: '/scenarios' },
       { text: 'Get Involved', link: '/get-involved' },
@@ -83,15 +84,6 @@ export default withMermaid({
           items: [
             { text: 'Introduction', link: '/overview/' },
             { text: 'Architecture', link: '/overview/architecture' },
-          ]
-        },
-        {
-          text: 'Core Concepts',
-          collapsed: false,
-          items: [
-            { text: 'Account Model', link: '/overview/account-model' },
-            { text: 'Control Planes', link: '/overview/control-planes' },
-            { text: 'APIExport & APIBinding', link: '/overview/api-export-binding' },
             { text: 'Guiding Principles', link: '/overview/principles' },
             { text: 'Design Decisions', link: '/overview/design-decision' },
           ]
@@ -113,6 +105,34 @@ export default withMermaid({
             { text: 'Platform Owner', link: '/overview/platform-owner' },
             { text: 'Service Providers', link: '/overview/providers' },
             { text: 'Service Consumers', link: '/overview/consumers' },
+          ]
+        },
+      ],
+
+      '/concepts/': [
+        {
+          text: 'Concepts',
+          items: [
+            { text: 'Overview', link: '/concepts/' },
+          ]
+        },
+        {
+          text: 'kcp Primitives',
+          collapsed: false,
+          items: [
+            { text: 'Control Planes & Workspaces', link: '/concepts/control-planes' },
+            { text: 'APIExport & APIBinding', link: '/concepts/api-export-binding' },
+          ]
+        },
+        {
+          text: 'Platform Mesh Objects',
+          collapsed: false,
+          items: [
+            { text: 'Account Model', link: '/concepts/account-model' },
+            { text: 'Account CR', link: '/concepts/account-cr' },
+            { text: 'ContentConfiguration', link: '/concepts/content-configuration' },
+            { text: 'IAM Store', link: '/concepts/iam-store' },
+            { text: 'Platform Mesh Annotations', link: '/concepts/pm-annotations' },
           ]
         },
       ],

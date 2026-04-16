@@ -16,7 +16,7 @@ The consumer determines where their workloads and services will run. Platform Me
 
 The consumer receives credentials for a service orchestration environment. Each account is an isolated kcp workspace with its own identity realm (Keycloak) and authorization store (OpenFGA). This means every consumer operates in a fully isolated control plane -- their resources, policies, and permissions are separate from every other consumer.
 
-The [Account Model](/overview/account-model) supports deep nesting, so organizations can mirror their internal structure (teams, projects, environments) directly in the workspace hierarchy.
+The [Account Model](/concepts/account-model) supports deep nesting, so organizations can mirror their internal structure (teams, projects, environments) directly in the workspace hierarchy.
 
 ### 3. Find Services
 
@@ -115,7 +115,7 @@ Best for: production environments, team collaboration, compliance-sensitive work
 
 ## Discovery and Binding
 
-The technical mechanism behind service discovery and consumption is the [APIExport/APIBinding](/overview/api-export-binding) pattern.
+The technical mechanism behind service discovery and consumption is the [APIExport/APIBinding](/concepts/api-export-binding) pattern.
 
 **APIExports** are published by service providers in their workspaces. Each export defines a set of API types (via APIResourceSchemas) that represent the capabilities the provider offers. Consumers can discover these exports through workspace navigation, marketplace UIs, or direct API queries.
 
@@ -141,6 +141,6 @@ This model is particularly valuable for consumers who want to use GitOps workflo
 ## What's Next
 
 - [Service Providers](/overview/providers) -- understand the other side of the equation: how providers publish and fulfill services
-- [APIExport & APIBinding](/overview/api-export-binding) -- deep dive into the binding mechanism that connects consumers to providers
-- [Account Model](/overview/account-model) -- how workspaces, identity, and authorization are structured for consumers
+- [APIExport & APIBinding](/concepts/api-export-binding) -- deep dive into the binding mechanism that connects consumers to providers
+- [Account Model](/concepts/account-model) -- how workspaces, identity, and authorization are structured for consumers
 - [Hands-On Walkthrough](/getting-started/example-msp) -- follow a complete consumer journey from account creation through service provisioning

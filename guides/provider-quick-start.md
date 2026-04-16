@@ -81,6 +81,26 @@ flowchart LR
 
 The consumer never interacts with the service cluster directly. From their perspective, HttpBin is just another Kubernetes resource type available in their workspace.
 
+## What You'll Create and Where
+
+Before the first step, here is the complete list of every object this guide creates. Use this as a reference whenever you are unsure which kubeconfig to use or who owns an object.
+
+| # | Object | Created by | Where | Which kubeconfig | Why |
+|---|---|---|---|---|---|
+| 1 | Provider `Workspace` (`httpbin-provider`) | You, as provider | kcp — under `root:providers` | `KCP_KUBECONFIG` | Home for the APIExport and any related RBAC. |
+| 2 | `APIExport` (`orchestrate.platform-mesh.io`) | You, as provider | kcp — provider workspace | `KCP_KUBECONFIG` | Publishes the API to consumers. api-syncagent fills in the schema later. |
+| 3 | `ClusterRole` + `ClusterRoleBinding` (`apiexport-bind`, `anonymous-view`) | You, as provider | kcp — provider workspace | `KCP_KUBECONFIG` | Grants the `bind` verb so consumer workspaces can create APIBindings to this export. |
+| 4 | `httpbin-operator` Helm release | You, as provider | Kind cluster — `example-httpbin-provider` namespace | `KIND_KUBECONFIG` | The operator that actually runs HttpBin pods. Knows nothing about kcp. |
+| 5 | `api-syncagent` Helm release | You, as provider | Kind cluster — provider namespace | `KIND_KUBECONFIG` | The bridge. Talks to **both** kcp (via `KCP_KUBECONFIG`) and the local Kind cluster. |
+| 6 | `PublishedResource` CR | You, as provider | Kind cluster — agent namespace | `KIND_KUBECONFIG` | Tells the agent which CRD on the Kind cluster to expose through the APIExport. |
+| 7 | `APIResourceSchema` | **Auto** — api-syncagent | kcp — provider workspace | n/a (the agent uses its own kubeconfig) | Generated from the CRD referenced by the PublishedResource. |
+| 8 | `APIBinding` | You, as consumer | kcp — a consumer workspace | `KCP_KUBECONFIG` | Makes `HttpBin` resources available as a native type in the consumer workspace. |
+| 9 | `HttpBin` resource | You, as consumer | kcp — consumer workspace | `KCP_KUBECONFIG` | A concrete service order. The agent syncs it to the Kind cluster, the operator provisions a pod. |
+
+::: tip What this guide does not create
+A real Platform Mesh provider would usually also ship a [**ContentConfiguration**](/concepts/content-configuration) to register a UI extension in the Portal, and in some deployments an [**Account CR**](/concepts/account-cr) to place the provider under a specific organizational hierarchy. Those are out of scope for this quick start — we focus only on the data plane (API publishing + sync).
+:::
+
 ## Environment Setup
 
 In the local development setup, a single Kind cluster named `platform-mesh` serves as both the Platform Mesh host and the service cluster. kcp runs inside this cluster as a pod, but exposes its own API server on `https://localhost:8443`.
@@ -640,4 +660,4 @@ The httpbin operator required **zero modifications** to work with Platform Mesh.
 - **Add provider metadata for the Portal UI** -- register display name, contacts, and icon so consumers can discover your service in the marketplace
 - **Customize with projections and mutations** -- rename kinds, transform fields, filter namespaces: [api-syncagent](/overview/api-syncagent)
 - **Deep dive into the httpbin provider** -- full architecture, CRD design, and reconciliation flow: [HttpBin Example](/guides/httpbin-example)
-- **Understand the API mechanism** -- identity hashing, permission claims, virtual workspaces: [APIExport and APIBinding](/overview/api-export-binding)
+- **Understand the API mechanism** -- identity hashing, permission claims, virtual workspaces: [APIExport and APIBinding](/concepts/api-export-binding)

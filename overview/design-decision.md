@@ -30,7 +30,7 @@ There must be a uniform API available to consumers for ordering, managing, and o
 This uniform API technology will be used as part of the reference architecture, specifically following the <Term>Kubernetes Resource Model</Term> (KRM) API.
 This approach allows for semantically rich, typed, and extensible expression of order and management interfaces.
 
-The Platform Mesh leverages [kcp capabilities](control-planes) to implement this uniform API layer efficiently, providing logical isolation and scalability while maintaining Kubernetes API compatibility.
+The Platform Mesh leverages [kcp capabilities](/concepts/control-planes) to implement this uniform API layer efficiently, providing logical isolation and scalability while maintaining Kubernetes API compatibility.
 
 Every participant in the reference architecture *should* provide such an API layer, which can be mapped to any kind of backend implementation.
 This is particularly relevant for the management APIs provided by <Term>Managed Service Providers</Term> and the consumer-facing APIs of the service orchestration environment that provide access to various service providers.

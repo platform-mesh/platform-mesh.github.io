@@ -60,7 +60,7 @@ The same logic runs independently against each discovered cluster. The reconcile
 
 ### Multi-Cluster-Aware Reconcilers
 
-The reconciler watches events in one cluster and acts on another. This is the **Platform Mesh syncer pattern**: watch kcp workspaces for spec changes via the [APIExport/APIBinding](/overview/api-export-binding) virtual workspace endpoint, sync desired state to a downstream service cluster, and report status back to kcp.
+The reconciler watches events in one cluster and acts on another. This is the **Platform Mesh syncer pattern**: watch kcp workspaces for spec changes via the [APIExport/APIBinding](/concepts/api-export-binding) virtual workspace endpoint, sync desired state to a downstream service cluster, and report status back to kcp.
 
 ```mermaid
 sequenceDiagram
@@ -93,7 +93,7 @@ Three variants tailored to different kcp integration scenarios:
 
 | Provider | Discovers | Platform Mesh Use Case |
 |----------|-----------|----------------------|
-| `apiexport` | All consumer workspaces that have created an [APIBinding](/overview/api-export-binding) to a given APIExport | **Primary provider.** The controller watches all consumers of its service across the entire kcp instance. |
+| `apiexport` | All consumer workspaces that have created an [APIBinding](/concepts/api-export-binding) to a given APIExport | **Primary provider.** The controller watches all consumers of its service across the entire kcp instance. |
 | `path-aware` | Same as `apiexport`, plus workspace path awareness | Controllers that need to reason about workspace hierarchy (e.g., applying inherited policies). |
 | `initializingworkspaces` | Workspaces during initialization (before initializers complete) | Controllers that set up workspace contents as part of provisioning (e.g., seeding default resources). |
 
@@ -167,7 +167,7 @@ In both paths, you need a Kubernetes operator that reconciles your service's CRD
 ## What's Next
 
 - **[api-syncagent](/overview/api-syncagent)** -- the simpler, configuration-driven integration path (start here if you are unsure)
-- **[APIExport and APIBinding](/overview/api-export-binding)** -- the cross-workspace sharing mechanism that both integration paths build on
+- **[APIExport and APIBinding](/concepts/api-export-binding)** -- the cross-workspace sharing mechanism that both integration paths build on
 - **[MongoDB Provider Example](/guides/mongodb-example)** -- hands-on walkthrough of a minimal custom syncer using multi-cluster-runtime
 - **[`kubernetes-sigs/multicluster-runtime`](https://github.com/kubernetes-sigs/multicluster-runtime)** -- upstream library repository
 - **[`kcp-dev/multicluster-provider`](https://github.com/kcp-dev/multicluster-provider)** -- kcp-specific providers (apiexport, path-aware, initializingworkspaces)
