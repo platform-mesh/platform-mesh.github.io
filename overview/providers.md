@@ -1,6 +1,6 @@
 # Service Providers
 
-The service provider is one of three [platform personas](/overview/personas). In Platform Mesh, a **Managed Service Provider (MSP)** is a service capable of managing the lifecycles of capabilities on demand through a standardized declarative API.
+The service provider is one of three [personas](/overview/personas). In Platform Mesh, a **Managed Service Provider (MSP)** is a service capable of managing the lifecycles of capabilities on demand through a standardized declarative API.
 The provider model is what makes Platform Mesh more than just a control plane -- it creates an ecosystem where services can be discovered, ordered, and managed through a unified mechanism.
 Any team that operates a service -- databases, certificates, CI/CD pipelines, AI/ML infrastructure, or anything else -- can become a provider by exposing a Kubernetes Resource Model (KRM) API for that service.
 
@@ -32,9 +32,13 @@ flowchart LR
     controller --> runtime
     runtime -- "status synced up" --> resource
 
-    style consumer fill:#1a3a5c,color:#fff
-    style provider fill:#3a1a5c,color:#fff
-    style runtime fill:#2d2d4d,color:#fff
+    style consumer fill:none,stroke:#1a56db,stroke-width:3px,color:inherit
+    style provider fill:none,stroke:#7c3aed,stroke-width:3px,color:inherit
+    style runtime fill:none,stroke:#6d28d9,stroke-width:3px,color:inherit
+
+    linkStyle 0 stroke:#4dabf7,stroke-width:3px
+    linkStyle 1 stroke:#4dabf7,stroke-width:3px
+    linkStyle 2 stroke:#69db7c,stroke-width:3px
 ```
 
 This separation means that the lifecycle API surface stays consistent even when the underlying implementation changes. A provider can migrate from self-hosted infrastructure to a managed cloud service without breaking the consumer's workflow.
@@ -100,7 +104,7 @@ Platform Mesh provides hands-on examples for both integration paths:
 
 ## What's Next
 
-- [Platform Personas](/overview/personas) -- all three personas and how they interact
+- [Personas Overview](/overview/personas) -- all three personas and how they interact
 - [Integration Paths](/overview/integration-paths) -- decision flowchart for choosing your integration mechanism
 - [Service Consumers](/overview/consumers) -- understand the other side of the marketplace
 - [APIExport and APIBinding](/overview/api-export-binding) -- the cross-workspace sharing mechanism that powers the marketplace

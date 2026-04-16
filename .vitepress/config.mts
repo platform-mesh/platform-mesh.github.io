@@ -109,7 +109,8 @@ export default withMermaid({
           text: 'Personas',
           collapsed: false,
           items: [
-            { text: 'Platform Personas', link: '/overview/personas' },
+            { text: 'Personas Overview', link: '/overview/personas' },
+            { text: 'Platform Owner', link: '/overview/platform-owner' },
             { text: 'Service Providers', link: '/overview/providers' },
             { text: 'Service Consumers', link: '/overview/consumers' },
           ]

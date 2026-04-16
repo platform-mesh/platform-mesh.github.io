@@ -84,14 +84,22 @@ flowchart TD
     B --> C["Phase 3: Ensure Object Existence"]
     C --> D["Phase 4: Content Synchronization"]
     D --> E["Phase 5: Sync Related Resources"]
-    E --> F["Requeue"]
+    E --> F(["Requeue"])
     F --> A
 
-    style A fill:#2d5a88,color:#fff
-    style B fill:#7a3b3b,color:#fff
-    style C fill:#2d6a4f,color:#fff
-    style D fill:#5a4b8a,color:#fff
-    style E fill:#6a5a2d,color:#fff
+    style A fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a5f
+    style B fill:#fee2e2,stroke:#ef4444,stroke-width:2px,color:#5f1e1e
+    style C fill:#d1fae5,stroke:#10b981,stroke-width:2px,color:#1e5f3a
+    style D fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#3b1e5f
+    style E fill:#fef3c7,stroke:#f59f00,stroke-width:2px,color:#5f4b1e
+    style F fill:#f1f5f9,stroke:#94a3b8,stroke-width:2px,color:#475569
+
+    linkStyle 0 stroke:#3b82f6,stroke-width:3px
+    linkStyle 1 stroke:#ef4444,stroke-width:3px
+    linkStyle 2 stroke:#10b981,stroke-width:3px
+    linkStyle 3 stroke:#7c3aed,stroke-width:3px
+    linkStyle 4 stroke:#f59f00,stroke-width:3px
+    linkStyle 5 stroke:#94a3b8,stroke-width:3px,stroke-dasharray:5
 ```
 
 ### Phase 1 -- Find Local Object
@@ -132,6 +140,9 @@ flowchart LR
 
     spec_kcp -- "Consumer writes spec" --> spec_sc
     status_sc -- "Provider writes status" --> status_kcp
+
+    linkStyle 0 stroke:#4dabf7,stroke-width:3px
+    linkStyle 1 stroke:#69db7c,stroke-width:3px
 ```
 
 - **Spec** flows from kcp to the service cluster. The consumer writes the desired state in their kcp workspace; the agent replicates it to the service cluster where the operator acts on it.

@@ -53,8 +53,12 @@ flowchart LR
     sa <-- "spec down / status up" --> vw
     sa -- "reads" --> pr
 
-    style kcp fill:#1a3a5c,color:#fff
-    style sc fill:#3a1a5c,color:#fff
+    style kcp fill:none,stroke:#1a56db,stroke-width:3px,color:inherit
+    style sc fill:none,stroke:#7c3aed,stroke-width:3px,color:inherit
+
+    linkStyle 0,1,2,3,4,5,6 stroke:#f59f00,stroke-width:3px
+    linkStyle 7 stroke:#4dabf7,stroke-width:3px
+    linkStyle 8 stroke:#f59f00,stroke-width:3px
 ```
 
 ## The HttpBin CRD

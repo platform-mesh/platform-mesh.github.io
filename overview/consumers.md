@@ -1,6 +1,6 @@
 # Service Consumers
 
-Service consumers are the developers, data scientists, and application owners who discover and use services through Platform Mesh. They are one of the three [platform personas](/overview/personas), alongside [service providers](/overview/providers) and [platform owners](/overview/personas#platform-owner). Whether using the Platform Mesh Portal, `kubectl`, or GitOps workflows, consumers interact with services through a uniform Kubernetes-native API -- the same declarative model regardless of what the service is, who provides it, or where it runs.
+Service consumers are the developers, data scientists, and application owners who discover and use services through Platform Mesh. They are one of the three [platform personas](/overview/personas), alongside [service providers](/overview/providers) and [platform owners](/overview/platform-owner). Whether using the Platform Mesh Portal, `kubectl`, or GitOps workflows, consumers interact with services through a uniform Kubernetes-native API -- the same declarative model regardless of what the service is, who provides it, or where it runs.
 
 Platform Mesh gives consumers a single mechanism for ordering and managing capabilities across providers, environments, and service tiers. From a managed database to a Kubernetes cluster to an AI inference endpoint, the consumer experience is always: declare what you want, and the platform makes it so.
 

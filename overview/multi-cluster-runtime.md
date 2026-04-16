@@ -159,6 +159,7 @@ flowchart LR
         OP2 <--> KCP2
         KCP2 <--> CW2
     end
+
 ```
 
 In both paths, you need a Kubernetes operator that reconciles your service's CRDs. The key difference is where sync happens: with api-syncagent, the agent runs as a **separate component** alongside your operator and handles all sync mechanics via `PublishedResource` configuration. With multi-cluster-runtime, sync logic is **built directly into your operator** -- the operator itself watches kcp and manages the service cluster, eliminating the need for a separate sync layer.

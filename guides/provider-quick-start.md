@@ -64,10 +64,19 @@ flowchart LR
     httpbin_local -. "status sync" .-> agent
     agent -. "status sync" .-> httpbin_res
 
-    style kcp fill:#1a3a5c,color:#fff
-    style cw fill:#2d5a88,color:#fff
-    style pw fill:#2d5a88,color:#fff
-    style sc fill:#3a1a5c,color:#fff
+    style kcp fill:none,stroke:#1a56db,stroke-width:3px,color:inherit
+    style cw fill:none,stroke:#3b82f6,stroke-width:3px,color:inherit
+    style pw fill:none,stroke:#3b82f6,stroke-width:3px,color:inherit
+    style sc fill:none,stroke:#7c3aed,stroke-width:3px,color:inherit
+
+    linkStyle 0 stroke:#4dabf7,stroke-width:3px
+    linkStyle 1 stroke:#4dabf7,stroke-width:3px
+    linkStyle 2 stroke:#4dabf7,stroke-width:3px
+    linkStyle 3 stroke:#4dabf7,stroke-width:3px
+    linkStyle 4 stroke:#4dabf7,stroke-width:3px
+    linkStyle 5 stroke:#69db7c,stroke-width:3px
+    linkStyle 6 stroke:#69db7c,stroke-width:3px
+    linkStyle 7 stroke:#69db7c,stroke-width:3px
 ```
 
 The consumer never interacts with the service cluster directly. From their perspective, HttpBin is just another Kubernetes resource type available in their workspace.

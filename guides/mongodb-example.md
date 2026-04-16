@@ -66,11 +66,19 @@ flowchart TB
     downstream -- "status feedback" --> MCR
     MCR -- "syncs status back<br>to consumer" --> kcp
 
-    style kcp fill:#1a3a5c,color:#fff
-    style controller fill:#5a4b8a,color:#fff
-    style downstream fill:#2d6a4f,color:#fff
-    style cw1 fill:#244a6e,color:#fff
-    style cw2 fill:#244a6e,color:#fff
+    style kcp fill:none,stroke:#1a56db,stroke-width:3px,color:inherit
+    style controller fill:none,stroke:#7c3aed,stroke-width:3px,color:inherit
+    style downstream fill:none,stroke:#10b981,stroke-width:3px,color:inherit
+    style cw1 fill:none,stroke:#3b82f6,stroke-width:3px,color:inherit
+    style cw2 fill:none,stroke:#3b82f6,stroke-width:3px,color:inherit
+
+    linkStyle 0,1 stroke:#868e96,stroke-width:3px
+    linkStyle 2,3 stroke:#868e96,stroke-width:3px
+    linkStyle 4,5 stroke:#868e96,stroke-width:3px
+    linkStyle 6 stroke:#4dabf7,stroke-width:3px
+    linkStyle 7 stroke:#4dabf7,stroke-width:3px
+    linkStyle 8 stroke:#69db7c,stroke-width:3px
+    linkStyle 9 stroke:#69db7c,stroke-width:3px
 ```
 
 **kcp** holds the APIExport, the APIResourceSchema that defines the MongoDB API shape, and all the consumer workspaces that bind to it. Consumers create MongoDB resources in their own workspaces -- they never touch the downstream cluster directly.

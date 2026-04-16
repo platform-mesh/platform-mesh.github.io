@@ -36,7 +36,7 @@ html:not(.dark) .onion-dark, html:not(.dark) .arch-dark { display: none; }
 
 **Account Controller** manages the [Account Model](/overview/account-model), which maps organizational structure (organizations, teams, environments) into kcp's workspace hierarchy. Each account node is an isolated control plane with its own API surface, identity realm, and authorization store. Policies flow downward through the hierarchy.
 
-**Extension Controller** processes ContentConfiguration CRDs that register micro-frontend extensions with the OpenMFP portal. It validates configurations asynchronously and stores the result so the portal can serve them at request time.
+**Extension Controller** processes ContentConfiguration CRDs that register micro-frontend extensions with the Platform Mesh Portal. It validates configurations asynchronously and stores the result so the portal can serve them at request time.
 
 ### Identity & Authorization
 
