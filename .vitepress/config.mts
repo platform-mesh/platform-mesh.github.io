@@ -86,6 +86,12 @@ export default withMermaid({
             { text: 'Control Planes', link: '/overview/control-planes' },
             { text: 'Design Decisions', link: '/overview/design-decision' },
             ]
+        },
+        {
+            text: 'Components',
+            items: [
+            { text: 'GraphQL Gateway', link: '/overview/components/graphql-gateway' },
+            ]
         }
       ],
 
