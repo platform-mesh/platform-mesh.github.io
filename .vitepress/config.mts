@@ -84,20 +84,20 @@ export default withMermaid({
             { text: "Control Planes", link: "/overview/control-planes" },
             { text: "Design Decisions", link: "/overview/design-decision" },
             {
-              text: "Modules",
-              link: "/overview/modules/",
+              text: "Components ",
+              link: "/overview/components/",
               items: [
                 {
                   text: "Portal",
-                  link: "/overview/modules/portal",
+                  link: "/overview/components/portal",
                 },
                 {
                   text: "Marketplace",
-                  link: "/overview/modules/marketplace",
+                  link: "/overview/components/marketplace",
                 },
                 {
                   text: "IAM",
-                  link: "/overview/modules/iam",
+                  link: "/overview/components/iam",
                 },
               ],
             },
