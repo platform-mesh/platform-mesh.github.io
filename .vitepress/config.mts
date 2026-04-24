@@ -1,5 +1,5 @@
 import { withMermaid } from "vitepress-plugin-mermaid";
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
 // Base path is required because GitHub Pages serves multiple doc versions from subdirectories:
 //   - https://platform-mesh.github.io/main/          (main branch docs)
@@ -15,22 +15,22 @@ import { fileURLToPath, URL } from 'node:url'
 //   - PAGES_BASE: Set for PR preview builds
 //
 // Priority: DOCS_VERSION > PAGES_BASE > "/" (local dev fallback)
-const base = 'DOCS_VERSION' in process.env && process.env.DOCS_VERSION != ''
-  ? '/' + process.env.DOCS_VERSION + '/'
-  : ('PAGES_BASE' in process.env && process.env.PAGES_BASE != ''
-    ? '/' + process.env.PAGES_BASE + '/'
-    : '/');
+const base =
+  "DOCS_VERSION" in process.env && process.env.DOCS_VERSION != ""
+    ? "/" + process.env.DOCS_VERSION + "/"
+    : "PAGES_BASE" in process.env && process.env.PAGES_BASE != ""
+      ? "/" + process.env.PAGES_BASE + "/"
+      : "/";
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   title: "Platform Mesh",
-  head: [
-    ['link', { rel: 'icon', href: `${base}favicon.ico` }]
-  ],
+  head: [["link", { rel: "icon", href: `${base}favicon.ico` }]],
 
   base,
 
-  description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
+  description:
+    "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
   vite: {
     resolve: {
@@ -38,86 +38,105 @@ export default withMermaid({
         {
           find: /^.*\/VPFooter\.vue$/,
           replacement: fileURLToPath(
-              new URL('theme/components/VPFooter.vue', import.meta.url)
-          )
+            new URL("theme/components/VPFooter.vue", import.meta.url),
+          ),
         },
         {
           find: /^.*\/VPFeature\.vue$/,
           replacement: fileURLToPath(
-              new URL('theme/components/VPFeature.vue', import.meta.url)
-          )
+            new URL("theme/components/VPFeature.vue", import.meta.url),
+          ),
         },
-      ]
-    }
+      ],
+    },
   },
-
 
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Getting Started', link: '/getting-started' },
-      { text: 'Overview', link: '/overview' },
-      { text: 'Scenarios', link: '/scenarios' },
-      { text: 'Get Involved', link: '/get-involved' },
+      { text: "Home", link: "/" },
+      { text: "Getting Started", link: "/getting-started" },
+      { text: "Overview", link: "/overview" },
+      { text: "Scenarios", link: "/scenarios" },
+      { text: "Get Involved", link: "/get-involved" },
     ],
 
     logo: {
-      src: '/pm_logo.svg',
+      src: "/pm_logo.svg",
       width: 24,
-      height: 24
+      height: 24,
     },
 
     outline: [2, 3, 4, 5],
 
     search: {
-      provider: 'local'
+      provider: "local",
     },
 
     sidebar: {
-
-      '/overview/': [
+      "/overview/": [
         {
-            text: 'Overview',
-            items: [
-            { text: 'Index', link: '/overview/' },
-            { text: 'Account Model', link: '/overview/account-model' },
-            { text: 'Guiding Principles', link: '/overview/principles' },
-            { text: 'Control Planes', link: '/overview/control-planes' },
-            { text: 'Design Decisions', link: '/overview/design-decision' },
-            ]
-        }
-      ],
-
-      '/getting-started/': [
-        {
-            text: 'Getting Started',
-            items: [
-            { text: 'Index', link: '/getting-started/' },
-            { text: 'Quick Start', link: '/getting-started/quick-start' },
-            { text: 'Next Steps', link: '/getting-started/next-steps' },
-            { text: 'Example MSP', link: '/getting-started/example-msp' },
-            { text: 'Troubleshooting', link: '/getting-started/troubleshooting' },
-            ]
-        }
-      ],
-
-
-        '/scenarios': {
-            text: 'Scenarios',
-            items:  [
-                { text: 'Scenarios', link: '/scenarios' },
-                { text: 'Provider to Consumer (P2C)', link: '/scenarios/details.html#provider-to-consumer-p2c' },
-                { text: 'Provider to Provider (P2P)', link: '/scenarios/details.html#provider-to-provider-p2p' },
-            ],
+          text: "Overview",
+          items: [
+            { text: "Index", link: "/overview/" },
+            { text: "Account Model", link: "/overview/account-model" },
+            { text: "Guiding Principles", link: "/overview/principles" },
+            { text: "Control Planes", link: "/overview/control-planes" },
+            { text: "Design Decisions", link: "/overview/design-decision" },
+            {
+              text: "Components ",
+              link: "/overview/components/",
+              items: [
+                {
+                  text: "Portal",
+                  link: "/overview/components/portal",
+                },
+                {
+                  text: "Marketplace",
+                  link: "/overview/components/marketplace",
+                },
+                {
+                  text: "IAM",
+                  link: "/overview/components/iam",
+                },
+              ],
+            },
+          ],
         },
+      ],
 
+      "/getting-started/": [
+        {
+          text: "Getting Started",
+          items: [
+            { text: "Index", link: "/getting-started/" },
+            { text: "Quick Start", link: "/getting-started/quick-start" },
+            { text: "Next Steps", link: "/getting-started/next-steps" },
+            { text: "Example MSP", link: "/getting-started/example-msp" },
+            {
+              text: "Troubleshooting",
+              link: "/getting-started/troubleshooting",
+            },
+          ],
+        },
+      ],
+
+      "/scenarios": {
+        text: "Scenarios",
+        items: [
+          { text: "Scenarios", link: "/scenarios" },
+          {
+            text: "Provider to Consumer (P2C)",
+            link: "/scenarios/details.html#provider-to-consumer-p2c",
+          },
+          {
+            text: "Provider to Provider (P2P)",
+            link: "/scenarios/details.html#provider-to-provider-p2p",
+          },
+        ],
+      },
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/platform-mesh' }
-    ]
-
+    socialLinks: [{ icon: "github", link: "https://github.com/platform-mesh" }],
   },
-
-})
+});
