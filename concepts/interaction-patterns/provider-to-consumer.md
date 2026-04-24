@@ -39,4 +39,4 @@ This separation lets consumers use a consistent Kubernetes Resource Model interf
 - [Personas](../personas.md)
 - [Account model](../account-model.md)
 - [Integration paths](../integration-paths.md)
-- [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md)
+- [API sharing](../api-sharing.md)

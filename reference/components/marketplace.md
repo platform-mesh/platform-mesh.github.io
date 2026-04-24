@@ -22,6 +22,6 @@ Add marketplace architecture, API discovery flow, integration with APIExports, U
 
 ## Related
 
-- [APIExport and APIBinding](/reference/concepts/api-export-binding.md)
+- [API sharing](/concepts/api-sharing.md)
 - [Provider to consumer](/concepts/interaction-patterns/provider-to-consumer.md)
 - [Cross-consumption](/concepts/interaction-patterns/cross-consumption.md)

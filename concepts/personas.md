@@ -8,7 +8,7 @@ Use this page to identify which role matches your work, what that role owns, and
 | --- | --- | --- | --- |
 | Platform owner | Run the mesh as a shared service platform | Platform Mesh runtime, account hierarchy, identity, authorization, policy, provider onboarding, component lifecycle | [Why Platform Mesh?](./why-platform-mesh.md), [Architecture](./architecture.md), [Account model](./account-model.md), [Control planes](./control-planes.md) |
 | Service provider | Publish a service capability as a declarative API | API contract, provider automation, service runtime integration, lifecycle status, integration path | [Integration paths](./integration-paths.md), [api-syncagent](./integration/api-syncagent.md), [multi-cluster-runtime](./integration/multi-cluster-runtime.md), [Interaction patterns](./interaction-patterns/provider-to-consumer.md) |
-| Service consumer | Discover and consume provider services through a consistent API | Account resources, bound provider APIs, desired-state resources, application service dependencies | [Explore the example MSP](/tutorials/explore-example-msp.md), [Interaction patterns](./interaction-patterns/provider-to-consumer.md), [Account model](./account-model.md), [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md) |
+| Service consumer | Discover and consume provider services through a consistent API | Account resources, bound provider APIs, desired-state resources, application service dependencies | [Explore the example MSP](/tutorials/explore-example-msp.md), [Interaction patterns](./interaction-patterns/provider-to-consumer.md), [Account model](./account-model.md), [API sharing](./api-sharing.md) |
 
 ## Platform owner
 
@@ -94,7 +94,7 @@ Consume services through a consistent Kubernetes Resource Model interface, with 
 
 ### Recommended reading
 
-Start with [Explore the example MSP](/tutorials/explore-example-msp.md) for a guided walkthrough. Then read [Interaction patterns](./interaction-patterns/provider-to-consumer.md), [Account model](./account-model.md), and [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md).
+Start with [Explore the example MSP](/tutorials/explore-example-msp.md) for a guided walkthrough. Then read [Interaction patterns](./interaction-patterns/provider-to-consumer.md), [Account model](./account-model.md), and [API sharing](./api-sharing.md).
 
 ## How the personas interact
 
@@ -148,4 +148,4 @@ Personas explain audience and ownership. Task steps, component facts, and upstre
 - [Provider to consumer](./interaction-patterns/provider-to-consumer.md)
 - [Provider to provider](./interaction-patterns/provider-to-provider.md)
 - [Cross-consumption](./interaction-patterns/cross-consumption.md)
-- [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md)
+- [API sharing](./api-sharing.md)

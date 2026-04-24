@@ -1,15 +1,12 @@
-# Reference map
+# Reference
 
-Reference pages are fact-oriented. Use this section when you need to look up Platform Mesh objects, components, and stable technical details.
+Use Reference when you need factual lookup for Platform Mesh runtime components, concrete resources, and metadata.
 
-## Objects and primitives
+For explanations of account structure, control planes, API sharing, interaction patterns, identity, and authorization, use [Concepts](/concepts/).
 
-Object and primitive reference pages describe the Platform Mesh and kcp concepts that appear across tutorials, how-to guides, and Concepts pages.
+## Sections
 
-- [Objects and primitives](./concepts/)
-
-## Components
-
-Component reference pages provide a stable location for runtime and integration component documentation. Many pages are placeholders for the Platform Mesh 0.3 documentation tasks tracked from [platform-mesh/backlog#201](https://github.com/platform-mesh/backlog/issues/201).
-
+- [Resources and metadata](./resources/)
 - [Components](./components/)
+
+Many component pages are placeholders for the Platform Mesh 0.3 documentation tasks tracked from [platform-mesh/backlog#201](https://github.com/platform-mesh/backlog/issues/201).

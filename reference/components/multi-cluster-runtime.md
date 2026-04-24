@@ -24,4 +24,4 @@ Add provider selection, Platform Mesh syncer patterns, APIExport virtual workspa
 ## Related
 
 - [multi-cluster-runtime concept](/concepts/integration/multi-cluster-runtime.md)
-- [APIExport and APIBinding](/reference/concepts/api-export-binding.md)
+- [API sharing](/concepts/api-sharing.md)

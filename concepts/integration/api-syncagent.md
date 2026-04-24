@@ -57,4 +57,4 @@ api-syncagent owns the detailed configuration and object semantics. Use the upst
 
 - [Integration paths](../integration-paths.md)
 - [api-syncagent component reference](/reference/components/api-syncagent.md)
-- [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md)
+- [API sharing](../api-sharing.md)

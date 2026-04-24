@@ -41,5 +41,5 @@ The Account is the Platform Mesh abstraction. The workspace is the kcp mechanism
 ## Related
 
 - [Account model](./account-model.md)
+- [API sharing](./api-sharing.md)
 - [Integration paths](./integration-paths.md)
-- [Control planes and workspaces reference](/reference/concepts/control-planes.md)

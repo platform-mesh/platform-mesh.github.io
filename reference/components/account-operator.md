@@ -23,4 +23,4 @@ Add Account API reference, workspace mapping rules, account types, status condit
 ## Related
 
 - [Account model](/concepts/account-model.md)
-- [Account CR](/reference/concepts/account-cr.md)
+- [Account resource](/reference/resources/account-resource.md)

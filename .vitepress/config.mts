@@ -84,6 +84,7 @@ export default withMermaid({
             { text: 'Learning path', link: '/tutorials/' },
             { text: 'Run Platform Mesh locally', link: '/tutorials/run-platform-mesh-locally' },
             { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
+            { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
             ]
         }
       ],
@@ -109,6 +110,8 @@ export default withMermaid({
             { text: 'Personas', link: '/concepts/personas' },
             { text: 'Account model', link: '/concepts/account-model' },
             { text: 'Control planes', link: '/concepts/control-planes' },
+            { text: 'API sharing', link: '/concepts/api-sharing' },
+            { text: 'Identity and authorization', link: '/concepts/identity-and-authorization' },
             { text: 'Integration paths', link: '/concepts/integration-paths' },
             ]
         },
@@ -133,25 +136,16 @@ export default withMermaid({
         {
             text: 'Reference',
             items: [
-            { text: 'Objects and primitives', link: '/reference/concepts/' },
+            { text: 'Resources and metadata', link: '/reference/resources/' },
             { text: 'Components', link: '/reference/components/' },
             ]
         },
         {
-            text: 'kcp primitives',
+            text: 'Resources and metadata',
             items: [
-            { text: 'Control planes and workspaces', link: '/reference/concepts/control-planes' },
-            { text: 'APIExport and APIBinding', link: '/reference/concepts/api-export-binding' },
-            ]
-        },
-        {
-            text: 'Platform Mesh objects',
-            items: [
-            { text: 'Account model', link: '/reference/concepts/account-model' },
-            { text: 'Account CR', link: '/reference/concepts/account-cr' },
-            { text: 'ContentConfiguration', link: '/reference/concepts/content-configuration' },
-            { text: 'IAM store', link: '/reference/concepts/iam-store' },
-            { text: 'Platform Mesh annotations', link: '/reference/concepts/platform-mesh-annotations' },
+            { text: 'Account resource', link: '/reference/resources/account-resource' },
+            { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
+            { text: 'Annotation catalog', link: '/reference/resources/annotation-catalog' },
             ]
         },
         {

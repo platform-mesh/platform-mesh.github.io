@@ -40,4 +40,4 @@ Use upstream docs and repositories for library APIs and provider implementations
 
 - [Integration paths](../integration-paths.md)
 - [multi-cluster-runtime component reference](/reference/components/multi-cluster-runtime.md)
-- [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md)
+- [API sharing](../api-sharing.md)

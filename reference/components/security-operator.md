@@ -23,6 +23,6 @@ Add managed resources, OpenFGA integration, multi-shard behavior, reconciliation
 
 ## Related
 
-- [IAM store](/reference/concepts/iam-store.md)
+- [Identity and authorization](/concepts/identity-and-authorization.md)
 - [OpenFGA](./openfga.md)
 - [rebac-authz-webhook](./rebac-authz-webhook.md)

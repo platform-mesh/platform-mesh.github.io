@@ -36,4 +36,4 @@ Platform Mesh mediates the relationship through accounts, workspaces, identity, 
 - [Provider to consumer](./provider-to-consumer.md)
 - [Cross-consumption](./cross-consumption.md)
 - [Integration paths](../integration-paths.md)
-- [APIExport and APIBinding reference](/reference/concepts/api-export-binding.md)
+- [API sharing](../api-sharing.md)

@@ -26,6 +26,20 @@ flowchart TB
 
 The hierarchy lets organizations model teams, projects, and environments without creating a physical Kubernetes cluster for every boundary.
 
+## Common account roles
+
+Platform Mesh can use accounts to represent several roles:
+
+| Role | Purpose |
+| --- | --- |
+| Organization | Top-level tenant or business boundary |
+| Team or project | Internal ownership boundary inside an organization |
+| Environment | Development, staging, production, or other lifecycle boundary |
+| Provider | Space where service provider APIs and automation are managed |
+| Consumer | Space where users bind and consume provider APIs |
+
+The exact account types available in an installation depend on the Platform Mesh version and account operator configuration.
+
 ## What accounts provide
 
 Accounts provide:
@@ -47,5 +61,6 @@ Account lifecycle is tied to identity and authorization state. Keycloak provides
 ## Related
 
 - [Control planes](./control-planes.md)
-- [Account model reference](/reference/concepts/account-model.md)
-- [Account CR reference](/reference/concepts/account-cr.md)
+- [API sharing](./api-sharing.md)
+- [Identity and authorization](./identity-and-authorization.md)
+- [Account resource](/reference/resources/account-resource.md)

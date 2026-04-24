@@ -22,5 +22,5 @@ Add portal architecture, extension model, ContentConfiguration usage, authentica
 
 ## Related
 
-- [ContentConfiguration](/reference/concepts/content-configuration.md)
+- [ContentConfiguration](/reference/resources/content-configuration.md)
 - [Explore the example MSP](/tutorials/explore-example-msp.md)

@@ -31,4 +31,4 @@ This gives access to the root workspace and organization management objects.
 ## Related
 
 - [Control planes](/concepts/control-planes.md)
-- [Control planes and workspaces reference](/reference/concepts/control-planes.md)
+- [kcp component reference](/reference/components/kcp.md)

@@ -25,4 +25,4 @@ Add Platform Mesh-specific sharding, local setup topology, virtual workspace beh
 ## Related
 
 - [Control planes](/concepts/control-planes.md)
-- [Control planes and workspaces](/reference/concepts/control-planes.md)
+- [API sharing](/concepts/api-sharing.md)

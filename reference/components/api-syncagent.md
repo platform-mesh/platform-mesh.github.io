@@ -23,4 +23,4 @@ Add Platform Mesh deployment guidance, PublishedResource examples, permission cl
 ## Related
 
 - [api-syncagent concept](/concepts/integration/api-syncagent.md)
-- [APIExport and APIBinding](/reference/concepts/api-export-binding.md)
+- [API sharing](/concepts/api-sharing.md)

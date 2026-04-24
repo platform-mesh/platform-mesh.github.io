@@ -23,4 +23,4 @@ Add store lifecycle, authorization model generation, tuple ownership, local setu
 ## Related
 
 - [Access OpenFGA](/how-to-guides/access-openfga.md)
-- [IAM store](/reference/concepts/iam-store.md)
+- [Identity and authorization](/concepts/identity-and-authorization.md)

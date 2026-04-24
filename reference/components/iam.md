@@ -24,4 +24,4 @@ Add IAM service and UI responsibilities, account integration, authentication flo
 
 - [Keycloak](./keycloak.md)
 - [OpenFGA](./openfga.md)
-- [IAM store](/reference/concepts/iam-store.md)
+- [Identity and authorization](/concepts/identity-and-authorization.md)
