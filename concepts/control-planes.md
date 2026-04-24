@@ -19,7 +19,7 @@ In essence, kcp extracts the declarative API control plane of Kubernetes and mak
 
 To overcome limitations imposed by the KRM kcp provides a higher-level isolation concept known as <Term>Workspaces</Term>. Workspaces provide their own sets of available API resources and a distinct list of objects created for those resources. Because of that, Workspaces basically function as isolated Kubernetes-like control planes. Existing Kubernetes API clients are capable of interacting with specific Workspaces just as they would interact with a Kubernetes cluster.
 
-Workspaces in kcp are hierarchical by nature. This means that they are a good fit for directly mapping to the Platform Mesh [account model](account-model) as they:
+Workspaces in kcp are hierarchical by nature. This means that they are a good fit for directly mapping to the Platform Mesh [account model](/concepts/account-model) as they:
 
 - Provide natural separation between the following:
   - service consumer workspaces for binding services

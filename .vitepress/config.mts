@@ -58,6 +58,8 @@ export default withMermaid({
       { text: 'Home', link: '/' },
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Overview', link: '/overview' },
+      { text: 'Concepts', link: '/concepts/' },
+      { text: 'Guides', link: '/guides/' },
       { text: 'Scenarios', link: '/scenarios' },
       { text: 'Get Involved', link: '/get-involved' },
     ],
@@ -78,15 +80,61 @@ export default withMermaid({
 
       '/overview/': [
         {
-            text: 'Overview',
-            items: [
-            { text: 'Index', link: '/overview/' },
-            { text: 'Account Model', link: '/overview/account-model' },
+          text: 'Overview',
+          items: [
+            { text: 'Introduction', link: '/overview/' },
+            { text: 'Architecture', link: '/overview/architecture' },
             { text: 'Guiding Principles', link: '/overview/principles' },
-            { text: 'Control Planes', link: '/overview/control-planes' },
             { text: 'Design Decisions', link: '/overview/design-decision' },
-            ]
-        }
+          ]
+        },
+        {
+          text: 'Integration',
+          collapsed: false,
+          items: [
+            { text: 'Integration Paths', link: '/overview/integration-paths' },
+            { text: 'api-syncagent', link: '/overview/api-syncagent' },
+            { text: 'multi-cluster-runtime', link: '/overview/multi-cluster-runtime' },
+          ]
+        },
+        {
+          text: 'Personas',
+          collapsed: false,
+          items: [
+            { text: 'Personas Overview', link: '/overview/personas' },
+            { text: 'Platform Owner', link: '/overview/platform-owner' },
+            { text: 'Service Providers', link: '/overview/providers' },
+            { text: 'Service Consumers', link: '/overview/consumers' },
+          ]
+        },
+      ],
+
+      '/concepts/': [
+        {
+          text: 'Concepts',
+          items: [
+            { text: 'Overview', link: '/concepts/' },
+          ]
+        },
+        {
+          text: 'kcp Primitives',
+          collapsed: false,
+          items: [
+            { text: 'Control Planes & Workspaces', link: '/concepts/control-planes' },
+            { text: 'APIExport & APIBinding', link: '/concepts/api-export-binding' },
+          ]
+        },
+        {
+          text: 'Platform Mesh Objects',
+          collapsed: false,
+          items: [
+            { text: 'Account Model', link: '/concepts/account-model' },
+            { text: 'Account CR', link: '/concepts/account-cr' },
+            { text: 'ContentConfiguration', link: '/concepts/content-configuration' },
+            { text: 'IAM Store', link: '/concepts/iam-store' },
+            { text: 'Platform Mesh Annotations', link: '/concepts/pm-annotations' },
+          ]
+        },
       ],
 
       '/getting-started/': [
@@ -102,6 +150,18 @@ export default withMermaid({
         }
       ],
 
+
+      '/guides/': [
+        {
+          text: 'Guides',
+          items: [
+            { text: 'Overview', link: '/guides/' },
+            { text: 'Provider Quick Start', link: '/guides/provider-quick-start' },
+            { text: 'HttpBin Provider Example', link: '/guides/httpbin-example' },
+            { text: 'MongoDB Provider Example', link: '/guides/mongodb-example' },
+          ]
+        }
+      ],
 
         '/scenarios': {
             text: 'Scenarios',

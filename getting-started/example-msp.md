@@ -95,7 +95,7 @@ After the account is created, you can step into it. There are two methods of acc
 1. **Portal UI**: Navigate through the Platform Mesh Portal interface
 2. **Kubeconfig**: Download the Kubeconfig file to interact with the account via `kubectl`
 
-Note that each account operates as its own [control plane](../overview/control-planes.md).
+Note that each account operates as its own [control plane](../concepts/control-planes.md).
 
 ![Platform Mesh Demo Kubeconfig](/img/pm-demo-account-kc.png)
 
@@ -130,7 +130,7 @@ You can also access the HttpBin service running within the local cluster. Note t
 
 ## Related Concepts
 
-- [Account Model](../overview/account-model.md) - How identity and access work in Platform Mesh
-- [Control Planes](../overview/control-planes.md) - Architecture of distributed control plane management
+- [Account Model](../concepts/account-model.md) - How identity and access work in Platform Mesh
+- [Control Planes](../concepts/control-planes.md) - Architecture of distributed control plane management
 - [Design Decisions](../overview/design-decision.md) - Managed Service Provider patterns
 - [Scenarios](../scenarios.md) - Real-world service interaction examples
