@@ -1,5 +1,7 @@
 # Platform Mesh Website
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/platform-mesh/platform-mesh.github.io/badge)](https://scorecard.dev/viewer/?uri=github.com/platform-mesh/platform-mesh.github.io)
+
 This is the repository backing the website of the Platform Mesh project.
 
 ## Contributing
