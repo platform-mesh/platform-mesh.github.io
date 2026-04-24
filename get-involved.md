@@ -1,4 +1,4 @@
-# Get Involved
+# Get involved
 
 Platform Mesh is an open source effort and welcomes contributions from
 the community. The projects developed in context of Platform Mesh have
