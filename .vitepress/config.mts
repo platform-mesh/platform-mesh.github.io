@@ -81,10 +81,16 @@ export default withMermaid({
         {
             text: 'Tutorials',
             items: [
-            { text: 'Learning path', link: '/tutorials/' },
             { text: 'Run Platform Mesh locally', link: '/tutorials/run-platform-mesh-locally' },
             { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
             { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
+            ]
+        },
+        {
+            text: 'Provider examples',
+            items: [
+            { text: 'HttpBin provider', link: '/tutorials/examples/httpbin-provider' },
+            { text: 'MongoDB provider', link: '/tutorials/examples/mongodb-provider' },
             ]
         }
       ],
@@ -109,7 +115,7 @@ export default withMermaid({
             { text: 'Architecture', link: '/concepts/architecture' },
             { text: 'Personas', link: '/concepts/personas' },
             { text: 'Account model', link: '/concepts/account-model' },
-            { text: 'Control planes', link: '/concepts/control-planes' },
+            { text: 'Control planes and workspaces', link: '/concepts/control-planes' },
             { text: 'API sharing', link: '/concepts/api-sharing' },
             { text: 'Identity and authorization', link: '/concepts/identity-and-authorization' },
             { text: 'Integration paths', link: '/concepts/integration-paths' },
