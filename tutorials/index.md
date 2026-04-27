@@ -10,7 +10,8 @@ Set up a local Platform Mesh environment first: [Set up Platform Mesh locally](/
 
 1. [Explore the example MSP](./explore-example-msp.md) - use the portal, create an organization and account, and provision the example HttpBin service.
 2. [Provider quick start](./provider-quick-start.md) - publish the HttpBin provider API with api-syncagent and verify the consumer flow.
-3. [Build a multi-cluster-runtime provider](./build-multi-cluster-runtime-provider.md) - run a custom Go provider controller that syncs MongoDB resources across clusters.
+3. [Consume a service from a controller](./consume-service-from-controller.md) - run a Go controller that watches HttpBin resources from the consumer side.
+4. [Build a multi-cluster-runtime provider](./build-multi-cluster-runtime-provider.md) - run a custom Go provider controller that syncs MongoDB resources across clusters.
 
 ## After the tutorials
 

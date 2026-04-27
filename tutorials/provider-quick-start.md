@@ -451,10 +451,10 @@ The HttpBin operator did not need Platform Mesh-specific code. api-syncagent han
 
 ## Next
 
-Continue with [api-syncagent](/concepts/integration/api-syncagent.md) for the architecture behind what you just built.
+Continue with [Consume a service from a controller](./consume-service-from-controller.md) to build the consumer side of the loop you just opened.
 
 Optional branches:
 
+- [api-syncagent](/concepts/integration/api-syncagent.md) for the architecture behind what you just built.
+- [Build a multi-cluster-runtime provider](./build-multi-cluster-runtime-provider.md) for the advanced provider track.
 - [Service provider persona](/concepts/personas/service-provider.md) for the role context.
-- [Provider to consumer](/concepts/interaction-patterns/provider-to-consumer.md) for the broader interaction pattern.
-- [api-syncagent component reference](/reference/components/api-syncagent.md) for configuration options.
