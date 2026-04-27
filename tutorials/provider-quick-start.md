@@ -10,6 +10,8 @@ By the end of this tutorial, you will have:
 - a PublishedResource that tells api-syncagent which CRD to expose
 - a consumer workspace that can bind the API and create an HttpBin resource
 
+The full source code is available in [`platform-mesh/provider-quickstart`](https://github.com/platform-mesh/provider-quickstart).
+
 ::: warning Development preview
 The local setup is under active development. Commands and component versions may change.
 :::

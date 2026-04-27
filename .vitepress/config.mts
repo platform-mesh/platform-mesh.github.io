@@ -85,12 +85,6 @@ export default withMermaid({
             { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
             { text: 'Build a multi-cluster-runtime provider', link: '/tutorials/build-multi-cluster-runtime-provider' },
             ]
-        },
-        {
-            text: 'Provider examples',
-            items: [
-            { text: 'HttpBin provider', link: '/tutorials/examples/httpbin-provider' },
-            ]
         }
       ],
 

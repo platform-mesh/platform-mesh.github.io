@@ -90,7 +90,7 @@ The default and `kube-system` namespaces are created automatically for the accou
 
 ## Provision the HttpBin service
 
-Inside the namespace, view the available services. HttpBin demonstrates the managed service provider pattern.
+Inside the namespace, view the available services. HttpBin demonstrates the managed service provider pattern. The operator backing this demo is in [`platform-mesh/example-httpbin-operator`](https://github.com/platform-mesh/example-httpbin-operator).
 
 ![Platform Mesh Default Namespace](/img/pm-demo-ns.png)
 
