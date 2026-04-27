@@ -1,4 +1,9 @@
-# Access Keycloak
+---
+title: Access the Keycloak admin console
+personas: [platform-owner]
+---
+
+# Access the Keycloak admin console
 
 Keycloak is the default identity provider used for authentication in the local Platform Mesh setup.
 

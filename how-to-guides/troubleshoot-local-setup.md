@@ -1,4 +1,9 @@
-# Troubleshoot local setup
+---
+title: Troubleshoot the local setup
+personas: [platform-owner, service-provider, service-consumer]
+---
+
+# Troubleshoot the local setup
 
 For local-setup specific issues, also check the [local-setup issues in the helm-charts repository](https://github.com/platform-mesh/helm-charts/issues?q=state%3Aopen%20label%3Alocal-setup).
 
@@ -35,13 +40,7 @@ If warnings continue, see the [certificate troubleshooting guide](https://github
 
 ## Component timeouts
 
-Use cached setup to reduce image pulling:
-
-```bash
-task local-setup:cached
-```
-
-Verify that all required images can be pulled from your network.
+Verify that all required images can be pulled from your network. To reduce image pulling on subsequent runs, see [Speed up local rebuilds](./speed-up-local-rebuilds.md).
 
 ## Enable debug output
 

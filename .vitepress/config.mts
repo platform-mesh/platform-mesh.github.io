@@ -96,13 +96,24 @@ export default withMermaid({
 
       '/how-to-guides/': [
         {
-            text: 'How-to guides',
+            text: 'Set up and run',
             items: [
             { text: 'Set up Platform Mesh locally', link: '/how-to-guides/set-up-platform-mesh-locally' },
-            { text: 'Access kcp admin', link: '/how-to-guides/access-kcp-admin' },
-            { text: 'Access Keycloak', link: '/how-to-guides/access-keycloak' },
-            { text: 'Access OpenFGA', link: '/how-to-guides/access-openfga' },
-            { text: 'Troubleshoot local setup', link: '/how-to-guides/troubleshoot-local-setup' },
+            { text: 'Speed up local rebuilds', link: '/how-to-guides/speed-up-local-rebuilds' },
+            ]
+        },
+        {
+            text: 'Access local services',
+            items: [
+            { text: 'Access the Keycloak admin console', link: '/how-to-guides/access-keycloak' },
+            { text: 'Access the OpenFGA playground', link: '/how-to-guides/access-openfga' },
+            { text: 'Access the kcp admin workspace', link: '/how-to-guides/access-kcp-admin' },
+            ]
+        },
+        {
+            text: 'Operate the local setup',
+            items: [
+            { text: 'Troubleshoot the local setup', link: '/how-to-guides/troubleshoot-local-setup' },
             ]
         }
       ],

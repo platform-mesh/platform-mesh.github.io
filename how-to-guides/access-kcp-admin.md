@@ -1,4 +1,9 @@
-# Access kcp admin
+---
+title: Access the kcp admin workspace
+personas: [platform-owner]
+---
+
+# Access the kcp admin workspace
 
 Use the local setup admin kubeconfig when you need full visibility into the kcp workspaces in a local Platform Mesh instance.
 

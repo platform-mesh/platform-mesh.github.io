@@ -1,4 +1,9 @@
-# Access OpenFGA
+---
+title: Access the OpenFGA playground
+personas: [platform-owner]
+---
+
+# Access the OpenFGA playground
 
 OpenFGA is the relationship-based authorization system used by Platform Mesh.
 
