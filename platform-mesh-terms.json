@@ -1,0 +1,77 @@
+{
+  "service provider": {
+    "description": "An organization or system that offers managed capabilities through the Platform Mesh API, managing multiple service runtimes on behalf of consumers.",
+    "url": "/overview/account-model"
+  },
+  "service providers": { "alias": "service provider" },
+  "Service providers": { "alias": "service provider" },
+  "service consumer": {
+    "description": "An organization or workload that discovers, orders, and consumes capabilities offered by service providers through the Platform Mesh account hierarchy.",
+    "url": "/overview/account-model"
+  },
+  "service consumers": { "alias": "service consumer" },
+  "control plane": {
+    "description": "An isolated kcp workspace providing its own set of API resources and objects, functioning as a Kubernetes-like API boundary.",
+    "url": "/overview/control-planes"
+  },
+  "control planes": { "alias": "control plane" },
+  "account model": {
+    "description": "The foundational hierarchy of organizations and workspaces in Platform Mesh, powered by kcp, that governs how service providers and consumers interact.",
+    "url": "/overview/account-model"
+  },
+  "Kubernetes Resource Model": {
+    "description": "The declarative, API-driven resource model from Kubernetes used as the lingua franca for service management in Platform Mesh.",
+    "url": "/overview/control-planes"
+  },
+  "capability": {
+    "description": "A managed service unit offered by a service provider and consumed by service consumers through the Platform Mesh API.",
+    "url": ""
+  },
+  "capabilities": { "alias": "capability" },
+  "managed capabilities": { "alias": "capability" },
+  "Workspaces": {
+    "description": "A kcp concept providing isolated Kubernetes-like control planes with their own API resources and objects, used as the organizational unit in Platform Mesh.",
+    "url": "/overview/control-planes"
+  },
+  "managed services": {
+    "description": "Services whose lifecycle is fully managed by a service provider through automated provisioning, scaling, and operations.",
+    "url": ""
+  },
+  "managed": { "alias": "managed services" },
+  "unmanaged services": {
+    "description": "Services not under automated lifecycle management, giving consumers direct control over deployment and operations.",
+    "url": ""
+  },
+  "digital twins": {
+    "description": "Virtual representations of physical or logical resources synchronized through the Platform Mesh API, enabling declarative management of real-world infrastructure.",
+    "url": ""
+  },
+  "marketplace": {
+    "description": "A catalog layer in Platform Mesh where service providers publish capabilities that service consumers can discover and bind to.",
+    "url": ""
+  },
+  "marketplaces": { "alias": "marketplace" },
+  "service runtime": {
+    "description": "The execution environment where a service provider deploys and operates managed capabilities for consumers.",
+    "url": ""
+  },
+  "service runtimes": { "alias": "service runtime" },
+  "servicelet": {
+    "description": "A lightweight automation component deployed alongside a service runtime that manages the lifecycle of capabilities on behalf of a service provider.",
+    "url": ""
+  },
+  "service coordinator": {
+    "description": "A control component that coordinates service lifecycle operations across multiple service runtimes within a service provider's account.",
+    "url": ""
+  },
+  "service": {
+    "description": "A capability or set of capabilities offered through the Platform Mesh API.",
+    "url": ""
+  },
+  "services": { "alias": "service" },
+  "Managed Service Provider": {
+    "description": "A service provider that uses the Platform Mesh MSP pattern to manage multiple service runtimes and automate the full capability lifecycle for consumers.",
+    "url": "/overview/design-decision"
+  },
+  "Managed Service Providers": { "alias": "Managed Service Provider" }
+}

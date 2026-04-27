@@ -1,0 +1,8 @@
+{
+  "kcp": {
+    "name": "kcp",
+    "description": "A horizontally scalable Kubernetes-like control plane that powers Platform Mesh's account hierarchy and multi-tenant API layer.",
+    "url": "https://kcp.io",
+    "icon": ""
+  }
+}
