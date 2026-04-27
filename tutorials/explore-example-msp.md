@@ -112,7 +112,10 @@ You can also inspect the local cluster resource behind the example. In productio
 
 ## Next
 
-- [Access kcp admin](/how-to-guides/access-kcp-admin.md)
-- [Access Keycloak](/how-to-guides/access-keycloak.md)
-- [Access OpenFGA](/how-to-guides/access-openfga.md)
-- [Why Platform Mesh?](/concepts/why-platform-mesh.md)
+Continue with [Provider quick start](./provider-quick-start.md) to publish your own service from the provider side.
+
+Optional branches:
+
+- [Access kcp admin](/how-to-guides/access-kcp-admin.md) to inspect the workspace tree behind the portal.
+- [Access Keycloak](/how-to-guides/access-keycloak.md) to see how the organization maps to a realm.
+- [Why Platform Mesh?](/concepts/why-platform-mesh.md) for the motivation behind the model.
