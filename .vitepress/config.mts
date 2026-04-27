@@ -152,7 +152,20 @@ export default withMermaid({
         {
             text: 'Platform Mesh runtime',
             items: [
-            { text: 'kcp', link: '/reference/components/kcp' },
+            {
+              text: 'kcp',
+              link: '/reference/components/kcp',
+              collapsed: false,
+              items: [
+                { text: 'Workspaces', link: '/reference/components/kcp/workspaces' },
+                { text: 'API sharing', link: '/reference/components/kcp/api-sharing' },
+                { text: 'Identity and authorization', link: '/reference/components/kcp/identity-and-authorization' },
+                { text: 'Virtual workspaces', link: '/reference/components/kcp/virtual-workspaces' },
+                { text: 'Watch and sync', link: '/reference/components/kcp/watch-and-sync' },
+                { text: 'Sharding', link: '/reference/components/sharding' },
+                { text: 'kcp-operator', link: '/reference/components/kcp-operator' },
+              ],
+            },
             { text: 'Platform Mesh operator', link: '/reference/components/platform-mesh-operator' },
             { text: 'Account operator', link: '/reference/components/account-operator' },
             { text: 'Security operator', link: '/reference/components/security-operator' },
