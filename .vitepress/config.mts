@@ -81,7 +81,6 @@ export default withMermaid({
         {
             text: 'Tutorials',
             items: [
-            { text: 'Run Platform Mesh locally', link: '/tutorials/run-platform-mesh-locally' },
             { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
             { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
             ]
@@ -99,6 +98,7 @@ export default withMermaid({
         {
             text: 'How-to guides',
             items: [
+            { text: 'Set up Platform Mesh locally', link: '/how-to-guides/set-up-platform-mesh-locally' },
             { text: 'Access kcp admin', link: '/how-to-guides/access-kcp-admin' },
             { text: 'Access Keycloak', link: '/how-to-guides/access-keycloak' },
             { text: 'Access OpenFGA', link: '/how-to-guides/access-openfga' },

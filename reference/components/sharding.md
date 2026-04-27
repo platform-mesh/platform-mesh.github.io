@@ -20,4 +20,4 @@ Add the local-setup sharded topology, shard membership and discovery, cross-shar
 
 - [kcp](./kcp.md)
 - [Architecture](/concepts/architecture.md)
-- [Run Platform Mesh locally](/tutorials/run-platform-mesh-locally.md)
+- [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md)
