@@ -59,6 +59,7 @@ export default withMermaid({
       { text: 'Getting Started', link: '/getting-started' },
       { text: 'Overview', link: '/overview' },
       { text: 'Scenarios', link: '/scenarios' },
+      { text: 'Security', link: '/security/' },
       { text: 'Get Involved', link: '/get-involved' },
     ],
 
@@ -111,6 +112,15 @@ export default withMermaid({
                 { text: 'Provider to Provider (P2P)', link: '/scenarios/details.html#provider-to-provider-p2p' },
             ],
         },
+
+      '/security/': [
+        {
+            text: 'Security',
+            items: [
+            { text: 'OpenSSF Scorecard', link: '/security/' },
+            ]
+        }
+      ],
 
     },
 
