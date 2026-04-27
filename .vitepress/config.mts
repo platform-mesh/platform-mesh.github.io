@@ -166,6 +166,15 @@ export default withMermaid({
             { text: 'api-syncagent', link: '/concepts/integration/api-syncagent' },
             { text: 'multi-cluster-runtime', link: '/concepts/integration/multi-cluster-runtime' },
             ]
+        },
+        {
+            text: 'Security',
+            items: [
+            { text: 'Overview', link: '/concepts/security' },
+            { text: 'Authentication', link: '/concepts/security/authentication' },
+            { text: 'Authorization', link: '/concepts/security/authorization' },
+            { text: 'Account Model', link: '/concepts/security/account-model' },
+            ]
         }
       ],
 
