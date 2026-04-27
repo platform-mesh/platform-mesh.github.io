@@ -34,7 +34,7 @@ This separation keeps the lifecycle API consistent even when the underlying impl
 
 Start with [Integration paths](../integration-paths.md) to choose a mechanism, then read [api-syncagent](../integration/api-syncagent.md) or [multi-cluster-runtime](../integration/multi-cluster-runtime.md) depending on the provider model. Use [Interaction patterns](../interaction-patterns/provider-to-consumer.md) to understand provider-to-consumer and provider-to-provider flows, and [API sharing](../api-sharing.md) for the contract between provider and consumer workspaces.
 
-When you are ready for hands-on work, follow the [Provider quick start](/tutorials/provider-quick-start.md) tutorial and the [HttpBin](/tutorials/examples/httpbin-provider.md) and [MongoDB](/tutorials/examples/mongodb-provider.md) provider examples.
+When you are ready for hands-on work, follow the [Provider quick start](/tutorials/provider-quick-start.md) tutorial for the api-syncagent path, then [Build a multi-cluster-runtime provider](/tutorials/build-multi-cluster-runtime-provider.md) for the custom-controller path. The [HttpBin provider example](/tutorials/examples/httpbin-provider.md) inspects the local demo provider in detail.
 
 ## Related
 

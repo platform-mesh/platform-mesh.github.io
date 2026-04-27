@@ -199,6 +199,6 @@ For the full component behavior, see [api-syncagent](../../concepts/integration/
 ## Next
 
 - [Provider quick start](../provider-quick-start.md)
-- [MongoDB provider example](./mongodb-provider.md)
+- [Build a multi-cluster-runtime provider](../build-multi-cluster-runtime-provider.md)
 - [API sharing](../../concepts/api-sharing.md)
 - [Provider to consumer](../../concepts/interaction-patterns/provider-to-consumer.md)
