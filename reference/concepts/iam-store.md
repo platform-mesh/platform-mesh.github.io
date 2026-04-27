@@ -1,10 +1,4 @@
 # IAM store has moved
 
-IAM store concepts are now documented in [Concepts > Identity and authorization](/concepts/identity-and-authorization.md).
-
-Related component references:
-
-- [Keycloak](/reference/components/keycloak.md)
-- [OpenFGA](/reference/components/openfga.md)
-- [rebac-authz-webhook](/reference/components/rebac-authz-webhook.md)
-- [Security operator](/reference/components/security-operator.md)
+- [IAM Store resource](/reference/resources/iamstore-resource.md) — the CR schema and reconciliation reference.
+- [Identity and authorization](/concepts/identity-and-authorization.md) — the conceptual model.

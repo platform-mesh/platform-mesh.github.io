@@ -185,6 +185,16 @@ export default withMermaid({
             { text: 'api-syncagent', link: '/reference/components/api-syncagent' },
             { text: 'multi-cluster-runtime', link: '/reference/components/multi-cluster-runtime' },
             ]
+        },
+        {
+            text: 'Resources',
+            link: '/reference/resources/',
+            items: [
+            { text: 'Account resource', link: '/reference/resources/account-resource' },
+            { text: 'IAM Store resource', link: '/reference/resources/iamstore-resource' },
+            { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
+            { text: 'Metadata catalog', link: '/reference/resources/metadata-catalog' },
+            ]
         }
       ],
 
