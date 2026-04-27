@@ -30,6 +30,8 @@ The provider owns the API contract and service automation. The consumer owns the
 | APIBinding | Consumer-side binding that makes a provider API available in a consumer workspace. |
 | APIResourceSchema | Schema object behind exported kcp APIs. |
 | Permission claim | Provider request for bounded access to related consumer-side resources, such as Secrets or ConfigMaps. |
+| Virtual workspace | Wildcard endpoint per APIExport that providers watch to see consumer-bound objects without per-workspace credentials. |
+| Identity hash | Stable tag in `APIExport.status.identityHash` providers use to scope wildcard reads when multiple providers export the same group/resource. |
 
 ## Platform Mesh usage
 
@@ -37,6 +39,22 @@ The provider owns the API contract and service automation. The consumer owns the
 - multi-cluster-runtime can be used by provider controllers that watch resources across workspaces.
 - Marketplace and portal workflows can guide or create APIBindings for consumers.
 - Permission claims are part of the provider-consumer trust boundary and should be accepted intentionally.
+
+## Permission claims
+
+A provider often needs bounded access to a few resources outside its own API — to write a `Secret` with connection credentials, read a credential the consumer placed in the workspace, or emit `events`. Permission claims are the consent mechanic for that access: the provider declares what it needs on the APIExport; the consumer accepts each claim explicitly on the APIBinding. Neither side can unilaterally escalate.
+
+Claims can be scoped by verb (read-only versus full access) and, in principle, by object selector. Platform Mesh itself is bootstrapped through this mechanism — the `core.platform-mesh.io` APIExport in `platform-mesh-system` claims access to workspaces, apibindings, logical clusters, and secrets so the account-operator can reconcile them on every account's behalf.
+
+For the full Platform Mesh examples, see [API sharing reference](/reference/components/kcp/api-sharing.md). For field-level semantics, see [permission claims](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#permission-claims) in the kcp docs.
+
+## Virtual workspace
+
+A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing a *virtual workspace* endpoint per APIExport — a single wildcard view that aggregates all bound objects across consumers. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
+
+Almost every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes a virtual workspace this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
+
+For URL contracts, terminating-phase endpoints, and Go discovery snippets, see [Virtual workspaces reference](/reference/components/kcp/virtual-workspaces.md).
 
 ## How Platform Mesh layers on this
 

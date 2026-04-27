@@ -104,6 +104,18 @@ spec:
 
 The URLs land in `status.apiExportEndpoints[].url`. See [Virtual workspaces](./virtual-workspaces.md) for how Platform Mesh consumes them.
 
+## Claim patterns across the platform-mesh org
+
+Different providers claim different things. Three patterns to compare:
+
+- **`api-syncagent` — automatic claims.** Every APIExport managed by api-syncagent gets `events` and `namespaces` claims injected automatically. If a `PublishedResource` declares a `related` Secret (e.g. for connection credentials), api-syncagent adds a `secrets` claim too. Providers using api-syncagent rarely write claim YAML themselves. ([related resources](https://github.com/kcp-dev/api-syncagent/blob/main/docs/content/publish-resources/related-resources.md))
+- **`gardener-syncer` — full-access claim on Secrets.** Claims `secrets` with `verbs: ["*"]` because it both reads provider credentials and writes Shoot-related secrets. ([apiexport-core.gardener.cloud.yaml](https://github.com/platform-mesh/gardener-syncer/blob/main/deploy/kcp/apiexport-core.gardener.cloud.yaml))
+- **`resource-broker` — verb-scoped read-only claim.** Claims `secrets` with `verbs: [get, list, watch]`. The provider can observe credentials but cannot mutate them — the kind of claim platform owners want to see when reviewing provider onboarding. ([apiexport-acceptapis.yaml](https://github.com/platform-mesh/resource-broker/blob/main/examples/platform-mesh/root:providers:resource-broker/apiexport-acceptapis.yaml))
+
+`selector` also accepts `matchLabels` and `matchExpressions`. Every accepted claim across the platform-mesh org today uses `matchAll: true`; selectors are available for restriction by label but not in production use yet.
+
+Claims added to an existing APIExport do not retroactively apply — consumers must update the binding to accept new claims explicitly.
+
 ## Related
 
 - [API sharing](/concepts/api-sharing.md) — Platform Mesh layering and design

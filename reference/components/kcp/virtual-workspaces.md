@@ -57,6 +57,32 @@ GetVWs: func(obj client.Object) ([]string, error) {
 - Authorization runs through the virtual-workspace's own RBAC, not raw `system:masters`.
 - Identity hash on the `APIExport` scopes which schemas are visible — providers cannot accidentally see other providers' data of the same group/resource.
 
+## Consumers in Platform Mesh
+
+| Component | What it watches |
+| --- | --- |
+| [account-operator](../account-operator.md) | `core.platform-mesh.io` — reconciles `Account` and `Workspace` objects across consumer workspaces. |
+| [rebac-authz-webhook](../rebac-authz-webhook.md) | The endpoint slice it's pointed at — resolves which workspace a `SubjectAccessReview` came from. |
+| [security-operator](../security-operator.md) | `core.platform-mesh.io` for IAM stores; `WorkspaceType.status.virtualWorkspaces[type=terminating]` for cleanup during workspace deletion. |
+| [Kubernetes GraphQL gateway](../kubernetes-graphql-gateway.md) | Configurable export — exposes the bound APIs as GraphQL. |
+| `terminal-controller-manager`, `search-operator`, `gardener-syncer`, `extension-manager-operator`, [marketplace `virtual-workspaces`](../marketplace.md), `resource-broker` | Each watches its own APIExport's VW. |
+
+The Helm value naming the slice each component watches is `kcp.apiExportEndpointSliceName`; account-operator defaults to `core.platform-mesh.io` ([helm-charts](https://github.com/platform-mesh/helm-charts/blob/main/charts/account-operator/values.yaml)).
+
+## End-to-end example
+
+The [example-mongodb-multiclusterruntime](https://github.com/platform-mesh/example-mongodb-multiclusterruntime) repo shows the full flow. The provider controller is run with a kubeconfig whose server URL is rewritten to the value from the endpoint slice:
+
+```bash
+# example-mongodb-multiclusterruntime: README.md
+VW_URL="$(kubectl get apiexportendpointslices.apis.kcp.io mongodb \
+  -o jsonpath='{.status.endpoints[0].url}')"
+kubectl --kubeconfig=kcp-controller.kubeconfig config set-cluster \
+  ... --server "${VW_URL}"
+```
+
+Through that single connection the controller reconciles every `MongoDB` object across every consumer workspace that bound the export, and writes status back through the same VW.
+
 ## Related
 
 - [API sharing](./api-sharing.md) — `APIExport` and `APIExportEndpointSlice` definitions
