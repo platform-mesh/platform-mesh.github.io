@@ -337,7 +337,7 @@ Verify the APIExport references the schema:
 KUBECONFIG=$KCP_KUBECONFIG kubectl get apiexport orchestrate.platform-mesh.io -o yaml
 ```
 
-Look for `spec.resources`.
+Look for the published schemas in the `spec` block.
 
 Check the agent logs:
 

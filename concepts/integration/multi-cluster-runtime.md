@@ -131,23 +131,19 @@ spec:
         status: {}
 ```
 
-The APIExport references that schema:
+The APIExport references that schema. The shape matches what the upstream `sample/mongo-api.yaml` ships today — `apis.kcp.io/v1alpha1` with `spec.latestResourceSchemas`:
 
 ```yaml
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
-  name: mongodb-provider
+  name: mongodb
 spec:
-  resources:
-    - group: mongodbcommunity.mongodb.com
-      name: mongodbcommunity
-      schema: v1.mongodbcommunity.mongodbcommunity.mongodb.com
-      storage:
-        crd: {}
+  latestResourceSchemas:
+    - v1.mongodbcommunity.mongodbcommunity.mongodb.com
 ```
 
-Consumers bind to this APIExport with an APIBinding and then create MongoDB resources in their own workspaces.
+Consumers bind to this APIExport (at path `root:mongodb` in the example) and then create MongoDB resources in their own workspaces. The consumer-side `APIBinding` in the example uses `apis.kcp.io/v1alpha2` to take advantage of `selector` and `verbs`. See [API sharing](/reference/components/kcp/api-sharing.md) for the v1alpha1/v1alpha2 differences.
 
 ## Controller shape
 

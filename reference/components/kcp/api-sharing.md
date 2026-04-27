@@ -15,6 +15,10 @@ See [API sharing](/concepts/api-sharing.md) for how Platform Mesh layers account
 | Identity hash | SHA-256 in `APIExport.status.identityHash`. Used by consumers to scope claim lookups across multiple exports of the same group/resource. | [Exporting APIs](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/) |
 | `APIExportEndpointSlice` | Publishes virtual-workspace URLs. | [Endpoint slices](https://docs.kcp.io/kcp/main/concepts/apis/api-export-endpoint-slices/) |
 
+## API versions
+
+`apis.kcp.io` serves both `v1alpha1` and `v1alpha2`. kcp converts between them automatically. Platform Mesh ships APIExport templates on `v1alpha1` and APIBinding templates on `v1alpha2`; both halves work against any consumer using either version. For the full schema and conversion semantics, see kcp's [exporting-apis](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/) and [binding-apis](https://docs.kcp.io/kcp/main/concepts/apis/binding-apis/) docs.
+
 ## APIExport — `core.platform-mesh.io`
 
 The Platform Mesh core APIExport publishes the `Account`, `AccountInfo`, `AuthorizationModel`, `Store`, and `Invite` schemas, and claims access to upstream tenancy and Kubernetes resources it needs to reconcile:
