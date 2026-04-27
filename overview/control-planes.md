@@ -2,4 +2,4 @@
 
 The control planes explanation is now [Control planes](/concepts/control-planes.md).
 
-The fact-oriented reference page is [Control planes and workspaces](/reference/concepts/control-planes.md).
+For canonical kcp behavior, see the upstream [kcp workspaces documentation](https://docs.kcp.io/kcp/main/concepts/workspaces/).
