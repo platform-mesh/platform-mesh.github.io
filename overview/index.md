@@ -1,3 +1,7 @@
+---
+redirect: /concepts/
+---
+
 # Overview has moved
 
 Overview content now lives in [Concepts](/concepts/).

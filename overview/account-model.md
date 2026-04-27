@@ -1,3 +1,7 @@
+---
+redirect: /concepts/account-model
+---
+
 # Account model has moved
 
 The account model explanation is now [Account model](/concepts/account-model.md).

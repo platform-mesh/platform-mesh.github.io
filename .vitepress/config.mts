@@ -32,6 +32,21 @@ export default withMermaid({
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
+  // Auto-redirect stub pages: any page with `redirect: /new/path` in its frontmatter
+  // gets a <meta http-equiv="refresh"> tag injected. Old v0.2 URLs that map to a
+  // single new location use this to bounce visitors automatically; the visible
+  // "moved" copy stays as a fallback for browsers that ignore meta refresh.
+  transformPageData(pageData) {
+    const redirect = pageData.frontmatter?.redirect
+    if (redirect) {
+      const url = base + String(redirect).replace(/^\//, '')
+      pageData.frontmatter.head = [
+        ...(pageData.frontmatter.head || []),
+        ['meta', { 'http-equiv': 'refresh', content: `0; url=${url}` }]
+      ]
+    }
+  },
+
   vite: {
     resolve: {
       alias: [

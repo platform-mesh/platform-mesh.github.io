@@ -1,3 +1,7 @@
+---
+redirect: /concepts/control-planes
+---
+
 # Control planes have moved
 
 The control planes explanation is now [Control planes](/concepts/control-planes.md).
