@@ -109,15 +109,25 @@ export default withMermaid({
 
       '/concepts/': [
         {
-            text: 'Concepts',
+            text: 'Foundations',
             items: [
             { text: 'Why Platform Mesh?', link: '/concepts/why-platform-mesh' },
             { text: 'Architecture', link: '/concepts/architecture' },
-            { text: 'Personas', link: '/concepts/personas' },
+            { text: 'Personas', link: '/concepts/personas/' },
+            ]
+        },
+        {
+            text: 'Account and control plane',
+            items: [
             { text: 'Account model', link: '/concepts/account-model' },
             { text: 'Control planes and workspaces', link: '/concepts/control-planes' },
-            { text: 'API sharing', link: '/concepts/api-sharing' },
             { text: 'Identity and authorization', link: '/concepts/identity-and-authorization' },
+            ]
+        },
+        {
+            text: 'API and integration',
+            items: [
+            { text: 'API sharing', link: '/concepts/api-sharing' },
             { text: 'Integration paths', link: '/concepts/integration-paths' },
             ]
         },
@@ -140,34 +150,25 @@ export default withMermaid({
 
       '/reference/': [
         {
-            text: 'Reference',
-            items: [
-            { text: 'Resources and metadata', link: '/reference/resources/' },
-            { text: 'Components', link: '/reference/components/' },
-            ]
-        },
-        {
-            text: 'Resources and metadata',
-            items: [
-            { text: 'Account resource', link: '/reference/resources/account-resource' },
-            { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
-            { text: 'Annotation catalog', link: '/reference/resources/annotation-catalog' },
-            ]
-        },
-        {
-            text: 'Components',
+            text: 'Platform Mesh runtime',
             items: [
             { text: 'kcp', link: '/reference/components/kcp' },
             { text: 'Platform Mesh operator', link: '/reference/components/platform-mesh-operator' },
             { text: 'Account operator', link: '/reference/components/account-operator' },
             { text: 'Security operator', link: '/reference/components/security-operator' },
-            { text: 'Kubernetes GraphQL gateway', link: '/reference/components/kubernetes-graphql-gateway' },
-            { text: 'Portal', link: '/reference/components/portal' },
-            { text: 'IAM', link: '/reference/components/iam' },
-            { text: 'Marketplace', link: '/reference/components/marketplace' },
+            { text: 'IAM service', link: '/reference/components/iam-service' },
+            { text: 'IAM UI', link: '/reference/components/iam-ui' },
             { text: 'Keycloak', link: '/reference/components/keycloak' },
             { text: 'OpenFGA', link: '/reference/components/openfga' },
             { text: 'rebac-authz-webhook', link: '/reference/components/rebac-authz-webhook' },
+            { text: 'Kubernetes GraphQL gateway', link: '/reference/components/kubernetes-graphql-gateway' },
+            { text: 'Portal', link: '/reference/components/portal' },
+            { text: 'Marketplace', link: '/reference/components/marketplace' },
+            ]
+        },
+        {
+            text: 'Integration paths',
+            items: [
             { text: 'api-syncagent', link: '/reference/components/api-syncagent' },
             { text: 'multi-cluster-runtime', link: '/reference/components/multi-cluster-runtime' },
             ]

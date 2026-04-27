@@ -22,13 +22,13 @@ html:not(.dark) .onion-dark, html:not(.dark) .arch-dark { display: none; }
 
 The **UI layer** includes the Platform Mesh portal and the Kubernetes GraphQL gateway. The portal is the consumer-facing experience. The gateway exposes Platform Mesh and kcp resources through GraphQL for UI clients.
 
-The **core control plane** is kcp. Platform Mesh uses kcp workspaces, APIExports, and APIBindings as its control-plane substrate. The account operator maps Platform Mesh accounts to that workspace hierarchy.
+The **core control plane** is [kcp](https://kcp.io). Platform Mesh uses kcp workspaces, APIExports, and APIBindings as its control-plane substrate. The account operator maps Platform Mesh accounts to that workspace hierarchy.
 
-The **identity and authorization layer** uses Keycloak for OpenID Connect authentication and OpenFGA for relationship-based authorization.
+The **identity and authorization layer** uses [Keycloak](https://www.keycloak.org) for OpenID Connect authentication and [OpenFGA](https://openfga.dev) for relationship-based authorization.
 
 The **deployment and supply chain layer** uses Flux and OCM to deliver and reconcile platform components.
 
-The **connectivity layer** connects provider runtimes to the mesh. api-syncagent is the low-effort CRD-based path. multi-cluster-runtime is the custom-controller path. kube-bind can be used where APIs need to be projected into regular Kubernetes clusters.
+The **connectivity layer** connects provider runtimes to the mesh. [api-syncagent](https://docs.kcp.io/api-syncagent/) is the low-effort CRD-based path. [multi-cluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) is the custom-controller path. [kube-bind](https://kube-bind.io) can be used where APIs need to be projected into regular Kubernetes clusters.
 
 ## Component interaction
 

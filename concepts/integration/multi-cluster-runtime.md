@@ -27,6 +27,8 @@ Use multi-cluster-runtime when:
 - lifecycle orchestration spans multiple systems
 - synchronization should be embedded in the provider controller
 
+The added effort over a standard `controller-runtime` operator is small — provider authors swap in the `mcr` packages instead of the standard ones and gain multi-cluster awareness without forking the framework.
+
 Use [api-syncagent](./api-syncagent.md) when the provider has standard CRD-based APIs and can use generic synchronization.
 
 ## Upstream documentation

@@ -45,7 +45,7 @@ Missing or stale authorization data can surface as authorization failures in kcp
 ## Related
 
 - [Account model](./account-model.md)
-- [OpenFGA component](/reference/components/openfga.md)
-- [IAM component](/reference/components/iam.md)
-- [Security operator](/reference/components/security-operator.md)
+- [Keycloak](/reference/components/keycloak.md)
+- [OpenFGA](/reference/components/openfga.md)
 - [rebac-authz-webhook](/reference/components/rebac-authz-webhook.md)
+- [Security operator](/reference/components/security-operator.md)

@@ -73,6 +73,15 @@ img[src='/search.png'] {
   cursor: zoom-in;
 }
 
+/* Mermaid sequenceDiagram: drop the border on swim-lane boxes so the tinted
+   background reads cleanly in both light and dark mode. The box background
+   rect is rendered with class `rect` via drawBackgroundRect — see
+   mermaid/.../chunk-CIYSR3OL.mjs and sequenceDiagram styles `g rect.rect`. */
+.mermaid svg g rect.rect {
+  stroke: none !important;
+  stroke-width: 0 !important;
+}
+
 /* Mermaid zoom lightbox */
 .mermaid-zoom-overlay {
   position: fixed;

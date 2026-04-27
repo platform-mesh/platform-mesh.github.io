@@ -295,4 +295,4 @@ Both paths give consumers a Kubernetes API in their workspace. The provider choo
 - [HttpBin provider example](./httpbin-provider.md)
 - [Provider quick start](../provider-quick-start.md)
 - [Integration paths](../../concepts/integration-paths.md)
-- [Service provider persona](../../concepts/personas.md#service-provider)
+- [Service provider persona](../../concepts/personas/service-provider.md)

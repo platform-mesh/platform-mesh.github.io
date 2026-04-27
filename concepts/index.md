@@ -6,7 +6,7 @@ Use this section when you want to understand why Platform Mesh exists, how its p
 
 1. [Why Platform Mesh?](./why-platform-mesh.md) - the motivation, design principles, and service-management problem Platform Mesh addresses.
 2. [Architecture](./architecture.md) - the runtime layers and how user requests flow through the system.
-3. [Personas](./personas.md) - the role guide for platform owners, service providers, and service consumers.
+3. [Personas](./personas/) - the role guide for platform owners, service providers, and service consumers.
 4. [Account model](./account-model.md) - how organizations and accounts map to isolated control planes.
 5. [Control planes and workspaces](./control-planes.md) - how Platform Mesh uses kcp workspaces without duplicating the full kcp docs.
 6. [API sharing](./api-sharing.md) - how provider APIs become available in consumer workspaces.

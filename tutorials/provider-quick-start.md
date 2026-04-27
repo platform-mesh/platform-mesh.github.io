@@ -450,7 +450,7 @@ The HttpBin operator did not need Platform Mesh-specific code. api-syncagent han
 ## Next
 
 - [Explore the example MSP](./explore-example-msp.md)
-- [Service provider persona](/concepts/personas.md#service-provider)
+- [Service provider persona](/concepts/personas/service-provider.md)
 - [Integration paths](/concepts/integration-paths.md)
 - [API sharing](/concepts/api-sharing.md)
 - [Provider to consumer](/concepts/interaction-patterns/provider-to-consumer.md)

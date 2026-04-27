@@ -30,5 +30,5 @@ This avoids forcing every provider to directly integrate with every other provid
 
 - [Provider to consumer](./provider-to-consumer.md)
 - [Provider to provider](./provider-to-provider.md)
-- [Personas](../personas.md)
+- [Personas](../personas/)
 - [Account model](../account-model.md)

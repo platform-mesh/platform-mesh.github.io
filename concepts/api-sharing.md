@@ -38,6 +38,16 @@ The provider owns the API contract and service automation. The consumer owns the
 - Marketplace and portal workflows can guide or create APIBindings for consumers.
 - Permission claims are part of the provider-consumer trust boundary and should be accepted intentionally.
 
+## How Platform Mesh layers on this
+
+The kcp primitives are generic. Platform Mesh layers account structure and lifecycle wiring on top:
+
+- **Where APIExports live.** Platform Mesh provisions dedicated provider workspaces under a known path. The platform owner controls those locations; providers do not pick arbitrary paths.
+- **Who consumes.** Consumer workspaces are mapped to [Accounts](./account-model.md) in the Platform Mesh hierarchy. APIBindings live inside a consumer Account's workspace.
+- **Authorization wiring.** When a binding is activated, Platform Mesh updates the consumer Account's [IAM store](./identity-and-authorization.md) so the new API surfaces are covered by OpenFGA alongside the rest of the workspace.
+
+A bare APIExport without Platform Mesh wiring works fine in vanilla kcp but will not appear in the marketplace, will not participate in IAM enforcement, and will not be discoverable through the Platform Mesh Portal.
+
 ## Upstream kcp ownership
 
 kcp owns APIExport, APIBinding, APIResourceSchema, permission claim, identity, and virtual workspace semantics.
