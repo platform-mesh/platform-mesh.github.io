@@ -70,7 +70,7 @@ A bare APIExport without Platform Mesh wiring works fine in vanilla kcp but will
 
 kcp owns APIExport, APIBinding, APIResourceSchema, permission claim, identity, and virtual workspace semantics.
 
-Use upstream kcp documentation for canonical behavior:
+Reference upstream kcp documentation for canonical behavior:
 
 - [Exporting and binding APIs](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/)
 - [APIBinding CRD reference](https://docs.kcp.io/kcp/main/reference/crd/apis.kcp.io/apibindings/)
