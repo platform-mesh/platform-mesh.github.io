@@ -52,7 +52,7 @@ For the full Platform Mesh examples, see [API sharing reference](/reference/comp
 
 A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregates all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
 
-Almost every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes a virtual workspace this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
+Every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes virtual workspaces this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
 
 For URL contracts, terminating-phase endpoints, and Go discovery snippets, see [Virtual workspaces reference](/reference/components/kcp/virtual-workspaces.md).
 
