@@ -48,7 +48,7 @@ graph TD
 
 A workspace has a path, such as `:root:org-a:team-a`. This avoids name conflicts between branches and gives platform owners a way to map organizational structure into the control plane.
 
-kcp workspace types can define which APIs are available by default and which parts of the hierarchy are allowed in a given area. Platform Mesh can use that to separate provider spaces, consumer account spaces, and marketplace or registry spaces without making every workspace identical.
+kcp workspace types allow defining which APIs are available by default and which parts of the hierarchy are allowed in a given area. Platform Mesh uses that to separate provider spaces, consumer account spaces, and marketplace or registry spaces without making every workspace identical.
 
 ## Provider and consumer workspaces
 
