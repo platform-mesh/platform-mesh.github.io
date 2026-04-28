@@ -48,9 +48,9 @@ Claims can be scoped by verb (read-only versus full access) and, in principle, b
 
 For the full Platform Mesh examples, see [API sharing reference](/reference/components/kcp/api-sharing.md). For field-level semantics, see [permission claims](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#permission-claims) in the kcp docs.
 
-## Virtual workspace
+## Virtual Workspaces
 
-A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing a *virtual workspace* endpoint per APIExport — a single wildcard view that aggregates all bound objects across consumers. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
+A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregates all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
 
 Almost every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes a virtual workspace this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
 
