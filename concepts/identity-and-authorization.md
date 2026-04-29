@@ -43,6 +43,7 @@ For the actual `AuthorizationConfiguration` YAML, the webhook deployment args, a
 
 ## Related
 
+- [Security architecture](/concepts/security/) — design view: separation of concerns, OIDC federation, ReBAC, account-model integration
 - [Account model](./account-model.md)
 - [IAM Store resource](/reference/resources/iamstore-resource.md)
 - [Keycloak](/reference/components/keycloak.md)
