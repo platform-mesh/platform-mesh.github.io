@@ -28,7 +28,7 @@ The **identity and authorization layer** uses [Keycloak](https://www.keycloak.or
 
 The **deployment and supply chain layer** uses Flux and OCM to deliver and reconcile platform components.
 
-The **connectivity layer** connects provider runtimes to the mesh. [api-syncagent](https://docs.kcp.io/api-syncagent/) is the low-effort CRD-based path. [multi-cluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) is the custom-controller path. [kube-bind](https://kube-bind.io) can be used where APIs need to be projected into regular Kubernetes clusters.
+The **connectivity layer** connects provider runtimes to the mesh. [api-syncagent](https://docs.kcp.io/api-syncagent/) is the low-effort CRD-based path. [multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) is the custom-controller path. [kube-bind](https://kube-bind.io) can be used where APIs need to be projected into regular Kubernetes clusters.
 
 ## Component interaction
 

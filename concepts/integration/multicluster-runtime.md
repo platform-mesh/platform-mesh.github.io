@@ -1,10 +1,10 @@
-# multi-cluster-runtime
+# multicluster-runtime
 
-multi-cluster-runtime is the advanced integration path for providers that need custom controller logic across multiple Kubernetes-like clusters.
+multicluster-runtime is the advanced integration path for providers that need custom controller logic across multiple Kubernetes-like clusters.
 
 ## Platform Mesh role
 
-In Platform Mesh, a provider controller can use multi-cluster-runtime to watch consumer workspaces through kcp and reconcile requests directly into a provider service runtime.
+In Platform Mesh, a provider controller can use multicluster-runtime to watch consumer workspaces through kcp and reconcile requests directly into a provider service runtime.
 
 ```mermaid
 sequenceDiagram
@@ -20,7 +20,7 @@ sequenceDiagram
 
 ## When to use it
 
-Use multi-cluster-runtime when:
+Use multicluster-runtime when:
 
 - the provider needs custom sync logic
 - the provider API is not a straightforward CRD sync case
@@ -61,7 +61,7 @@ flowchart TB
     end
 
     subgraph controller["Custom controller"]
-        MCR["multi-cluster-runtime<br>+ kcp APIExport provider"]
+        MCR["multicluster-runtime<br>+ kcp APIExport provider"]
     end
 
     subgraph downstream["Downstream Kubernetes cluster"]
@@ -86,7 +86,9 @@ flowchart TB
 
 ## Defining the API in kcp
 
-With api-syncagent, the CRD on the service cluster is converted into kcp schema objects automatically. With multi-cluster-runtime, the provider defines the kcp API explicitly.
+With api-syncagent, the CRD on the service cluster is converted into kcp schema objects automatically. With multicluster-runtime, the provider defines the kcp API explicitly.
+
+Hand-authoring an `APIResourceSchema` is not required. Providers can author a regular CRD with the usual tooling (`kubebuilder`, `controller-gen`) and convert it into an `APIResourceSchema` with kcp's [`apigen`](https://github.com/kcp-dev/kcp/tree/main/cmd/apigen) tool, then apply the result to kcp. The example below shows the hand-written form for clarity.
 
 The APIResourceSchema describes the consumer-facing resource:
 
@@ -147,7 +149,7 @@ Consumers bind to this APIExport (at path `root:mongodb` in the example) and the
 
 ## Controller shape
 
-The controller uses controller-runtime plus multi-cluster-runtime. The kcp APIExport provider discovers all consumer workspaces that have bound to the MongoDB APIExport.
+The controller uses controller-runtime plus multicluster-runtime. The kcp APIExport provider discovers all consumer workspaces that have bound to the MongoDB APIExport.
 
 ```go
 import (
@@ -185,7 +187,7 @@ The important design choices are explicit: the controller decides how to map spe
 
 ## Compare with api-syncagent
 
-| Aspect | HttpBin with api-syncagent | MongoDB with multi-cluster-runtime |
+| Aspect | HttpBin with api-syncagent | MongoDB with multicluster-runtime |
 | --- | --- | --- |
 | Integration mechanism | Generic agent | Custom Go controller |
 | Sync logic | Handled by api-syncagent | Written by the provider |
@@ -205,8 +207,8 @@ Use upstream docs and repositories for library APIs and provider implementations
 
 ## Related
 
-- [Build a multi-cluster-runtime provider](/tutorials/build-multi-cluster-runtime-provider.md) — runnable tutorial.
+- [Build a multicluster-runtime provider](/tutorials/build-multicluster-runtime-provider.md) — runnable tutorial.
 - [api-syncagent](./api-syncagent.md) — the simpler alternative path.
 - [Integration paths](../integration-paths.md)
-- [multi-cluster-runtime component reference](/reference/components/multi-cluster-runtime.md)
+- [multicluster-runtime component reference](/reference/components/multicluster-runtime.md)
 - [API sharing](../api-sharing.md)

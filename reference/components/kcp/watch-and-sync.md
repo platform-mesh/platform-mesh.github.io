@@ -100,4 +100,4 @@ The same pattern is used by the [security-operator](../security-operator.md) for
 
 - [Virtual workspaces](./virtual-workspaces.md) — the kcp endpoint multicluster-provider connects to
 - [API sharing](./api-sharing.md) — `APIExportEndpointSlice` configuration
-- [account-operator](../account-operator.md), [security-operator](../security-operator.md), [api-syncagent](../api-syncagent.md), [multi-cluster-runtime](../multi-cluster-runtime.md)
+- [account-operator](../account-operator.md), [security-operator](../security-operator.md), [api-syncagent](../api-syncagent.md), [multicluster-runtime](../multicluster-runtime.md)

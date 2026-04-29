@@ -25,10 +25,3 @@ Cross-consumption can also appear inside provider-to-provider relationships. A p
 The consumer owns the composition of requested capabilities. Each provider owns fulfillment for its own API. Platform Mesh owns the shared mediation layer that keeps discovery, authorization, account isolation, and API binding consistent across providers.
 
 This avoids forcing every provider to directly integrate with every other provider, and avoids giving consumers direct access to provider runtimes.
-
-## Related
-
-- [Provider to consumer](./provider-to-consumer.md)
-- [Provider to provider](./provider-to-provider.md)
-- [Personas](../personas/)
-- [Account model](../account-model.md)

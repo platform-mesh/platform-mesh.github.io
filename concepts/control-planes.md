@@ -27,7 +27,7 @@ The Account is the Platform Mesh abstraction. The workspace is the kcp mechanism
 
 ## Workspace hierarchy
 
-Workspaces are hierarchical. Platform Mesh can use that hierarchy to represent organizational and account structure while keeping API resources isolated at each level.
+Workspaces are hierarchical. Platform Mesh uses that hierarchy to represent organizational and account structure while keeping API resources isolated at each level.
 
 ```mermaid
 graph TD
@@ -48,7 +48,7 @@ graph TD
 
 A workspace has a path, such as `:root:org-a:team-a`. This avoids name conflicts between branches and gives platform owners a way to map organizational structure into the control plane.
 
-kcp workspace types can define which APIs are available by default and which parts of the hierarchy are allowed in a given area. Platform Mesh can use that to separate provider spaces, consumer account spaces, and marketplace or registry spaces without making every workspace identical.
+kcp workspace types allow defining which APIs are available by default and which parts of the hierarchy are allowed in a given area. Platform Mesh utilizes workspace types to template workspaces for organisations, accounts and providers.
 
 ## Provider and consumer workspaces
 

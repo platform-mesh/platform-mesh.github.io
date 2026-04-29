@@ -99,7 +99,7 @@ export default withMermaid({
             { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
             { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
             { text: 'Consume a service from a controller', link: '/tutorials/consume-service-from-controller' },
-            { text: 'Build a multi-cluster-runtime provider', link: '/tutorials/build-multi-cluster-runtime-provider' },
+            { text: 'Build a multicluster-runtime provider', link: '/tutorials/build-multicluster-runtime-provider' },
             ]
         }
       ],
@@ -164,7 +164,7 @@ export default withMermaid({
             text: 'Integration',
             items: [
             { text: 'api-syncagent', link: '/concepts/integration/api-syncagent' },
-            { text: 'multi-cluster-runtime', link: '/concepts/integration/multi-cluster-runtime' },
+            { text: 'multicluster-runtime', link: '/concepts/integration/multicluster-runtime' },
             ]
         }
       ],
@@ -204,7 +204,7 @@ export default withMermaid({
             text: 'Integration paths',
             items: [
             { text: 'api-syncagent', link: '/reference/components/api-syncagent' },
-            { text: 'multi-cluster-runtime', link: '/reference/components/multi-cluster-runtime' },
+            { text: 'multicluster-runtime', link: '/reference/components/multicluster-runtime' },
             ]
         },
         {

@@ -22,7 +22,7 @@ flowchart LR
 
 ## Data direction
 
-Consumer desired state flows from kcp to the service cluster. Provider status flows from the service cluster back to kcp.
+Spec is synchronized in both directions. Consumer desired state flows from kcp to the service cluster, and any worker-side mutations to that spec — for example from mutating webhooks on the service cluster — flow back to kcp so both sides converge. Status flows from the service cluster back to kcp.
 
 ```mermaid
 flowchart LR
@@ -31,7 +31,7 @@ flowchart LR
     ServiceStatus["service cluster status"]
     KcpStatus["kcp status"]
 
-    KcpSpec --> ServiceSpec
+    KcpSpec <--> ServiceSpec
     ServiceStatus --> KcpStatus
 ```
 
@@ -40,11 +40,11 @@ flowchart LR
 Use api-syncagent when:
 
 - the service already exposes CRDs
-- synchronization can follow spec-down/status-up
+- a spec-down/status-up flow with optional spec writeback from the service cluster covers the integration
 - the provider wants a configuration-driven integration
 - related resources such as Secrets or ConfigMaps need to be synchronized
 
-Use [multi-cluster-runtime](./multi-cluster-runtime.md) when the provider needs full control over synchronization logic.
+Use [multicluster-runtime](./multicluster-runtime.md) when the provider needs full control over synchronization logic.
 
 ## How api-syncagent works
 
@@ -88,7 +88,7 @@ flowchart LR
         crd --> pods
     end
 
-    sa <-- "spec down / status up" --> vw
+    sa <-- "spec sync (both ways) / status up" --> vw
     sa -- "reads" --> pr
 
     style kcp fill:none,stroke:#1a56db,stroke-width:3px,color:inherit
@@ -108,7 +108,7 @@ api-syncagent then:
 1. Converts the CRD into an APIResourceSchema in kcp.
 2. Adds the schema to the provider APIExport.
 3. Watches the APIExport virtual workspace for consumer resources.
-4. Syncs consumer spec down to the service cluster.
+4. Syncs spec between the consumer workspace and the service cluster — kcp drives the desired state, and any service-cluster mutations to that spec are written back to kcp.
 5. Syncs provider status back to the consumer workspace.
 
 The schema name in kcp is versioned and immutable. If the CRD changes, api-syncagent creates a new APIResourceSchema and updates the export.
@@ -144,7 +144,7 @@ sequenceDiagram
     Consumer->>CW: Read status
 ```
 
-The important direction is: spec flows from kcp to the service cluster, and status flows from the service cluster back to kcp.
+The important relationship is: spec is synchronized in both directions — kcp drives the desired state and any service-cluster mutations to that spec flow back — while status flows one way from the service cluster to kcp.
 
 ## Production considerations
 
@@ -177,7 +177,7 @@ api-syncagent owns the detailed configuration and object semantics. Use the upst
 ## Related
 
 - [Provider quick start](/tutorials/provider-quick-start.md) — runnable tutorial that builds an api-syncagent provider end to end.
-- [multi-cluster-runtime](./multi-cluster-runtime.md) — the alternative path for custom controller logic.
+- [multicluster-runtime](./multicluster-runtime.md) — the alternative path for custom controller logic.
 - [Integration paths](../integration-paths.md)
 - [api-syncagent component reference](/reference/components/api-syncagent.md)
 - [API sharing](../api-sharing.md)

@@ -21,7 +21,7 @@ See the [Platform Mesh runtime index](./components/) for the full grouped list.
 How service providers connect into the mesh. Each path links to the upstream tool's documentation for full configuration details.
 
 - [api-syncagent](./components/api-syncagent.md)
-- [multi-cluster-runtime](./components/multi-cluster-runtime.md)
+- [multicluster-runtime](./components/multicluster-runtime.md)
 
 For the conceptual decision between paths, see [Concepts > Integration paths](/concepts/integration-paths.md).
 

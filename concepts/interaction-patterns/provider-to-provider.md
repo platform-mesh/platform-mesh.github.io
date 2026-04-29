@@ -30,10 +30,3 @@ If the provider-to-provider relationship needs APIs projected into Kubernetes cl
 Each provider owns its own API contract and runtime automation. The composing provider owns the dependency on the upstream capability. The upstream provider owns fulfillment and status for its own service.
 
 Platform Mesh mediates the relationship through accounts, workspaces, identity, authorization, and declarative APIs. It does not collapse the two providers into one operational domain.
-
-## Related
-
-- [Provider to consumer](./provider-to-consumer.md)
-- [Cross-consumption](./cross-consumption.md)
-- [Integration paths](../integration-paths.md)
-- [API sharing](../api-sharing.md)

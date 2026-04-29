@@ -6,7 +6,7 @@ Service providers integrate with Platform Mesh by exposing declarative APIs and 
 
 Use **api-syncagent** when the provider already exposes Kubernetes CRDs and the standard spec-down / status-up sync pattern is enough.
 
-Use **multi-cluster-runtime** when the provider needs custom sync logic, non-CRD APIs, or reconciliation built directly into a provider controller.
+Use **multicluster-runtime** when the provider needs custom sync logic, non-CRD APIs, or reconciliation built directly into a provider controller.
 
 Both paths require a Kubernetes operator that reconciles your service's resources. The paths differ in *how* synchronization between kcp and the service cluster is handled, not in whether you need an operator.
 
@@ -15,7 +15,7 @@ Both paths require a Kubernetes operator that reconciles your service's resource
 | Path | Best fit | Provider effort |
 | --- | --- | --- |
 | api-syncagent | Existing CRD-based service APIs | Operator + deploy the sync agent; sync handled by the agent |
-| multi-cluster-runtime | Custom controllers, non-CRD APIs, complex sync logic | Operator built with mcr libraries; sync built into the operator |
+| multicluster-runtime | Custom controllers, non-CRD APIs, complex sync logic | Operator built with mcr libraries; sync built into the operator |
 
 ## kube-bind (work in progress)
 
@@ -29,7 +29,7 @@ This integration path is currently under development. See the [interaction patte
 ## Related
 
 - [api-syncagent](./integration/api-syncagent.md)
-- [multi-cluster-runtime](./integration/multi-cluster-runtime.md)
+- [multicluster-runtime](./integration/multicluster-runtime.md)
 - [API sharing](./api-sharing.md)
 - [Provider to consumer](./interaction-patterns/provider-to-consumer.md)
 - [Provider to provider](./interaction-patterns/provider-to-provider.md)

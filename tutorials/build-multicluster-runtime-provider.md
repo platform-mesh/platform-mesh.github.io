@@ -1,11 +1,11 @@
-# Build a multi-cluster-runtime provider
+# Build a multicluster-runtime provider
 
-This tutorial walks you through running a custom Go provider controller using multi-cluster-runtime instead of api-syncagent. You will publish a `MongoDBCommunity` API into kcp and use a custom controller to sync resources from consumer workspaces to a downstream Kubernetes cluster running the MongoDB Community Operator.
+This tutorial walks you through running a custom Go provider controller using multicluster-runtime instead of api-syncagent. You will publish a `MongoDBCommunity` API into kcp and use a custom controller to sync resources from consumer workspaces to a downstream Kubernetes cluster running the MongoDB Community Operator.
 
 By the end of this tutorial, you will have:
 
 - an APIResourceSchema and APIExport for the MongoDB API in a provider workspace
-- a custom Go controller running locally that uses multi-cluster-runtime and the kcp APIExport provider
+- a custom Go controller running locally that uses multicluster-runtime and the kcp APIExport provider
 - a consumer workspace that binds the API and creates a MongoDB resource
 - a downstream cluster reconciled by the controller, with status flowing back to the consumer
 
@@ -23,11 +23,11 @@ Before you begin, make sure you have:
 - Git installed
 - a downstream Kubernetes cluster with the [MongoDB Community Operator](https://www.mongodb.com/docs/kubernetes-operator/current/community-operator/) deployed
 
-For background on when this path applies, see [multi-cluster-runtime](/concepts/integration/multi-cluster-runtime.md).
+For background on when this path applies, see [multicluster-runtime](/concepts/integration/multicluster-runtime.md).
 
 ## What you will build
 
-Consumers create `MongoDBCommunity` resources in their kcp workspace. A custom Go controller using multi-cluster-runtime watches all bound consumer workspaces, projects each resource onto the downstream cluster, and syncs selected status fields back.
+Consumers create `MongoDBCommunity` resources in their kcp workspace. A custom Go controller using multicluster-runtime watches all bound consumer workspaces, projects each resource onto the downstream cluster, and syncs selected status fields back.
 
 The full source code is available in [`platform-mesh/example-mongodb-multiclusterruntime`](https://github.com/platform-mesh/example-mongodb-multiclusterruntime).
 
@@ -117,11 +117,11 @@ Look for `status.phase` and `status.version` populated by the downstream operato
 
 ## What you just did
 
-You ran a custom Go controller that uses multi-cluster-runtime to span kcp consumer workspaces and a downstream Kubernetes cluster. Unlike api-syncagent, the controller decides explicitly how to map spec down, how to handle deletes, and which status fields to surface back. That control is the trade-off the multi-cluster-runtime path makes.
+You ran a custom Go controller that uses multicluster-runtime to span kcp consumer workspaces and a downstream Kubernetes cluster. Unlike api-syncagent, the controller decides explicitly how to map spec down, how to handle deletes, and which status fields to surface back. That control is the trade-off the multicluster-runtime path makes.
 
 ## Next
 
-Continue with [multi-cluster-runtime](/concepts/integration/multi-cluster-runtime.md) for the architecture and the full pattern comparison with api-syncagent.
+Continue with [multicluster-runtime](/concepts/integration/multicluster-runtime.md) for the architecture and the full pattern comparison with api-syncagent.
 
 Optional branches:
 

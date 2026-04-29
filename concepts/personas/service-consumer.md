@@ -30,14 +30,6 @@ Consumers can interact with their workspace through different surfaces, all of w
 
 The choice of surface does not change the underlying API or the ownership boundary.
 
-## Common questions
-
-- Which services are available to my account?
-- How do I bind or consume a provider API?
-- Which resources do I create to request a service instance?
-- Where do I check status and failure information?
-- Can I use `kubectl`, GitOps, IaC, or the portal for this workflow?
-
 ## Recommended reading
 
 Start with [Explore the example MSP](/tutorials/explore-example-msp.md) for a guided walkthrough of the consumer experience. Then read [Interaction patterns](../interaction-patterns/provider-to-consumer.md) to understand how providers and consumers connect, [Account model](../account-model.md) for how consumer accounts are structured, and [API sharing](../api-sharing.md) for how provider APIs become available in the consumer workspace.

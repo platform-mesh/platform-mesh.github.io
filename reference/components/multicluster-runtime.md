@@ -1,8 +1,8 @@
-# multi-cluster-runtime
+# multicluster-runtime
 
 ## Purpose
 
-multi-cluster-runtime is a Go library for building controllers that reconcile across multiple Kubernetes-like clusters.
+multicluster-runtime is a Go library for building controllers that reconcile across multiple Kubernetes-like clusters.
 
 ## Runtime role
 
@@ -23,5 +23,5 @@ Add provider selection, Platform Mesh syncer patterns, APIExport virtual workspa
 
 ## Related
 
-- [multi-cluster-runtime concept](/concepts/integration/multi-cluster-runtime.md)
+- [multicluster-runtime concept](/concepts/integration/multicluster-runtime.md)
 - [API sharing](/concepts/api-sharing.md)

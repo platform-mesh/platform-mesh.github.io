@@ -33,10 +33,3 @@ When consumers need APIs close to their workload clusters, kube-bind can project
 The consumer owns the requested service resources in its account workspace. The provider owns the controller logic, runtime resources, and service implementation. Platform Mesh owns the shared control-plane boundary between them.
 
 This separation lets consumers use a consistent Kubernetes Resource Model interface while providers keep their runtime topology and operational model private.
-
-## Related
-
-- [Personas](../personas/)
-- [Account model](../account-model.md)
-- [Integration paths](../integration-paths.md)
-- [API sharing](../api-sharing.md)

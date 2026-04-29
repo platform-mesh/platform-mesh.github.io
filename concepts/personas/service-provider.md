@@ -22,19 +22,11 @@ The provider owns **what** can be ordered (the API schema) and **how** it gets f
 
 This separation keeps the lifecycle API consistent even when the underlying implementation changes. A provider can migrate from self-hosted infrastructure to a managed cloud service without breaking consumer workflows.
 
-## Common questions
-
-- Should this provider use api-syncagent or multi-cluster-runtime?
-- Which CRDs or APIs should be exposed to consumers?
-- How does consumer desired state reach the provider runtime?
-- How does provider status flow back to the consumer workspace?
-- How can one provider consume another provider's API?
-
 ## Recommended reading
 
-Start with [Integration paths](../integration-paths.md) to choose a mechanism, then read [api-syncagent](../integration/api-syncagent.md) or [multi-cluster-runtime](../integration/multi-cluster-runtime.md) depending on the provider model. Use [Interaction patterns](../interaction-patterns/provider-to-consumer.md) to understand provider-to-consumer and provider-to-provider flows, and [API sharing](../api-sharing.md) for the contract between provider and consumer workspaces.
+Start with [Integration paths](../integration-paths.md) to choose a mechanism, then read [api-syncagent](../integration/api-syncagent.md) or [multicluster-runtime](../integration/multicluster-runtime.md) depending on the provider model. Use [Interaction patterns](../interaction-patterns/provider-to-consumer.md) to understand provider-to-consumer and provider-to-provider flows, and [API sharing](../api-sharing.md) for the contract between provider and consumer workspaces.
 
-When you are ready for hands-on work, follow the [Provider quick start](/tutorials/provider-quick-start.md) tutorial for the api-syncagent path, then [Build a multi-cluster-runtime provider](/tutorials/build-multi-cluster-runtime-provider.md) for the custom-controller path.
+When you are ready for hands-on work, follow the [Provider quick start](/tutorials/provider-quick-start.md) tutorial for the api-syncagent path, then [Build a multicluster-runtime provider](/tutorials/build-multicluster-runtime-provider.md) for the custom-controller path.
 
 ## Related
 

@@ -36,7 +36,7 @@ The provider owns the API contract and service automation. The consumer owns the
 ## Platform Mesh usage
 
 - api-syncagent can publish CRD-based provider services through APIExports.
-- multi-cluster-runtime can be used by provider controllers that watch resources across workspaces.
+- multicluster-runtime can be used by provider controllers that watch resources across workspaces.
 - Marketplace and portal workflows can guide or create APIBindings for consumers.
 - Permission claims are part of the provider-consumer trust boundary and should be accepted intentionally.
 
@@ -50,9 +50,9 @@ For the full Platform Mesh examples, see [API sharing reference](/reference/comp
 
 ## Virtual workspace
 
-A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing a *virtual workspace* endpoint per APIExport — a single wildcard view that aggregates all bound objects across consumers. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
+A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregates all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
 
-Almost every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes a virtual workspace this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
+Every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes virtual workspaces this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
 
 For URL contracts, terminating-phase endpoints, and Go discovery snippets, see [Virtual workspaces reference](/reference/components/kcp/virtual-workspaces.md).
 
@@ -70,7 +70,7 @@ A bare APIExport without Platform Mesh wiring works fine in vanilla kcp but will
 
 kcp owns APIExport, APIBinding, APIResourceSchema, permission claim, identity, and virtual workspace semantics.
 
-Use upstream kcp documentation for canonical behavior:
+Reference upstream kcp documentation for canonical behavior:
 
 - [Exporting and binding APIs](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/)
 - [APIBinding CRD reference](https://docs.kcp.io/kcp/main/reference/crd/apis.kcp.io/apibindings/)
