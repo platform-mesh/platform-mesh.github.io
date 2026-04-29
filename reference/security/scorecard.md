@@ -10,7 +10,7 @@ Scorecard gives Platform Mesh continuous, public posture monitoring:
 
 - **Surfaces regressions** - runs on every push to `main` and weekly, so policy drift is caught quickly rather than discovered in a security audit.
 - **Public visibility** - results are published to `scorecard.dev` and linked via a per-repo badge, so adopters can verify our security hygiene without having to audit the repositories themselves.
-- **Complements other tools** - Renovate handles automated dependency updates; Trivy scans container images for known CVEs; Scorecard verifies that the surrounding process (branch protection, code review, signed artifacts, etc.) is in good shape.
+- **Complements other tools** - Renovate handles automated dependency updates and the Scorecard verifies that the surrounding process (branch protection, code review, signed artifacts, etc.) is in good shape.
 
 ## How it's configured
 
@@ -46,8 +46,4 @@ Samples, templates, PoCs, and meta repositories (e.g., `backlog`, `architecture`
 
 ## How to interpret scores
 
-Each check is scored independently and the overall score is a weighted average from 0 (worst) to 10 (best). The [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md) explains what each check measures and how to improve it. A score of 7 or above is generally considered a healthy posture for an actively maintained open-source project.
-
-:::tip Improving the score
-Most checks map directly to GitHub settings or workflow configurations. If a check is failing, the Scorecard viewer shows the specific reason and links to remediation guidance.
-:::
+Each check is scored independently and the overall score is a weighted average from 0 (worst) to 10 (best). The [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md) explains what each check measures and how to improve it. A score of 7 or above is generally considered a healthy posture for an actively maintained open-source project. If a check is failing, the Scorecard viewer shows the specific reason and links to remediation guidance.
