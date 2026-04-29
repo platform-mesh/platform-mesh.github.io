@@ -1,5 +1,6 @@
 import { withMermaid } from "vitepress-plugin-mermaid";
 import { fileURLToPath, URL } from 'node:url'
+import markdownItFootnote from 'markdown-it-footnote'
 
 // Base path is required because GitHub Pages serves multiple doc versions from subdirectories:
 //   - https://platform-mesh.github.io/main/          (main branch docs)
@@ -146,6 +147,14 @@ export default withMermaid({
             ]
         },
         {
+            text: 'Security architecture',
+            items: [
+            { text: 'Overview', link: '/concepts/security/' },
+            { text: 'Authentication', link: '/concepts/security/authentication' },
+            { text: 'Authorization', link: '/concepts/security/authorization' },
+            ]
+        },
+        {
             text: 'API and integration',
             items: [
             { text: 'API sharing', link: '/concepts/api-sharing' },
@@ -225,6 +234,12 @@ export default withMermaid({
       { icon: 'github', link: 'https://github.com/platform-mesh' }
     ]
 
+  },
+
+  markdown: {
+    config: (md) => {
+      md.use(markdownItFootnote)
+    }
   },
 
 })
