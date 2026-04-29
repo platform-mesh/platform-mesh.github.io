@@ -7,7 +7,7 @@ import { fileURLToPath, URL } from 'node:url'
 //   - https://platform-mesh.github.io/pr-preview/pr-123/  (PR previews)
 //
 // VitePress needs to know this base path at build time so all asset URLs (JS, CSS, images)
-// and internal links are prefixed correctly. Without it, a page at /main/overview/ would
+// and internal links are prefixed correctly. Without it, a page at /main/concepts/ would
 // try to load assets from / instead of /main/, causing 404 errors.
 //
 // The GitHub Actions workflow sets these env vars before running `npm run build`:
@@ -31,6 +31,21 @@ export default withMermaid({
   base,
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
+
+  // Auto-redirect stub pages: any page with `redirect: /new/path` in its frontmatter
+  // gets a <meta http-equiv="refresh"> tag injected. Old v0.2 URLs that map to a
+  // single new location use this to bounce visitors automatically; the visible
+  // "moved" copy stays as a fallback for browsers that ignore meta refresh.
+  transformPageData(pageData) {
+    const redirect = pageData.frontmatter?.redirect
+    if (redirect) {
+      const url = base + String(redirect).replace(/^\//, '')
+      pageData.frontmatter.head = [
+        ...(pageData.frontmatter.head || []),
+        ['meta', { 'http-equiv': 'refresh', content: `0; url=${url}` }]
+      ]
+    }
+  },
 
   vite: {
     resolve: {
@@ -56,11 +71,11 @@ export default withMermaid({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Getting Started', link: '/getting-started' },
-      { text: 'Overview', link: '/overview' },
-      { text: 'Scenarios', link: '/scenarios' },
-      { text: 'Security', link: '/security/' },
-      { text: 'Get Involved', link: '/get-involved' },
+      { text: 'Tutorials', link: '/tutorials/' },
+      { text: 'How-to guides', link: '/how-to-guides/' },
+      { text: 'Concepts', link: '/concepts/' },
+      { text: 'Reference', link: '/reference/' },
+      { text: 'Get involved', link: '/get-involved' },
     ],
 
     logo: {
@@ -77,47 +92,129 @@ export default withMermaid({
 
     sidebar: {
 
-      '/overview/': [
+      '/tutorials/': [
         {
-            text: 'Overview',
+            text: 'Tutorials',
             items: [
-            { text: 'Index', link: '/overview/' },
-            { text: 'Account Model', link: '/overview/account-model' },
-            { text: 'Guiding Principles', link: '/overview/principles' },
-            { text: 'Control Planes', link: '/overview/control-planes' },
-            { text: 'Design Decisions', link: '/overview/design-decision' },
+            { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
+            { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
+            { text: 'Consume a service from a controller', link: '/tutorials/consume-service-from-controller' },
+            { text: 'Build a multi-cluster-runtime provider', link: '/tutorials/build-multi-cluster-runtime-provider' },
             ]
         }
       ],
 
-      '/getting-started/': [
+      '/how-to-guides/': [
         {
-            text: 'Getting Started',
+            text: 'Set up and run',
             items: [
-            { text: 'Index', link: '/getting-started/' },
-            { text: 'Quick Start', link: '/getting-started/quick-start' },
-            { text: 'Next Steps', link: '/getting-started/next-steps' },
-            { text: 'Example MSP', link: '/getting-started/example-msp' },
-            { text: 'Troubleshooting', link: '/getting-started/troubleshooting' },
+            { text: 'Set up Platform Mesh locally', link: '/how-to-guides/set-up-platform-mesh-locally' },
+            { text: 'Speed up local rebuilds', link: '/how-to-guides/speed-up-local-rebuilds' },
             ]
-        }
-      ],
-
-
-        '/scenarios': {
-            text: 'Scenarios',
-            items:  [
-                { text: 'Scenarios', link: '/scenarios' },
-                { text: 'Provider to Consumer (P2C)', link: '/scenarios/details.html#provider-to-consumer-p2c' },
-                { text: 'Provider to Provider (P2P)', link: '/scenarios/details.html#provider-to-provider-p2p' },
-            ],
         },
-
-      '/security/': [
         {
-            text: 'Security',
+            text: 'Access local services',
             items: [
-            { text: 'OpenSSF Scorecard', link: '/security/' },
+            { text: 'Access the Keycloak admin console', link: '/how-to-guides/access-keycloak' },
+            { text: 'Access the OpenFGA playground', link: '/how-to-guides/access-openfga' },
+            { text: 'Access the kcp admin workspace', link: '/how-to-guides/access-kcp-admin' },
+            ]
+        },
+        {
+            text: 'Operate the local setup',
+            items: [
+            { text: 'Troubleshoot the local setup', link: '/how-to-guides/troubleshoot-local-setup' },
+            ]
+        }
+      ],
+
+      '/concepts/': [
+        {
+            text: 'Foundations',
+            items: [
+            { text: 'Why Platform Mesh?', link: '/concepts/why-platform-mesh' },
+            { text: 'Architecture', link: '/concepts/architecture' },
+            { text: 'Personas', link: '/concepts/personas/' },
+            ]
+        },
+        {
+            text: 'Account and control plane',
+            items: [
+            { text: 'Account model', link: '/concepts/account-model' },
+            { text: 'Control planes and workspaces', link: '/concepts/control-planes' },
+            { text: 'Identity and authorization', link: '/concepts/identity-and-authorization' },
+            ]
+        },
+        {
+            text: 'API and integration',
+            items: [
+            { text: 'API sharing', link: '/concepts/api-sharing' },
+            { text: 'Integration paths', link: '/concepts/integration-paths' },
+            ]
+        },
+        {
+            text: 'Interaction patterns',
+            items: [
+            { text: 'Provider to consumer', link: '/concepts/interaction-patterns/provider-to-consumer' },
+            { text: 'Provider to provider', link: '/concepts/interaction-patterns/provider-to-provider' },
+            { text: 'Cross-consumption', link: '/concepts/interaction-patterns/cross-consumption' },
+            ]
+        },
+        {
+            text: 'Integration',
+            items: [
+            { text: 'api-syncagent', link: '/concepts/integration/api-syncagent' },
+            { text: 'multi-cluster-runtime', link: '/concepts/integration/multi-cluster-runtime' },
+            ]
+        }
+      ],
+
+      '/reference/': [
+        {
+            text: 'Platform Mesh runtime',
+            items: [
+            {
+              text: 'kcp',
+              link: '/reference/components/kcp',
+              collapsed: false,
+              items: [
+                { text: 'Workspaces', link: '/reference/components/kcp/workspaces' },
+                { text: 'API sharing', link: '/reference/components/kcp/api-sharing' },
+                { text: 'Identity and authorization', link: '/reference/components/kcp/identity-and-authorization' },
+                { text: 'Virtual workspaces', link: '/reference/components/kcp/virtual-workspaces' },
+                { text: 'Watch and sync', link: '/reference/components/kcp/watch-and-sync' },
+                { text: 'Sharding', link: '/reference/components/sharding' },
+                { text: 'kcp-operator', link: '/reference/components/kcp-operator' },
+              ],
+            },
+            { text: 'Platform Mesh operator', link: '/reference/components/platform-mesh-operator' },
+            { text: 'Account operator', link: '/reference/components/account-operator' },
+            { text: 'Security operator', link: '/reference/components/security-operator' },
+            { text: 'IAM service', link: '/reference/components/iam-service' },
+            { text: 'IAM UI', link: '/reference/components/iam-ui' },
+            { text: 'Keycloak', link: '/reference/components/keycloak' },
+            { text: 'OpenFGA', link: '/reference/components/openfga' },
+            { text: 'rebac-authz-webhook', link: '/reference/components/rebac-authz-webhook' },
+            { text: 'Kubernetes GraphQL gateway', link: '/reference/components/kubernetes-graphql-gateway' },
+            { text: 'Portal', link: '/reference/components/portal' },
+            { text: 'Marketplace', link: '/reference/components/marketplace' },
+            ]
+        },
+        {
+            text: 'Integration paths',
+            items: [
+            { text: 'api-syncagent', link: '/reference/components/api-syncagent' },
+            { text: 'multi-cluster-runtime', link: '/reference/components/multi-cluster-runtime' },
+            ]
+        },
+        {
+            text: 'Resources',
+            link: '/reference/resources/',
+            items: [
+            { text: 'Account resource', link: '/reference/resources/account-resource' },
+            { text: 'IAM Store resource', link: '/reference/resources/iamstore-resource' },
+            { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
+            { text: 'Metadata catalog', link: '/reference/resources/metadata-catalog' },
             ]
         }
       ],
