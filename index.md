@@ -5,17 +5,17 @@ layout: home
 hero:
   name: "Platform Mesh"
   text:  "Building upon the Kubernetes API & Resource Model"
-  tagline: "Discover, order, and orchestrate services across any provider through the beloved kubectl ❤️"
+  tagline: "Discover, order, and orchestrate services across any provider through kubectl"
   image:
     src: '/pm_logo.svg'
     alt: 'Platform Mesh'
   actions:
     - theme: brand
-      text: Getting Started
-      link: /getting-started/
+      text: Tutorials
+      link: /tutorials/
     - theme: alt
-      text: Overview
-      link: /overview/
+      text: Concepts
+      link: /concepts/
 
 features:
   - title: Multi-tenant Control Planes
@@ -27,4 +27,3 @@ features:
   - title: Decentralised Marketplace Support
     details: Export and Binding interfaces that back decentralised marketplaces for consumers to browse available APIs and providers to publish services.
 ---
-

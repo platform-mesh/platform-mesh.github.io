@@ -4,6 +4,13 @@
 
 This is the repository backing the website of the Platform Mesh project.
 
+The documentation follows the [Diátaxis](https://diataxis.fr) framework, organised into four sections:
+
+- **Tutorials** (`tutorials/`) — guided, learning-oriented walkthroughs.
+- **How-to guides** (`how-to-guides/`) — task-oriented recipes for specific goals.
+- **Concepts** (`concepts/`) — explanation-oriented background on the architecture.
+- **Reference** (`reference/`) — fact-oriented lookup for components and resources.
+
 ## Contributing
 
 We welcome contributions to the Platform Mesh website! If you have
