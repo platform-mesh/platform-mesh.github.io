@@ -10,7 +10,7 @@ Instead of manually configuring authentication and authorization for each new wo
 
 The Security Operator automates security configuration across Platform Mesh:
 
-**Workspace Initialization** — When a new organization is created, operator creates `Store` resource with authorization models and tuples, `IdentityProviderConfiguration` resource that provisions Keycloak realms and OIDC clients, and `WorkspaceAuthenticationConfiguration` resource linking realms to KCP workspaces.
+**Workspace Initialization** — Security Operator initializes workspaces of `org` and `account` type. For an `org` workspace operator created `Store` resource with authorization models and tuples, `IdentityProviderConfiguration` resource that provisions Keycloak realms and OIDC clients, and `WorkspaceAuthenticationConfiguration` resource linking realms to KCP workspaces. For an `account` type workspace operator creates tuples with account creator information.
 
 **OpenFGA and Keycloak Management** — Maintains authorization stores (one per organization) with fine-grained access control, writes authorization tuples mapping users to roles and resources, provisions isolated Keycloak realms with OIDC clients, and dynamically extends authorization models when APIs are bound.
 
@@ -22,13 +22,13 @@ The Security Operator automates security configuration across Platform Mesh:
 
 ## Core Concepts
 
-The Security Operator manages several custom resources that work together to provide comprehensive security automation. Understanding these core concepts is essential for working with the Platform Mesh security model.
+The Security Operator manages several custom resources that work together to provide comprehensive security automation. 
 
 ### Store
 
 The `Store` resource represents an **OpenFGA** authorization store within the Platform Mesh. Each organization gets its own `Store`, which serves as the foundation for all authorization decisions within that organization's workspaces.
 
-Unlike traditional **RBAC** systems where permissions are evaluated against static role definitions, OpenFGA uses a **relationship-based authorization model**. The `Store` resource bridges Kubernetes and OpenFGA by:
+The `Store` resource bridges Kubernetes and OpenFGA by:
 
 - Maintaining the **core authorization model** that defines permission relationships
 - Managing **tuples** that map users to roles and resources
@@ -136,6 +136,7 @@ Configure Keycloak connection and identity provider behavior. The base URL and c
 | `--idp-additional-redirect-urls` | — | Additional redirect URLs for Keycloak clients |
 | `--idp-kubectl-client-redirect-urls` | `http://localhost:8000`, `http://localhost:18000` | Redirect URLs for kubectl Keycloak client |
 | `--set-default-password` | `false` | Enable setting default password for IDP users |
+| `--http-client-timeout-seconds` | `30` | HTTP client timeout in seconds |
 
 ::: info
 The Keycloak client secret is read from the `KEYCLOAK_CLIENT_SECRET` environment variable.
@@ -154,7 +155,6 @@ Configure email delivery for user invitations and notifications. All SMTP settin
 | `--idp-smtp-password` | — | SMTP password |
 | `--idp-smtp-ssl` | `false` | Enable SMTP SSL |
 | `--idp-smtp-starttls` | `false` | Enable SMTP STARTTLS |
-| `--http-client-timeout-seconds` | `30` | HTTP client timeout in seconds |
 
 ### KCP Integration
 
