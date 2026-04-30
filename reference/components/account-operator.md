@@ -28,6 +28,53 @@ Reconciliation of an `AccountInfo` resource runs through the following steps:
 
 Together, these pieces implement the account model described in [Account model](/concepts/account-model.md) and the resource-oriented view in [Account resource](/reference/resources/account-resource.md).
 
+## Installation / configuration notes
+
+### Helm
+The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](https://github.com/platform-mesh/helm-charts), CRDs ship as **`account-operator-crds`**. The authoritative values table is located in [charts/account-operator README](https://github.com/platform-mesh/helm-charts/blob/main/charts/account-operator/README.md).
+
+### CLI Flags
+| Type | Flag | Default | Description |
+| --- | --- | --- | --- |
+| Account operator-specific | **`--webhooks-enabled`** | `false` | Enable the webhook server |
+| Account operator-specific | **`--webhooks-cert-dir`** | `certs` | Webhook TLS certificate directory |
+| Account operator-specific | **`--webhooks-port`** | `9443` | Webhook server listen port |
+| Account operator-specific | **`--webhooks-deny-list`** | *(empty)* | Comma-separated denied organization names |
+| Account operator-specific | **`--webhooks-additional-account-types`** | *(empty)* | Extra allowed `spec.type` values (`StringSlice`; repeat **`--flag=v`** per value) |
+| Account operator-specific | **`--subroutines-workspace-type-enabled`** | `true` | WorkspaceType subroutine |
+| Account operator-specific | **`--subroutines-workspace-enabled`** | `true` | Workspace subroutine |
+| Account operator-specific | **`--subroutines-workspace-ready-enabled`** | `true` | Workspace ready subroutine |
+| Account operator-specific | **`--subroutines-account-info-enabled`** | `true` | ManageAccountInfo subroutine |
+| Account operator-specific | **`--controllers-account-info-enabled`** | `true` | AccountInfo controller (finalizer / deletion gate) |
+| Account operator-specific | **`--kcp-api-export-endpoint-slice-name`** | `core.platform-mesh.io` | APIExportEndpointSlice name |
+| Account operator-specific | **`--kcp-provider-workspace`** | `root` | Provider workspace |
+| Common | **`--debug-label-value`** | *(empty)* | Debug label value for controller filters |
+| Common | **`--max-concurrent-reconciles`** | `10` | Max concurrent reconciles per controller |
+| Common | **`--environment`** | *(empty)* | Service environment label |
+| Common | **`--region`** | `local` | Region label (e.g. local, staging, prod) |
+| Common | **`--kubeconfig`** | *(empty)* | Kubeconfig file path |
+| Common | **`--is-local`** | `false` | Mark execution as local |
+| Common | **`--image-name`** | *(empty)* | Image name metadata |
+| Common | **`--image-tag`** | *(empty)* | Image tag metadata |
+| Common | **`--log-level`** | `info` | Log level |
+| Common | **`--no-json`** | `false` | Disable JSON logs |
+| Common | **`--shutdown-timeout`** | `1m` | Graceful shutdown timeout |
+| Common | **`--metrics-bind-address`** | `:9090` | Metrics bind address |
+| Common | **`--metrics-secure`** | `false` | Serve metrics over HTTPS |
+| Common | **`--tracing-enabled`** | `false` | Enable OTLP tracing |
+| Common | **`--tracing-config-service-name`** | *(empty)* | Trace resource service name |
+| Common | **`--tracing-config-service-version`** | *(empty)* | Trace resource service version |
+| Common | **`--tracing-config-collector-endpoint`** | *(empty)* | OTLP collector endpoint |
+| Common | **`--enable-http2`** | `true` | HTTP/2 for metrics and webhook servers |
+| Common | **`--health-probe-bind-address`** | `:8090` | Liveness/readiness bind address |
+| Common | **`--leader-elect`** | `false` | Enable controller-manager leader election |
+
+### Environment variables
+
+| Variable | Description |
+| --- | --- |
+| **`KUBECONFIG`** | Kubeconfig to use |
+
 ## Links
 
 | Kind | Link |
