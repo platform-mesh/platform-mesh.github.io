@@ -42,6 +42,8 @@ Data between shards is primarily replicated through the cache-server - an eventu
 
 It replicates e.g. APIExports without direct shard-to-shard connections.
 
+For more details on the cache-server review the kcp [cache-server](https://docs.kcp.io/kcp/main/concepts/sharding/cache-server/) documentation.
+
 ## Workspace scheduling
 
 When a Workspace is created the scheduler picks a random valid shard to schedule the logical cluster for that Workspace on.
@@ -113,3 +115,4 @@ sequenceDiagram
 - [kcp sharding setup guide](https://docs.kcp.io/kcp/main/setup/sharding/)
 - [kcp logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster)
 - [kcp root Workspace](https://docs.kcp.io/kcp/main/concepts/workspaces/workspace-types/#root-workspace)
+- [kcp cache-server](https://docs.kcp.io/kcp/main/concepts/sharding/cache-server/)
