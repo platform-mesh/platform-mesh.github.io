@@ -13,8 +13,7 @@ The scope of this document is:
 
 A dedicated Security Response Team owns all vulnerability-related activity. Responsibilities include receiving and acknowledging vulnerability reports, reviewing automated findings, coordinating fixes, publishing GitHub Security Advisories and CVEs, and communicating with reporters and users throughout the process.
 
-<!-- TODO: Consider making this team public -->
-For an up-to-date list of all team members, see the `platform-mesh/security` GitHub team.
+For an up-to-date list of all team members, see [the `platform-mesh/security` GitHub team](https://github.com/orgs/platform-mesh/teams/security).
 
 ## Reporting Vulnerabilities
 
