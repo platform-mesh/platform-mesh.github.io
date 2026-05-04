@@ -25,7 +25,12 @@ High availability is achieved by making each component highly available by itsel
 
 ### shard
 
-A shard is an independent kcp API server backed by its own etcd. It hosts a set of logical clusters, the low-level primitive of Workspaces.
+A shard is a kcp process (or processes with replicas) with its own etcd and hosts a set of [logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster), the low-level primitive of [Workspaces](/reference/components/kcp/workspaces.md).
+
+Every kcp instance consists of one `root` shard, which also contains the special [`root` Workspace](https://docs.kcp.io/kcp/main/concepts/workspaces/workspace-types/#root-workspace).
+The `root` Workspace contains e.g. the `Shard` resource, which is managed by each shard itself to signal to the front-proxy and other shards that it exists.
+
+Shards contain the controllers and reconcilers that make kcp mechanisms like [API sharing](/reference/components/kcp/api-sharing.md) work.
 
 ### front-proxy
 
@@ -101,8 +106,10 @@ sequenceDiagram
 ## Related
 
 - [kcp](./kcp.md)
-- [kcp-operator](./kcp-operator.md)
+- [API sharing](/reference/components/kcp/api-sharing.md)
 - [Control planes and workspaces](/concepts/control-planes.md)
 - [Virtual Workspaces](/reference/components/kcp/virtual-workspaces.md)
 - [kcp sharding concepts](https://docs.kcp.io/kcp/main/concepts/sharding/)
 - [kcp sharding setup guide](https://docs.kcp.io/kcp/main/setup/sharding/)
+- [kcp logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster)
+- [kcp root Workspace](https://docs.kcp.io/kcp/main/concepts/workspaces/workspace-types/#root-workspace)
