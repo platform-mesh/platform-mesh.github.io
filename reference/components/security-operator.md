@@ -10,7 +10,7 @@ Instead of manually configuring authentication and authorization for each new wo
 
 The Security Operator automates security configuration across Platform Mesh:
 
-**Workspace Initialization** — Security Operator initializes workspaces of `org` and `account` type. For an `org` workspace operator creates `Store` resource with authorization model and tuples, `IdentityProviderConfiguration` resource that provisions Keycloak realm and OIDC clients, and `WorkspaceAuthenticationConfiguration` resource linking realms to KCP workspaces. For an `account` type workspace operator creates tuples with account creator information.
+**Workspace Initialization** — Security Operator initializes workspaces of `org` and `account` type. For an `org` workspace, the operator creates a `Store` resource with authorization model and tuples, an `IdentityProviderConfiguration` resource that provisions Keycloak realm and OIDC clients, and a `WorkspaceAuthenticationConfiguration` resource linking realms to KCP workspaces. For an `account` type workspace, the operator creates tuples with account creator information.
 
 **OpenFGA and Keycloak Management** — Maintains authorization stores (one per organization) with fine-grained access control, writes authorization tuples mapping users to roles and resources, provisions isolated Keycloak realms with OIDC clients, and dynamically extends authorization models when APIs are bound.
 
@@ -229,7 +229,7 @@ The IDP controller provisions these resources in Keycloak and stores client cred
 | `kubectl` client | **Public** | CLI authentication via OIDC device flow or local callback server |
 
 ::: tip
-The `kubectl` client is automatically configured with localhost redirect URLs to support `kubectl oidc-login` plugin.
+The `kubectl` client is automatically configured with localhost redirect URLs to support `kubectl oidc-login` and similar CLI authentication plugins.
 :::
 
 **Example IdentityProviderConfiguration resource:**
