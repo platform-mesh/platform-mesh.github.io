@@ -225,6 +225,13 @@ export default withMermaid({
             { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
             { text: 'Metadata catalog', link: '/reference/resources/metadata-catalog' },
             ]
+        },
+        {
+            text: 'Security',
+            link: '/reference/security/',
+            items: [
+            { text: 'OpenSSF Scorecard', link: '/reference/security/scorecard' },
+            ]
         }
       ],
 
