@@ -10,7 +10,7 @@ The [account-operator](../account-operator.md) creates and reconciles them.
 | --- | --- | --- |
 | `Workspace` (`tenancy.kcp.io/v1alpha1`) | One per organization, account, or provider. | [Workspaces](https://docs.kcp.io/kcp/main/concepts/workspaces/workspaces/) |
 | `WorkspaceType` | Defines API surface, default bindings, and parent/child constraints. Platform Mesh ships `orgs`, `org`, `account`. | [Workspace types](https://docs.kcp.io/kcp/main/concepts/workspaces/workspace-types/) |
-| `LogicalCluster` (`core.kcp.io/v1alpha1`) | Singleton `cluster` object inside each workspace. The `kcp.io/path` annotation is what Platform Mesh controllers route on. | [Logical clusters](https://docs.kcp.io/kcp/main/concepts/workspaces/logical-clusters/) |
+| `LogicalCluster` (`core.kcp.io/v1alpha1`) | Singleton `cluster` object inside each workspace. The `kcp.io/path` annotation is what Platform Mesh controllers route on. | [Logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster) |
 
 ## Workspace types Platform Mesh ships
 
