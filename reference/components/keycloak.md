@@ -30,6 +30,10 @@ This per-organization JWT configuration enables isolated identity management whi
 
 Keycloak realms are created, updated, and deleted automatically in sync with organization lifecycle through `IdentityProviderConfiguration` resources managed by the Security Operator.
 
+::: info
+See more information about [IdentityProviderConfiguration](/reference/components/security-operator.md#identityproviderconfiguration-idp) in the Security Operator component documentation.
+:::
+
 **Creation** — When an organization is created, the Security Operator provisions an `IdentityProviderConfiguration` resource named after the workspace. The IDP controller reconciles this resource and creates a corresponding Keycloak realm with the same name through the Keycloak Admin API.
 
 **Configuration** — Each realm is initialized with standard defaults:
