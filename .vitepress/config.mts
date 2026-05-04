@@ -106,7 +106,7 @@ export default withMermaid({
         {
             text: 'Components',
             items: [
-            { text: 'GraphQL Gateway', link: '/overview/components/graphql-gateway' },
+            { text: 'GraphQL Gateway', link: '/reference/components/kubernetes-graphql-gateway' },
             ]
         }
       ],
