@@ -161,5 +161,5 @@ Set any limit flag to `0` to disable that limit. Refer to the [component reposit
 
 ## Links
 
-- [Component Repository](https://github.com/platform-mesh/kubernetes-graphql-gateway)
+- [kubernetes-graphql-gateway repository](https://github.com/platform-mesh/kubernetes-graphql-gateway)
 - [ClusterAccess CRD Definition](https://github.com/platform-mesh/kubernetes-graphql-gateway/blob/main/config/crd/gateway.platform-mesh.io_clusteraccesses.yaml)
