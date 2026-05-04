@@ -20,7 +20,7 @@ Reconciliation of an `Account` resource runs through the following steps:
 6. Readiness of the resource itself is blocked until the earlier created `Workspace` is ready, i.e. potential initializers have finished. This ensures that the [security operator](/reference/components/security-operator.md) is finished with its work.
 
 ### **AccountInfo (`core.platform-mesh.io/v1alpha1`)**
-An `AccountInfo` resource with name `account` is created by the account operator in an account's workspace and holds information about the account the workspace belongs to. Its purpose is to expose that information to internal components that don't have information about or permission to workspaces/accounts higher up in the tree. It is comparable to the `LogicalCluster` object named `cluster` in every kcp workspace.
+An `AccountInfo` resource with name `account` is created by the account operator in an account's workspace and holds information about the account the workspace belongs to. Its purpose is to expose that information to internal components that don't have information about or permission to workspaces/accounts higher up in the tree.
 
 Reconciliation of an `AccountInfo` resource runs through the following steps:
 1. A finalizer is added. There are no other actions happening until the resource is deleted. Other components like the [security operator](/reference/components/security-operator.md) are expected to add their own finalizers when depending on information of the resource for e.g. `Workspace` termination.
