@@ -20,14 +20,34 @@ addressed as a separate cluster.
 Shared **WorkspaceType** definitions used for Platform Mesh tenancy (including the parent `orgs` type and the per-account `org` / `account` types) are
 created in the **`root:orgs`** workspace. **Workspace** objects for each `Account` are created in the respective Workspace they belong to.
 
-### Example Workspace tree
+### Example workspace tree
 
-```text
-root
-└── orgs           # Contains: WorkspaceTypes, Account CR "default" of type "org"
-    └── default    # Contains: Account CR "foobar" of type "account", AccountInfo "account"
-        └── foobar # Contains: AccountInfo "account"
+Workspace names usually match `Account` **`metadata.name`**. Logical paths (as in
+`AccountInfo.spec.*.path`) chain with colons.
+
+```mermaid
+flowchart TB
+  root([root])
+  orgs([orgs])
+  default([default])
+  foo([foo])
+  bar([bar])
+  baz([baz])
+  root --> orgs
+  orgs --> default
+  default --> foo
+  default --> bar
+  bar --> baz
 ```
+
+| Workspace | Typical contents | Example path |
+| --- | --- | --- |
+| **root** | kcp root shard; parent of the shared `orgs` workspace. | `root` |
+| **orgs** | **WorkspaceType** definitions for Platform Mesh; **`Account`** for organization **`default`** (`spec.type: org`). | `root:orgs` |
+| **default** | Organization workspace; **`Account`** **`foo`** and **`bar`** (`spec.type: account`); cluster-scoped **`AccountInfo`** **`account`**. | `root:orgs:default` |
+| **foo** | Nested account workspace; **`AccountInfo`** **`account`**. | `root:orgs:default:foo` |
+| **bar** | Nested account workspace; **`Account`** **`baz`** (`spec.type: account`); **`AccountInfo`** **`account`**. | `root:orgs:default:bar` |
+| **baz** | Nested account workspace (child of **`bar`**); **`AccountInfo`** **`account`**. | `root:orgs:default:bar:baz` |
 
 ## Resources
 
