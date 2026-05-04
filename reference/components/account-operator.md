@@ -4,7 +4,7 @@
 
 The account operator is the Platform Mesh component that converts defined account or organization entities into live control-plane structure. It owns reconciliation of the `Account`-Resource and ties its lifecycle to **kcp** workspace lifecycle. It ensures that each account gets the right isolation, workspace typing, and discoverable metadata.
 
-Its role is to sit between the tenancy declared and how KCP exposes that tenancy without concerning itself with the implementation of identity or access management.
+Its role is to sit between the tenancy declared and how kcp exposes that tenancy without concerning itself with the implementation of identity or access management.
 
 ## Resources
 
