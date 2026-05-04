@@ -36,9 +36,124 @@ The `Store` resource bridges Kubernetes and OpenFGA by:
 
 `Store` resources are created during workspace initialization when a new organization is provisioned or during the Platform Mesh installation phase. The Store controller watches these resources and creates corresponding stores in the OpenFGA service, then keeps the authorization model and tuples synchronized.
 
+**Example Store resource:**
+
+```yaml
+apiVersion: core.platform-mesh.io/v1alpha1
+kind: Store
+metadata:
+  name: test
+  finalizers:
+  - core.platform-mesh.io/fga-store
+  - core.platform-mesh.io/fga-tuples
+spec:
+  coreModule: |
+    module core
+
+    type user
+
+    type role
+      relations
+        define assignee: [user,user:*]
+
+    type core_platform-mesh_io_account
+      relations
+        define parent: [core_platform-mesh_io_account]
+
+        define owner: [role#assignee] or owner from parent
+        define member: [role#assignee] or owner
+
+        define get: member
+        define update: member
+        define patch: member
+        define delete: owner
+
+        define create_core_platform-mesh_io_accounts: member
+        define list_core_platform-mesh_io_accounts: member
+        define watch_core_platform-mesh_io_accounts: member
+
+        # org and account specific
+        define watch: member
+
+        define create_core_platform-mesh_io_accountinfos: member
+        define list_core_platform-mesh_io_accountinfos: member
+        define watch_core_platform-mesh_io_accountinfos: member
+
+        define list_core_kcp_io_logicalclusters: member
+        define watch_core_kcp_io_logicalclusters: member
+
+        # IAM specific
+        define manage_iam_roles: owner
+        define get_iam_roles: member
+        define get_iam_users: member
+
+        # APIExport binding control
+        define bind_inherited: [apis_kcp_io_apiexport] or bind_inherited from parent
+        define bind: [apis_kcp_io_apiexport] or bind_inherited
+
+    type core_platform-mesh_io_accountinfo
+      relations
+        define parent: [core_platform-mesh_io_account]
+
+        define member: member from parent
+        define owner: owner from parent
+
+        define get: member
+        define watch: member
+
+        # IAM specific
+        define manage_iam_roles: owner
+        define get_iam_roles: member
+        define get_iam_users: member
+
+    type core_kcp_io_logicalcluster
+      relations
+        define parent: [core_platform-mesh_io_account]
+
+        define member: member from parent
+
+        define get: member
+        define watch: member
+  tuples:
+  - object: role:core_platform-mesh_io_account/<logical-cluster-name>/<account-name>/owner
+    relation: assignee
+    user: user:<user-email>
+  - object: core_platform-mesh_io_account:<logical-cluster-name>/<account-name>
+    relation: owner
+    user: role:core_platform-mesh_io_account/<logical-cluster-name>/<account-name>/owner#assignee
+status:
+  storeId: 01KQF7C00X593KN79515TFA4VG
+  authorizationModelId: 01KQS6VBH2DWWEQDZJ3Z55RB31
+  conditions:
+  - type: Ready
+    status: "True"
+    reason: Complete
+    message: all subroutines completed successfully
+  managedTuples:
+  - object: role:core_platform-mesh_io_account/<logical-cluster-name>/<account-name>/owner
+    relation: assignee
+    user: user:<user-email>
+  - object: core_platform-mesh_io_account:<logical-cluster-name>/<account-name>
+    relation: owner
+    user: role:core_platform-mesh_io_account/<logical-cluster-name>/<account-name>/owner#assignee
+```
+
+**Key fields:**
+
+- **`spec.coreModule`**: The OpenFGA authorization model in DSL format, defining permission relationships for Platform Mesh core resources. The same core model is used across all organizations. See the [security-operator Helm chart values](https://github.com/platform-mesh/helm-charts/blob/0e2ae8fb755cf2a8eecdeff55eff5c1bce47e635/charts/security-operator/values.yaml#L115) for the configuration source.
+
+- **`spec.tuples`**: Initial authorization tuples that map users to roles. Tuple identifiers include the **logical cluster name** (the name of the kcp cluster where the [account](/concepts/account-model.md) is created) and the account name, forming a globally unique reference like `core_platform-mesh_io_account:<logical-cluster-name>/<account-name>`.
+
+- **`status.storeId`**: The OpenFGA store ID assigned when the store is created in OpenFGA.
+
+- **`status.authorizationModelId`**: The OpenFGA model ID for the current authorization schema version.
+
+- **`status.managedTuples`**: Tuples that were successfully written to OpenFGA, mirroring the spec tuples once reconciliation completes.
+Note that OpenFGA contains additional tuples created during account initialization and other operations — `managedTuples` only tracks the tuples explicitly declared in the `Store` resource spec.
+
 ### AuthorizationModel
 
-An `AuthorizationModel` defines the permission schema for a specific API within an OpenFGA store. While the core authorization model (bundled in each `Store`) covers Platform Mesh's built-in resources, `AuthorizationModel` resources **extend** this base to include provider APIs.
+An `AuthorizationModel` defines the permission schema for a specific API within an OpenFGA store. The common authorization model for every organization in OpenFGA consists of two parts: the **core module** from the `Store` resource and **auto-generated schemas** based on Kubernetes resources, generated by the security-operator during `Store` reconciliation. `AuthorizationModel` resources **extend** this base model with provider API-specific permissions.
 
 When somebody creates an `ApiBinding` to consume a provider's API, the Security Operator automatically:
 
@@ -47,6 +162,51 @@ When somebody creates an `ApiBinding` to consume a provider's API, the Security 
 3. Enables fine-grained access control for the newly bound API's resources
 
 This dynamic model extension means providers don't need to manually configure authorization for each consumer — the Security Operator handles it automatically as APIs are bound and unbound.
+
+**Example AuthorizationModel resource:**
+
+```yaml
+apiVersion: core.platform-mesh.io/v1alpha1
+kind: AuthorizationModel
+metadata:
+  name: orchestrate-platform-mesh-io-httpbins-<organization name>
+  finalizers:
+  - core.platform-mesh.io/fga-tuples
+spec:
+  model: |
+    module httpbins
+
+    extend type core_namespace
+      relations
+        define create_orchestrate_platform-mesh_io_httpbins: owner
+        define list_orchestrate_platform-mesh_io_httpbins: member
+        define watch_orchestrate_platform-mesh_io_httpbins: member
+
+    type orchestrate_platform-mesh_io_httpbin
+      relations
+        define parent: [core_namespace]
+        define member: [role#assignee] or owner or member from parent
+        define owner: [role#assignee] or owner from parent
+        
+        define get: member
+        define update: member
+        define delete: member
+        define patch: member
+        define watch: member
+
+        define manage_iam_roles: owner
+        define get_iam_roles: member
+        define get_iam_users: member
+  storeRef:
+    cluster: <logical-cluster-name>
+    name: <organization-name>
+```
+
+**Key fields:**
+
+- **`spec.model`**: The OpenFGA authorization model extension in DSL format. This model extends the core authorization model with provider API-specific types and permissions. In this example, it defines permissions for the `orchestrate_platform-mesh_io_httpbin` resource type and extends `core_namespace` to include httpbin-related operations.
+
+- **`spec.storeRef`**: Reference to the consumer organization's `Store` resource. The `cluster` field contains the logical cluster name, and `name` contains the organization name. The Security Operator uses this reference to merge the authorization model extension into the consumer's OpenFGA store.
 
 ### IdentityProviderConfiguration (IDP)
 
@@ -69,8 +229,69 @@ The IDP controller provisions these resources in Keycloak and stores client cred
 | `kubectl` client | **Public** | CLI authentication via OIDC device flow or local callback server |
 
 ::: tip
-The `kubectl` client is automatically configured with localhost redirect URLs to support `kubectl oidc-login` and similar CLI authentication plugins.
+The `kubectl` client is automatically configured with localhost redirect URLs to support `kubectl oidc-login` plugin.
 :::
+
+**Example IdentityProviderConfiguration resource:**
+
+```yaml
+apiVersion: core.platform-mesh.io/v1alpha1
+kind: IdentityProviderConfiguration
+metadata:
+  name: <organization-name>
+  finalizers:
+  - core.platform-mesh.io/idp-finalizer
+spec:
+  registrationAllowed: true
+  clients:
+  - clientName: <organization-name>
+    clientType: confidential
+    redirectUris:
+    - http://localhost:8000/callback*
+    - http://localhost:4300/callback*
+    - http://sub.localhost:4300/callback*
+    - https://<organization-name>.portal.localhost:8443/*
+    postLogoutRedirectUris:
+    - https://<organization-name>.portal.localhost:8443/logout*
+    secretRef:
+      name: portal-client-secret-<organization-name>-<organization-name>
+      namespace: default
+  - clientName: kubectl
+    clientType: public
+    redirectUris:
+    - http://localhost:8000
+    - http://localhost:18000
+    secretRef:
+      name: portal-client-secret-<organization-name>-kubectl
+      namespace: default
+status:
+  conditions:
+  - type: Ready
+    status: "True"
+    reason: Complete
+    message: all subroutines completed successfully
+  managedClients:
+    <organization-name>:
+      clientId: acce553c-4644-497e-a089-05a7c856370c
+      registrationClientUri: https://portal.localhost:8443/keycloak/realms/<organization-name>/clients-registrations/openid-connect/acce553c-4644-497e-a089-05a7c856370c
+      secretRef:
+        name: portal-client-secret-<organization-name>-<organization-name>
+        namespace: default
+    kubectl:
+      clientId: 11e0418a-af32-48c5-837e-9581343e4249
+      registrationClientUri: https://portal.localhost:8443/keycloak/realms/<organization-name>/clients-registrations/openid-connect/11e0418a-af32-48c5-837e-9581343e4249
+      secretRef:
+        name: portal-client-secret-<organization-name>-kubectl
+        namespace: default
+```
+
+**Key fields:**
+
+- **`spec.registrationAllowed`**: Controls whether self-registration is enabled in the Keycloak realm.
+
+- **`spec.clients`**: List of OIDC clients to provision in the Keycloak realm. Each client specifies its type (`confidential` or `public`), redirect URIs for authentication callbacks, post-logout redirect URIs, and a reference to the Kubernetes secret where credentials are stored.
+
+- **`status.managedClients`**: Map of successfully provisioned clients in Keycloak. For each client, the status includes the Keycloak-assigned `clientId`, the `registrationClientUri` used for OIDC Dynamic Client Registration updates, and the secret reference. The Security Operator uses this information to manage client lifecycle through the OIDC protocol.
 
 ### Invite
 
@@ -82,6 +303,27 @@ When an `Invite` is created, the Security Operator:
 - Grants appropriate permissions once the user accepts the invitation
 
 This enables **self-service user onboarding** while maintaining security boundaries between organizations.
+
+**Example Invite resource:**
+
+```yaml
+apiVersion: core.platform-mesh.io/v1alpha1
+kind: Invite
+metadata:
+  name: <invite-name>
+spec:
+  email: <user-email>
+status:
+  conditions:
+  - type: Ready
+    status: "True"
+    reason: Complete
+    message: all subroutines completed successfully
+```
+
+**Key fields:**
+
+- **`spec.email`**: The email address of the user to invite. The Security Operator sends an invitation email to this address and provisions a pending user account in the organization's Keycloak realm.
 
 ### ApiExportPolicy
 
@@ -100,6 +342,31 @@ An `ApiExportPolicy` consists of two parts:
 - `:root:orgs:example:*` — Grants permission to this workspace **and all descendants**
 
 `ApiExportPolicy` resources are typically created by Platform Mesh administrators when publishing APIs for broader consumption. The Security Operator watches these policies and writes the corresponding authorization tuples to OpenFGA, enabling the permitted workspaces to create `ApiBinding` resources.
+
+**Example APIExportPolicy resource:**
+
+```yaml
+apiVersion: core.platform-mesh.io/v1alpha1
+kind: APIExportPolicy
+metadata:
+  name: orchestrate.platform-mesh.io
+  finalizers:
+  - system.platform-mesh.io/apiexportpolicy-finalizer
+spec:
+  apiExportRef:
+    name: orchestrate.platform-mesh.io
+    clusterPath: root:providers:httpbin-provider
+  allowPathExpressions:
+  - :root:orgs:*
+status:
+  conditions:
+  - type: Ready
+    status: "True"
+    reason: Complete
+    message: all subroutines completed successfully
+  managedAllowExpressions:
+  - :root:orgs:*
+```
 
 ## Configuration
 
