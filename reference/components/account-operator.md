@@ -17,7 +17,7 @@ Reconciliation of an `Account` resource runs through the following steps:
 3. For accounts of type `org`, `WorkspaceTypes` for the organization's `Workspace` itself and its child `Accounts` are created.
 4. A `Workspace` for the `Account` is created, using one of the above mentioned `WorkspaceTypes`, depending on the account type.
 5. An `AccountInfo` resource of name `account` is created within the `Account`'s `Workspace` and populated with information.
-6. Readiness of the resource itself is blocked until the earlier created `Workspace` is ready, i.e. potential initalizers have finished. This ensures that the [security operator](/reference/components/security-operator.md) is finished with its work.
+6. Readiness of the resource itself is blocked until the earlier created `Workspace` is ready, i.e. potential initializers have finished. This ensures that the [security operator](/reference/components/security-operator.md) is finished with its work.
 
 ### **AccountInfo (`core.platform-mesh.io/v1alpha1`)**
 An `AccountInfo` resource with name `account` is created by the account operator in an account's workspace and holds information about the account the workspace belongs to. Its purpose is to expose that information to internal components that don't have information about or permission to workspaces/accounts higher up in the tree. It is comparable to the `LogicalCluster` object named `cluster` in every kcp workspace.
