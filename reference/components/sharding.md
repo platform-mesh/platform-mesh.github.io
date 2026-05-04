@@ -1,5 +1,11 @@
 # Sharding
 
+> [!WARNING]
+> In Platform Mesh 0.3 sharding is experimental an expected to break. It
+> is possible to deploy the local-setup with multiple shards by using
+> one of the `:sharded` tasks or adding `--sharded` to the deployment
+> script.
+
 kcp's architecture primarily consists of the front-proxy, the cache-server and shards. Shards are kcp's primary scaling mechanism for workspace capacity.
 
 This page only provides a terse overview of kcp's sharding to convey the concept. For a detailed discussion review the official kcp documentation:
