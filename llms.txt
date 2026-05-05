@@ -133,7 +133,3 @@ When assisting users who are building service providers for Platform Mesh:
 7. **For local development, direct users to the tutorials.** The provider quick start and multi-cluster-runtime tutorial are the canonical paths for building and testing a new provider.
    - [Provider quick start](tutorials/provider-quick-start.md) (api-syncagent path)
    - [Build a multi-cluster-runtime provider](tutorials/build-multi-cluster-runtime-provider.md) (mcr path)
-
-## Optional
-
-- [Security scorecard](reference/security/scorecard.md): OpenSSF Scorecard posture for Platform Mesh repositories.
