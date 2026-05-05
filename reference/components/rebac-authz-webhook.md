@@ -83,7 +83,7 @@ The authorization path has three high-level cases:
 
 | Case | What happens |
 | --- | --- |
-| Non-resource requests | If kcp sends a SAR without `resourceAttributes`, the webhook returns `allowed: true` for any URL whose path starts with a configured prefix (default `/api`, `/openapi`, `/version`); other non-resource paths get no opinion. In Platform Mesh's default kcp config, kcp's authorizer chain and webhook match conditions filter non-resource requests upstream. |
+| Non-resource requests | This branch is only relevant for clusters that call the webhook without `matchConditions`. In Platform Mesh's default kcp config, `matchConditions: has(request.resourceAttributes)` prevents non-resource SARs from reaching the webhook, and kcp's `AlwaysAllowPaths` authorizer runs earlier in the chain. If a cluster does send non-resource SARs to the webhook, paths with a configured prefix (default `/api`, `/openapi`, `/version`) return `allowed: true`; other non-resource paths get no opinion. |
 | The `root:orgs` workspace | Requests against the parent workspace that hosts all organizations are checked against the shared OpenFGA store named `orgs`. |
 | Workspaces under `root:orgs` | Requests against an organization workspace (for example `root:orgs:default`) or any account workspace beneath it (for example `root:orgs:default:foo`) are checked against that organization's own OpenFGA store. |
 
