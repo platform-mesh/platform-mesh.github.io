@@ -84,8 +84,8 @@ jobs:
           clean-exclude: pr-preview
           force: false
 
-      # Deploy root index.html redirect from main branch only
-      # This ensures the site root redirects to the default version (release-0.2)
+      # Deploy root-level files from main branch only
+      # This ensures the site root redirects to the default version and serves llms.txt
       - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
         if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
         with:
@@ -98,4 +98,6 @@ jobs:
             main
             release-*
           force: false
-          include: index.html
+          include: |
+            index.html
+            llms.txt
