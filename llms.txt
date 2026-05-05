@@ -1,6 +1,6 @@
 # Platform Mesh
 
-> Platform Mesh is a composable service platform built on the Kubernetes Resource Model. It lets service providers publish declarative APIs, service consumers discover and bind those APIs into isolated account workspaces, and platform owners operate the shared control-plane infrastructure. The runtime substrate is kcp — a Kubernetes-compatible API server that separates API management from container scheduling.
+> Platform Mesh is a composable service platform built on the Kubernetes Resource Model. It lets service providers publish declarative APIs, service consumers discover and bind those APIs into isolated account workspaces, and platform owners operate the shared control-plane infrastructure. The runtime substrate is kcp — a Kubernetes-like API server that hosts many isolated logical clusters (workspaces) and provides API sharing primitives (APIExport / APIBinding) without bundling Kubernetes' workload APIs (Pods, Deployments, Nodes).
 
 Platform Mesh solves the problem of offering, discovering, ordering, and managing services from different providers through a single, consistent declarative interface. Consumers express desired state using familiar Kubernetes resources; providers reconcile that intent into real services and report status back through the same control-plane path.
 
