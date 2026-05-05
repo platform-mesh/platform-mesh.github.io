@@ -40,34 +40,42 @@ Platform Mesh separates the responsibilities for identity, tenancy, policy stora
 
 ```mermaid
 flowchart LR
-  userRequest["User or service request"] --> kcp["kcp API server"]
-  kcp --> sar["SubjectAccessReview"]
-  sar --> webhook["rebac-authz-webhook /authz"]
-  webhook --> workspaceContext["kcp workspace context"]
-  workspaceContext --> openfga["OpenFGA authorization store"]
-  openfga --> decision["Authorization response"]
-  decision --> kcp
+  subgraph designTime["Design time"]
+    securityOperator["Security operator"] -->|writes stores, models, tuples| fgaStore[("OpenFGA stores")]
+  end
+
+  subgraph runtime["Runtime"]
+    userRequest["User or service request"] --> kcp["kcp API server"]
+    kcp --> sar["SubjectAccessReview"]
+    sar --> webhook["rebac-authz-webhook /authz"]
+    webhook --> workspaceContext["kcp workspace context"]
+    workspaceContext --> fgaCheck[("OpenFGA Check")]
+    fgaCheck --> decision["Authorization response"]
+    decision --> kcp
+  end
+
+  fgaStore -.read by.-> fgaCheck
 ```
 
-## Concepts and dependencies
+## Upstream concepts and dependencies
 
 `rebac-authz-webhook` depends on these Kubernetes and kcp concepts:
 
-| Concept | Role here |
-| --- | --- |
-| [Kubernetes webhook authorization](https://kubernetes.io/docs/reference/access-authn-authz/webhook/) | The HTTPS webhook protocol used by kcp to call `/authz`. |
-| [`SubjectAccessReview`](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#checking-api-access) | Request and response object sent between kcp and the webhook. |
-| [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) | Used for the management-cluster `ClusterRole` listed under [RBAC and permissions](#rbac-and-permissions). |
-| [kcp workspaces and logical clusters](https://docs.kcp.io/kcp/main/concepts/workspaces/) | Each kcp workspace is a logical cluster; the webhook reads `LogicalCluster` to identify the request's workspace. |
-| [kcp `APIExport` / `APIExportEndpointSlice`](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/) | Used at startup to discover virtual-workspace URLs for per-logical-cluster access. |
-| [kcp virtual workspaces](https://docs.kcp.io/kcp/main/concepts/workspaces/virtual-workspaces/) | Per-export endpoints the webhook calls into to read kcp resources scoped to a single logical cluster. |
-| [multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) + [kcp-dev/multicluster-provider](https://github.com/kcp-dev/multicluster-provider) | Provide the multicluster manager used to watch kcp logical clusters. See also [multi-cluster-runtime](./multi-cluster-runtime.md). |
-| [kcp-operator](./kcp-operator.md) | Reconciles `RootShard` and `Shard` CRs into running kcp shards, including the `spec.authorization.webhook` configuration that points kcp at this webhook. |
-| [OpenFGA](./openfga.md) | The relationship-based authorization engine the webhook delegates `Check` calls to. |
+| Concept | Platform Mesh page | Role here |
+| --- | --- | --- |
+| [Kubernetes webhook authorization](https://kubernetes.io/docs/reference/access-authn-authz/webhook/) | None | The HTTPS webhook protocol used by kcp to call `/authz`. |
+| [`SubjectAccessReview`](https://kubernetes.io/docs/reference/access-authn-authz/authorization/#checking-api-access) | None | Request and response object sent between kcp and the webhook. |
+| [Kubernetes RBAC](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) | None | Used for the management-cluster `ClusterRole` listed under [RBAC and permissions](#rbac-and-permissions). |
+| [kcp workspaces and logical clusters](https://docs.kcp.io/kcp/main/concepts/workspaces/) | [kcp workspaces](./kcp/workspaces.md) | Each kcp workspace is a logical cluster; the webhook reads `LogicalCluster` to identify the request's workspace. |
+| [kcp `APIExport` / `APIExportEndpointSlice`](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/) | [API sharing](./kcp/api-sharing.md) | Used at startup to discover virtual-workspace URLs for per-shard access. |
+| [kcp virtual workspaces](https://docs.kcp.io/kcp/main/concepts/workspaces/virtual-workspaces/) | [Virtual workspaces](./kcp/virtual-workspaces.md) | Per-export endpoints the webhook uses to read kcp resources. |
+| [multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) + [kcp-dev/multicluster-provider](https://github.com/kcp-dev/multicluster-provider) | [multi-cluster-runtime](./multi-cluster-runtime.md) | Provide the multicluster manager used to watch kcp logical clusters. |
+| [kcp-operator](./kcp-operator.md) | [kcp-operator](./kcp-operator.md) | Reconciles `RootShard` and `Shard` CRs into running kcp shards, including the `spec.authorization.webhook` configuration that points kcp at this webhook. |
+| [OpenFGA](./openfga.md) | [OpenFGA](./openfga.md) | The relationship-based authorization engine the webhook delegates `Check` calls to. |
 
 ## Authorization model
 
-The webhook accepts JSON `authorization.k8s.io/v1` and `v1beta1` `SubjectAccessReview` requests and returns a JSON `SubjectAccessReview` response.
+The webhook accepts JSON `authorization.k8s.io/v1` and `v1beta1` `SubjectAccessReview` requests and returns the matching `SubjectAccessReview` response. Platform Mesh's kcp `AuthorizationConfiguration` requests `subjectAccessReviewVersion: v1` (see [kcp identity and authorization](./kcp/identity-and-authorization.md)).
 
 kcp authenticates the caller before invoking the webhook and sends the resulting user in `spec.user`. The webhook trusts that identity and only decides whether the requested verb and resource are allowed in OpenFGA.
 
@@ -75,17 +83,15 @@ The authorization path has three high-level cases:
 
 | Case | What happens |
 | --- | --- |
-| Non-resource requests | Discovery paths such as `/api`, `/openapi`, and `/version` are allowed directly so Kubernetes clients can discover the API surface. |
-| The `root:orgs` workspace | Requests against the shared organizations workspace are checked against the OpenFGA store named `orgs`. |
-| Workspaces under `root:orgs` | Requests against organization and account workspaces (for example `root:orgs:default` or `root:orgs:default:foo`) are checked against that organization's OpenFGA store. |
+| Non-resource requests | If kcp sends a SAR without `resourceAttributes`, the webhook returns `allowed: true` for any URL whose path starts with a configured prefix (default `/api`, `/openapi`, `/version`); other non-resource paths get no opinion. In Platform Mesh's default kcp config, kcp's authorizer chain and webhook match conditions filter non-resource requests upstream. |
+| The `root:orgs` workspace | Requests against the parent workspace that hosts all organizations are checked against the shared OpenFGA store named `orgs`. |
+| Workspaces under `root:orgs` | Requests against an organization workspace (for example `root:orgs:default`) or any account workspace beneath it (for example `root:orgs:default:foo`) are checked against that organization's own OpenFGA store. |
 
-The webhook returns `allowed: true` when OpenFGA authorizes the request. Otherwise it returns `allowed: false` without setting `denied: true`, which kcp treats as "no opinion" and resolves through the rest of the authorizer chain.
+The webhook returns `allowed: true` when OpenFGA authorizes the request. Otherwise it returns `allowed: false` without setting `denied: true` ("no opinion"). In Platform Mesh, the webhook is last in the kcp authorizer chain (after RBAC and Node, see [kcp identity and authorization](./kcp/identity-and-authorization.md)), so a no-opinion result is effectively a deny.
 
 ### Workspace context
 
-Platform Mesh authorization is workspace-aware. The webhook uses kcp information to understand whether a request targets the shared `root:orgs` workspace or a workspace below `root:orgs:*`.
-
-For account workspaces, the webhook keeps a cache of workspace context. This cache links a logical cluster to the corresponding organization, account, REST mapping, and OpenFGA store ID. That context lets the webhook evaluate Kubernetes verbs such as `get`, `create`, `list`, `watch`, `update`, `patch`, and `delete` against the correct authorization model.
+For account workspaces the webhook keeps a per-logical-cluster cache linking the logical cluster to its organization, account, REST mapping, and OpenFGA store ID. The cache is consulted on every request to evaluate Kubernetes verbs (`get`, `create`, `list`, `watch`, `update`, `patch`, `delete`) against the correct OpenFGA store.
 
 ### Relationship-based checks
 
@@ -93,18 +99,20 @@ OpenFGA stores the relationship graph for organizations, accounts, namespaces, a
 
 ## kcp and OpenFGA integration
 
-The webhook needs access to the root kcp API server for discovery. It discovers `APIExportEndpointSlice` objects from the root API server and then uses the virtual workspace URLs from those endpoint slices for per-logical-cluster access.
+The webhook needs access to the root kcp API server for discovery. It reads the `APIExportEndpointSlice` (default `core.platform-mesh.io`) from the root API server; the slice enumerates one virtual-workspace URL per kcp shard. The webhook connects to those URLs and uses the multicluster manager (multicluster-runtime + kcp-dev/multicluster-provider) to partition the resulting stream by logical cluster.
 
 The default endpoint slice name is `core.platform-mesh.io`. This can be overridden with `--kcp-api-export-endpoint-slice-name`.
 
-At startup the webhook:
+### Startup dependencies
 
-1. Creates a kcp cluster client from the root API URL.
-2. Reads the `LogicalCluster` named `cluster` in `root:orgs`.
-3. Lists OpenFGA stores named `orgs` and uses the first returned store as the shared orgs store. The process exits if no such store exists.
-4. Starts a cluster cache that engages logical clusters discovered through the multicluster manager.
+`rebac-authz-webhook` reads the following resources at startup. If a required resource is absent, the process exits.
 
-For account workspaces, the cluster cache reads `Store` resources in `root:orgs` and uses `status.storeId` to route checks to the correct OpenFGA store.
+| Resource | Kind | Purpose |
+| --- | --- | --- |
+| `core.platform-mesh.io` (or value of `--kcp-api-export-endpoint-slice-name`) | `APIExportEndpointSlice` | Provides the per-shard virtual-workspace URLs the webhook connects to. |
+| `cluster` in `root:orgs` | `LogicalCluster` (`core.kcp.io/v1alpha1`) | Self-object for `root:orgs`; anchors the workspace context cache. |
+| Store named `orgs` | OpenFGA store | Required shared OpenFGA store for `root:orgs`. |
+| Per-organization stores | `Store` (`core.platform-mesh.io`, in `root:orgs`) | Read by the cluster cache; `status.storeId` routes account-workspace checks to the right OpenFGA store. |
 
 ## Configuration
 
@@ -116,9 +124,13 @@ For account workspaces, the cluster cache reads `Store` resources in `root:orgs`
 | `--health-probe-bind-address` | `:8090` | Bind address for health and readiness probes. |
 | `--openfga-addr` | `openfga.platform-mesh-system:8081` | OpenFGA gRPC address. |
 | `--webhook-cert-dir` | `config` | Directory containing webhook serving certificates. The chart mounts the cert secret at `/config`, matching this flag's working directory. |
-| `--webhook-cluster-key` | `authorization.kubernetes.io/cluster-name` | `SubjectAccessReview.spec.extra` key carrying the target logical-cluster ID. kcp populates this attribute, and the webhook uses it to choose between the shared `orgs` store and a per-organization store. |
+| `--webhook-cluster-key` | `authorization.kubernetes.io/cluster-name` | `SubjectAccessReview.spec.extra` key for the target logical-cluster ID. kcp sets this; the webhook uses it to route OpenFGA checks. |
 | `--webhook-allowed-nonresource-prefixes` | `/api`, `/openapi`, `/version` | Non-resource URL prefixes the webhook allows directly. |
 | `--kcp-api-export-endpoint-slice-name` | `core.platform-mesh.io` | kcp `APIExportEndpointSlice` used for logical-cluster discovery. |
+
+::: info
+`authorization.kubernetes.io/cluster-name` is the legacy kcp extra key. It is deprecated as of kcp v0.28.3; the canonical key is `authorization.kcp.io/cluster-name`. Set `--webhook-cluster-key=authorization.kcp.io/cluster-name` when running against a kcp version that emits only the canonical key. See the [kcp webhook authorizer documentation](https://docs.kcp.io/kcp/main/concepts/authorization/authorizers/).
+:::
 
 ### Environment variables
 
@@ -161,16 +173,28 @@ The webhook exposes controller-runtime Prometheus metrics on `--metrics-bind-add
 
 OpenTelemetry instrumentation covers outgoing kcp HTTP calls and OpenFGA gRPC calls. Trace export is configured through standard `OTEL_*` environment variables, which can be supplied through the chart's `extraEnvs`.
 
-Logging uses `klog` and the standard Kubernetes logging flags. The chart appends `--v=&#123;&#123; .Values.v &#125;&#125;` when `v` is set.
+Logging uses `klog` and the standard Kubernetes logging flags. The chart appends <span v-pre>`--v={{ .Values.v }}`</span> when `v` is set.
 
 ## TLS and trust
 
 kcp calls the webhook over HTTPS, so it must trust the certificate served by `/authz`. That certificate is signed by an in-cluster CA. The [Platform Mesh operator](./platform-mesh-operator.md) copies the matching CA bundle into the kubeconfig kcp uses for the webhook call.
 
-1. The Platform Mesh operator applies a self-signed cert-manager `Issuer` (`rebac-authz-webhook-issuer`) and a `Certificate` (`rebac-authz-webhook-cert`) for the in-cluster DNS name `rebac-authz-webhook.platform-mesh-system.svc.cluster.local`.
-2. The chart mounts the resulting `rebac-authz-webhook-cert` Secret at `/config`; `controller-runtime`'s webhook server picks the cert up via `--webhook-cert-dir`.
-3. The static `kcp-webhook-secret` template only contains `server`. The Platform Mesh operator's deployment subroutine reads `ca.crt` from the cert Secret and writes it into the kubeconfig stored in `kcp-webhook-secret` as `certificate-authority-data` for every `cluster` entry.
-4. kcp loads `kcp-webhook-secret` via `authorization.webhook.configSecretName` (set by the `infra` chart) and validates the webhook's serving certificate against that injected CA bundle.
+```mermaid
+sequenceDiagram
+  participant Op as platform-mesh-operator
+  participant CM as cert-manager
+  participant Sec as kcp-webhook-secret
+  participant Cert as rebac-authz-webhook-cert
+  participant KCP as kcp shard
+  participant Webhook as rebac-authz-webhook
+
+  Op->>CM: apply Issuer + Certificate
+  CM-->>Cert: issue serving cert + ca.crt
+  Cert-->>Webhook: mount at /config
+  Op->>Sec: write kubeconfig with certificate-authority-data from Cert
+  KCP->>Sec: load via authorization.webhook.configSecretName
+  KCP->>Webhook: HTTPS POST /authz, validate cert against injected CA
+```
 
 The webhook does not authenticate the caller itself. In the default setup, it relies on the in-cluster Service and serving certificate, and does not use client-certificate mTLS.
 
@@ -200,22 +224,9 @@ The infra chart templates these values into the `RootShard` and `Shard` custom r
 
 At runtime, kcp loads `kcp-webhook-secret` and calls its `/authz` URL for authorization decisions. The CA bundle in that kubeconfig is filled in by the Platform Mesh operator, as described in [TLS and trust](#tls-and-trust). The chart's own `certificates.create` is left at `false` because the certificate is issued by the Platform Mesh operator.
 
-## Local setup notes
+## Local setup
 
-The component ships in the standard Platform Mesh local setup; see [`helm-charts/local-setup`](https://github.com/platform-mesh/helm-charts/tree/main/local-setup). The local `PlatformMesh` overlay enables `hostAliases` for kcp host name resolution. OpenFGA and the Security operator must be healthy before the webhook can return useful authorization decisions.
-
-## Operations
-
-For day-to-day debugging, start from the dependency chain:
-
-- kcp must reference `kcp-webhook-secret` as its authorization webhook config.
-- `kcp-webhook-secret` must point to `https://rebac-authz-webhook.platform-mesh-system.svc.cluster.local:9443/authz`.
-- The `rebac-authz-webhook` Service must be reachable on port `9443`.
-- The pod needs a valid root kcp kubeconfig and access to the configured `APIExportEndpointSlice` (default `core.platform-mesh.io`).
-- OpenFGA must be reachable at the configured address. An OpenFGA store named `orgs` must exist before the webhook starts; otherwise the process exits.
-- Organization `Store` resources should have `status.storeId` populated before account workspace requests can be evaluated.
-
-If the webhook returns no opinion (`allowed: false` without `denied: true`), it means this webhook did not allow the request; kcp's final decision depends on the rest of its authorizer chain, not on an explicit deny from the webhook.
+For local setup, see [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md). The webhook ships with the standard local stack and depends on OpenFGA and the Security operator being healthy before it can return useful authorization decisions.
 
 ## Repository
 
@@ -228,5 +239,6 @@ If the webhook returns no opinion (`allowed: false` without `denied: true`), it 
 - [Security operator](./security-operator.md)
 - [Account operator](./account-operator.md)
 - [kcp](./kcp.md)
+- [kcp identity and authorization](./kcp/identity-and-authorization.md)
 - [Identity and authorization](../../concepts/identity-and-authorization.md)
 - [Authentication](../../concepts/security/authentication.md)
