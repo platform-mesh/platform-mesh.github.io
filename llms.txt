@@ -109,7 +109,7 @@ When assisting users who are building service providers for Platform Mesh:
    - Both paths support arbitrarily complex reconciliation logic in the provider operator. The difference is in who owns the sync transport, not in what the operator can do.
    - Type mapping between consumer-facing APIs and downstream resources does not by itself require multi-cluster-runtime — tools like KRO can handle that transformation in the kcp layer with api-syncagent.
 
-2. **Provider controllers reconcile resources from virtual workspaces.** The provider does not connect to each consumer workspace individually. It watches its APIExport's virtual workspace endpoint, which aggregates all bound consumer resources. The provider's service account gets RBAC access to the virtual workspace through kcp's authorization model.
+2. **Provider controllers reconcile resources from virtual workspaces.** The provider does not connect to each consumer workspace individually. It watches its APIExport's virtual-workspace endpoints (one per shard, via `APIExportEndpointSlice.status`), which aggregate all bound consumer resources for that shard. The provider's controller identity is granted access via verbs on the `apiexports/content` subresource in the APIExport's workspace plus read access to `APIExportEndpointSlice` — not by per-workspace credentials.
    - Platform Mesh: [Virtual workspaces](reference/components/kcp/virtual-workspaces.md), [Identity and authorization](concepts/identity-and-authorization.md)
    - Upstream kcp: [Virtual workspaces](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#virtual-workspace), [Authorization](https://docs.kcp.io/kcp/main/concepts/authorization/)
 
