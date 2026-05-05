@@ -32,6 +32,7 @@ Both paths require a Kubernetes operator that reconciles the service's resources
 - **UI layer** — Portal (consumer-facing) and Kubernetes GraphQL Gateway (exposes kcp resources via GraphQL).
 - **Core control plane** — kcp with workspaces, APIExports, APIBindings, and sharding.
 - **Identity and authorization** — Keycloak, OpenFGA, rebac-authz-webhook.
+- **Deployment and supply chain** — Flux and OCM deliver and reconcile platform components.
 - **Platform operators** — account-operator (account lifecycle), security-operator (IAM wiring), platform-mesh-operator (component lifecycle).
 -  **Connectivity** — api-syncagent and multi-cluster-runtime are the two provider integration paths today. kube-bind (work in progress) will serve a dual role: letting vanilla Kubernetes clusters publish APIs into the mesh as providers, and letting consumers project bound Platform Mesh APIs into their own workload clusters.
 
