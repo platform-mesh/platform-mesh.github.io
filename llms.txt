@@ -8,7 +8,7 @@ Platform Mesh solves the problem of offering, discovering, ordering, and managin
 
 - **Accounts** map organizational structure (organizations, teams, environments) to isolated kcp workspaces. Each account has its own API surface and authorization boundary.
 - **APIExport / APIBinding** (kcp primitives) connect providers and consumers. A provider publishes an APIExport; a consumer binds it into their workspace with an APIBinding and creates resources there.
-- **Virtual workspaces** let provider controllers watch all consumer-created resources for their exported API from a single endpoint, without per-workspace credentials.
+- **Virtual workspaces** let provider controllers watch all consumer-created resources for their exported API through the APIExport's virtual-workspace endpoints, without per-workspace credentials. In a sharded kcp, each shard exposes its own endpoint; controllers consume the list from `APIExportEndpointSlice.status`.
 - **Permission claims** are the consent mechanism for cross-boundary access (e.g., a provider writing a Secret with connection credentials into a consumer workspace).
 - **Identity and authorization** use Keycloak (OIDC authentication), OpenFGA (relationship-based authorization), and rebac-authz-webhook (kcp enforcement).
 
