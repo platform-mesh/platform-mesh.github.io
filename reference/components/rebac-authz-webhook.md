@@ -161,7 +161,7 @@ The webhook exposes controller-runtime Prometheus metrics on `--metrics-bind-add
 
 OpenTelemetry instrumentation covers outgoing kcp HTTP calls and OpenFGA gRPC calls. Trace export is configured through standard `OTEL_*` environment variables, which can be supplied through the chart's `extraEnvs`.
 
-Logging uses `klog` and the standard Kubernetes logging flags. The chart appends `--v={{ .Values.v }}` when `v` is set.
+Logging uses `klog` and the standard Kubernetes logging flags. The chart appends `--v=&#123;&#123; .Values.v &#125;&#125;` when `v` is set.
 
 ## TLS and trust
 
