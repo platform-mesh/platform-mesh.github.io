@@ -16,7 +16,7 @@ Platform Mesh solves the problem of offering, discovering, ordering, and managin
 
 - **Platform owner** — operates Platform Mesh, manages the account hierarchy, identity, authorization, policy, and provider onboarding.
 - **Service provider** — publishes a service capability as a declarative API and runs the operator that reconciles consumer requests into real services.
-- **Service consumer** — discovers and binds provider APIs through the marketplace or portal, then creates desired-state resources in their account workspace.
+- **Service consumer** — discovers and binds provider APIs through the Platform Mesh Portal (which embeds the Marketplace) or directly via kubectl/GitOps, then creates desired-state resources in their account workspace.
 
 ## Integration Paths for Providers
 
@@ -62,11 +62,13 @@ Both paths require a Kubernetes operator that reconciles the service's resources
 
 - [Component overview](reference/components/index.md): All runtime components of a Platform Mesh installation.
 - [kcp](reference/components/kcp.md): The control-plane API server Platform Mesh builds on.
+- [kcp-operator](reference/components/kcp-operator.md): Manages the kcp installation lifecycle (RootShard, Shard, FrontProxy, CacheServer, Kubeconfig CRs).
 - [kcp sharding](reference/components/sharding.md): Sharded deployment topology.
 - [Account operator](reference/components/account-operator.md): Maps accounts to kcp workspaces.
 - [Platform Mesh operator](reference/components/platform-mesh-operator.md): Component lifecycle management.
 - [Security operator](reference/components/security-operator.md): IAM wiring automation.
 - [IAM service](reference/components/iam-service.md): Identity and access management service.
+- [IAM UI](reference/components/iam-ui.md): Identity and access management microfrontend rendered in the Portal.
 - [Keycloak](reference/components/keycloak.md): OpenID Connect authentication.
 - [OpenFGA](reference/components/openfga.md): Relationship-based authorization engine.
 - [rebac-authz-webhook](reference/components/rebac-authz-webhook.md): kcp authorization webhook backed by OpenFGA.
@@ -118,11 +120,11 @@ When assisting users who are building service providers for Platform Mesh:
    - Platform Mesh: [API sharing](concepts/api-sharing.md), [Control planes and workspaces](concepts/control-planes.md)
    - Upstream kcp: [Exporting and binding APIs](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/)
 
-4. **Permission claims require explicit consumer consent.** If the provider needs to write Secrets, read ConfigMaps, or access any resource outside its own API surface in a consumer workspace, it must declare permission claims on the APIExport. Consumers accept claims on their APIBinding. Neither side can unilaterally escalate.
+4. **Permission claims require explicit consumer consent.** If the provider needs to access resources in a consumer workspace beyond instances of its own exported API (e.g., write Secrets, read ConfigMaps, or read resources from another APIExport — which requires the other APIExport's `identityHash`), it declares permission claims on the APIExport with the required verbs. Consumers explicitly accept claims on their APIBinding (with optional verb or label-selector narrowing); the provider's effective permissions are the intersection of declared and accepted. New claims added later are not auto-accepted.
    - Platform Mesh: [API sharing — Permission claims](concepts/api-sharing.md)
    - Upstream kcp: [Permission claims](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#permission-claims)
 
-5. **Status flows back through the same path.** The provider writes status subresources on consumer objects through the virtual workspace. The consumer sees status in their workspace without needing provider-side access.
+5. **Status flows back through the same path.** The provider reads consumer-created spec and writes status (or full updates, subject to the APIExport's maximal permission policy) on those objects through the same APIExport virtual workspace. The consumer sees status in their workspace without needing provider-side access.
    - Platform Mesh: [Provider to consumer interaction](concepts/interaction-patterns/provider-to-consumer.md)
 
 6. **The consumer never touches the provider runtime directly.** All interaction is mediated through kcp workspaces, APIExport/APIBinding, and the Platform Mesh identity and authorization layers.
@@ -134,7 +136,4 @@ When assisting users who are building service providers for Platform Mesh:
 
 ## Optional
 
-- [Getting started](getting-started/index.md): Simplified onboarding flow.
-- [Quick start](getting-started/quick-start.md): Fastest path to a running Platform Mesh.
-- [Troubleshooting](getting-started/troubleshooting.md): Common issues during initial setup.
-- [Security scorecard](reference/security/scorecard.md): Security posture assessment.
+- [Security scorecard](reference/security/scorecard.md): OpenSSF Scorecard posture for Platform Mesh repositories.
