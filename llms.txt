@@ -113,7 +113,7 @@ When assisting users who are building service providers for Platform Mesh:
    - Platform Mesh: [Virtual workspaces](reference/components/kcp/virtual-workspaces.md), [Identity and authorization](concepts/identity-and-authorization.md)
    - Upstream kcp: [Virtual workspaces](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#virtual-workspace), [Authorization](https://docs.kcp.io/kcp/main/concepts/authorization/)
 
-3. **The provider owns the APIExport and the operator.** The provider defines the API contract (CRDs / APIResourceSchema), publishes it as an APIExport from a provider workspace, and runs the operator that reconciles consumer-created resources into real services.
+3.  **The provider owns the APIExport and the operator.** The provider defines the API contract as one or more `APIResourceSchema` objects (the kcp equivalent of a CRD; an APIExport references APIResourceSchemas, not CRDs directly), publishes them as an APIExport from a provider workspace, and runs the operator that reconciles consumer-created resources into real services.
    - Platform Mesh: [API sharing](concepts/api-sharing.md), [Control planes and workspaces](concepts/control-planes.md)
    - Upstream kcp: [Exporting and binding APIs](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/)
 
