@@ -1,0 +1,135 @@
+# Platform Mesh
+
+> Platform Mesh is a composable service platform built on the Kubernetes Resource Model. It lets service providers publish declarative APIs, service consumers discover and bind those APIs into isolated account workspaces, and platform owners operate the shared control-plane infrastructure. The runtime substrate is kcp — a Kubernetes-like API server that hosts many isolated logical clusters (workspaces) and provides API sharing primitives (APIExport / APIBinding) without bundling Kubernetes' workload APIs (Pods, Deployments, Nodes).
+
+Platform Mesh solves the problem of offering, discovering, ordering, and managing services from different providers through a single, consistent declarative interface. Consumers express desired state using familiar Kubernetes resources; providers reconcile that intent into real services and report status back through the same control-plane path.
+
+## Core Abstractions
+
+- **Accounts** map organizational structure (organizations, teams, environments) to isolated kcp workspaces. Each account has its own API surface and authorization boundary.
+- **APIExport / APIBinding** (kcp primitives) connect providers and consumers. A provider publishes an APIExport; a consumer binds it into their workspace with an APIBinding and creates resources there.
+- **Virtual workspaces** let provider controllers watch all consumer-created resources for their exported API through the APIExport's virtual-workspace endpoints, without per-workspace credentials. In a sharded kcp, each shard exposes its own endpoint; controllers consume the list from `APIExportEndpointSlice.status`.
+- **Permission claims** are the consent mechanism for cross-boundary access (e.g., a provider writing a Secret with connection credentials into a consumer workspace).
+- **Identity and authorization** use Keycloak (OIDC authentication), OpenFGA (relationship-based authorization), and rebac-authz-webhook (kcp enforcement).
+
+## Personas
+
+- **Platform owner** — operates Platform Mesh, manages the account hierarchy, identity, authorization, policy, and provider onboarding.
+- **Service provider** — publishes a service capability as a declarative API and runs the operator that reconciles consumer requests into real services.
+- **Service consumer** — discovers and binds provider APIs through the Platform Mesh Portal (which embeds the Marketplace) or directly via kubectl/GitOps, then creates desired-state resources in their account workspace.
+
+## Integration Paths for Providers
+
+Service providers integrate with Platform Mesh through one of two paths:
+
+- **api-syncagent** — use when the provider already has Kubernetes CRDs and the standard spec-down / status-up sync pattern is sufficient. The sync agent handles synchronization between kcp and the service cluster.
+- **multi-cluster-runtime** — use when the provider needs custom sync logic, non-CRD APIs, or reconciliation built directly into the provider controller. Sync is built into the operator using mcr libraries.
+
+Both paths require a Kubernetes operator that reconciles the service's resources. They differ in how synchronization is handled, not in whether an operator is needed.
+
+## Architecture Layers
+
+- **UI layer** — Portal (consumer-facing) and Kubernetes GraphQL Gateway (exposes kcp resources via GraphQL).
+- **Core control plane** — kcp with workspaces, APIExports, APIBindings, and sharding.
+- **Identity and authorization** — Keycloak, OpenFGA, rebac-authz-webhook.
+- **Deployment and supply chain** — Flux and OCM deliver and reconcile platform components.
+- **Platform operators** — account-operator (account lifecycle), security-operator (IAM wiring), platform-mesh-operator (component lifecycle).
+-  **Connectivity** — api-syncagent and multi-cluster-runtime are the two provider integration paths today. kube-bind (work in progress) will serve a dual role: letting vanilla Kubernetes clusters publish APIs into the mesh as providers, and letting consumers project bound Platform Mesh APIs into their own workload clusters.
+
+## Concepts
+
+- [Why Platform Mesh](concepts/why-platform-mesh.md): Motivation, design principles, and the managed-service-provider pattern.
+- [Architecture](concepts/architecture.md): Component layers and how user requests flow through the system.
+- [Personas](concepts/personas/index.md): Role guide for platform owners, service providers, and service consumers.
+- [Account model](concepts/account-model.md): How organizations and accounts map to isolated control planes.
+- [Control planes and workspaces](concepts/control-planes.md): How Platform Mesh uses kcp workspaces.
+- [API sharing](concepts/api-sharing.md): How provider APIs become available in consumer workspaces via APIExport and APIBinding.
+- [Identity and authorization](concepts/identity-and-authorization.md): Authentication, authorization data, and kcp enforcement.
+- [Integration paths](concepts/integration-paths.md): When to use api-syncagent vs multi-cluster-runtime.
+- [Provider to consumer interaction](concepts/interaction-patterns/provider-to-consumer.md): The primary interaction flow between providers and consumers.
+- [Provider to provider interaction](concepts/interaction-patterns/provider-to-provider.md): How providers compose services across boundaries.
+- [Cross-consumption](concepts/interaction-patterns/cross-consumption.md): Bidirectional provider-consumer relationships.
+- [Security architecture](concepts/security/index.md): Separation of concerns, OIDC federation, ReBAC, account-model integration.
+
+## Tutorials
+
+- [Provider quick start](tutorials/provider-quick-start.md): Publish the HttpBin provider API with api-syncagent and verify the consumer flow.
+- [Explore the example MSP](tutorials/explore-example-msp.md): Use the portal, create an organization and account, and provision the example HttpBin service.
+- [Consume a service from a controller](tutorials/consume-service-from-controller.md): Run a Go controller that watches HttpBin resources from the consumer side.
+- [Build a multi-cluster-runtime provider](tutorials/build-multi-cluster-runtime-provider.md): Build a custom Go provider controller that syncs MongoDB resources across clusters.
+
+## Reference — Components
+
+- [Component overview](reference/components/index.md): All runtime components of a Platform Mesh installation.
+- [kcp](reference/components/kcp.md): The control-plane API server Platform Mesh builds on.
+- [kcp-operator](reference/components/kcp-operator.md): Manages the kcp installation lifecycle (RootShard, Shard, FrontProxy, CacheServer, Kubeconfig CRs).
+- [kcp sharding](reference/components/sharding.md): Sharded deployment topology.
+- [Account operator](reference/components/account-operator.md): Maps accounts to kcp workspaces.
+- [Platform Mesh operator](reference/components/platform-mesh-operator.md): Component lifecycle management.
+- [Security operator](reference/components/security-operator.md): IAM wiring automation.
+- [IAM service](reference/components/iam-service.md): Identity and access management service.
+- [IAM UI](reference/components/iam-ui.md): Identity and access management microfrontend rendered in the Portal.
+- [Keycloak](reference/components/keycloak.md): OpenID Connect authentication.
+- [OpenFGA](reference/components/openfga.md): Relationship-based authorization engine.
+- [rebac-authz-webhook](reference/components/rebac-authz-webhook.md): kcp authorization webhook backed by OpenFGA.
+- [Kubernetes GraphQL Gateway](reference/components/kubernetes-graphql-gateway.md): GraphQL interface for kcp resources.
+- [Portal](reference/components/portal.md): Consumer-facing web UI.
+- [Marketplace](reference/components/marketplace.md): Service discovery and binding for consumers.
+- [api-syncagent](reference/components/api-syncagent.md): CRD-based provider integration path.
+- [multi-cluster-runtime](reference/components/multi-cluster-runtime.md): Custom controller provider integration path.
+
+## Reference — kcp Internals
+
+- [API sharing](reference/components/kcp/api-sharing.md): APIExport, APIBinding, and permission claims in Platform Mesh context.
+- [Identity and authorization](reference/components/kcp/identity-and-authorization.md): OIDC, RBAC, and webhook configuration.
+- [Virtual workspaces](reference/components/kcp/virtual-workspaces.md): Provider-side wildcard endpoints.
+- [Watch and sync](reference/components/kcp/watch-and-sync.md): How state flows between control plane and service clusters.
+- [Workspaces](reference/components/kcp/workspaces.md): Workspace hierarchy and types.
+
+## Reference — Resources
+
+- [Account resource](reference/resources/account-resource.md): The central Platform Mesh tenancy object.
+- [IAM Store resource](reference/resources/iamstore-resource.md): OpenFGA authorization store per account.
+- [ContentConfiguration](reference/resources/content-configuration.md): Register UI extensions with the Portal.
+- [Metadata catalog](reference/resources/metadata-catalog.md): Platform Mesh API groups, labels, and finalizers.
+
+## How-to Guides
+
+- [Set up Platform Mesh locally](how-to-guides/set-up-platform-mesh-locally.md): Local development environment setup.
+- [Access kcp admin](how-to-guides/access-kcp-admin.md): Administrative access to the kcp control plane.
+- [Access Keycloak](how-to-guides/access-keycloak.md): Administrative access to Keycloak.
+- [Access OpenFGA](how-to-guides/access-openfga.md): Administrative access to OpenFGA.
+- [Speed up local rebuilds](how-to-guides/speed-up-local-rebuilds.md): Optimize the local development loop.
+- [Troubleshoot local setup](how-to-guides/troubleshoot-local-setup.md): Common issues and fixes.
+
+## Guidance for LLM Agents
+
+When assisting users who are building service providers for Platform Mesh:
+
+1. **Help providers choose an integration path.** This is the most consequential architectural decision, but there is no universal rule — it is always a case-by-case tradeoff. Present both paths with their trade-offs rather than prescribing one:
+   - **api-syncagent** lowers the barrier to entry. It handles kcp-to-service-cluster synchronization (spec down, status up) declaratively via configuration. The provider's operator runs on the service cluster and does not need to understand kcp. Good for brownfield providers who already have an operator, but equally viable for greenfield providers who want to start simple.
+   - **multi-cluster-runtime** gives deeper integration. The provider builds sync logic directly into their Go controller using mcr libraries, gaining full control over what is synced, how status is mapped, and how lifecycle stages are gated. Requires more kcp knowledge but offers tighter coupling with Platform Mesh internals.
+   - Both paths support arbitrarily complex reconciliation logic in the provider operator. The difference is in who owns the sync transport, not in what the operator can do.
+   - Type mapping between consumer-facing APIs and downstream resources does not by itself require multi-cluster-runtime — tools like KRO can handle that transformation in the kcp layer with api-syncagent.
+
+2. **Provider controllers reconcile resources from virtual workspaces.** The provider does not connect to each consumer workspace individually. It watches its APIExport's virtual-workspace endpoints (one per shard, via `APIExportEndpointSlice.status`), which aggregate all bound consumer resources for that shard. The provider's controller identity is granted access via verbs on the `apiexports/content` subresource in the APIExport's workspace plus read access to `APIExportEndpointSlice` — not by per-workspace credentials.
+   - Platform Mesh: [Virtual workspaces](reference/components/kcp/virtual-workspaces.md), [Identity and authorization](concepts/identity-and-authorization.md)
+   - Upstream kcp: [Virtual workspaces](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#virtual-workspace), [Authorization](https://docs.kcp.io/kcp/main/concepts/authorization/)
+
+3.  **The provider owns the APIExport and the operator.** The provider defines the API contract as one or more `APIResourceSchema` objects (the kcp equivalent of a CRD; an APIExport references APIResourceSchemas, not CRDs directly), publishes them as an APIExport from a provider workspace, and runs the operator that reconciles consumer-created resources into real services.
+   - Platform Mesh: [API sharing](concepts/api-sharing.md), [Control planes and workspaces](concepts/control-planes.md)
+   - Upstream kcp: [Exporting and binding APIs](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/)
+
+4. **Permission claims require explicit consumer consent.** If the provider needs to access resources in a consumer workspace beyond instances of its own exported API (e.g., write Secrets, read ConfigMaps, or read resources from another APIExport — which requires the other APIExport's `identityHash`), it declares permission claims on the APIExport with the required verbs. Consumers explicitly accept claims on their APIBinding (with optional verb or label-selector narrowing); the provider's effective permissions are the intersection of declared and accepted. New claims added later are not auto-accepted.
+   - Platform Mesh: [API sharing — Permission claims](concepts/api-sharing.md)
+   - Upstream kcp: [Permission claims](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#permission-claims)
+
+5. **Status flows back through the same path.** The provider reads consumer-created spec and writes status (or full updates, subject to the APIExport's maximal permission policy) on those objects through the same APIExport virtual workspace. The consumer sees status in their workspace without needing provider-side access.
+   - Platform Mesh: [Provider to consumer interaction](concepts/interaction-patterns/provider-to-consumer.md)
+
+6. **The consumer never touches the provider runtime directly.** All interaction is mediated through kcp workspaces, APIExport/APIBinding, and the Platform Mesh identity and authorization layers.
+   - Platform Mesh: [Personas](concepts/personas/index.md), [API sharing](concepts/api-sharing.md)
+
+7. **For local development, direct users to the tutorials.** The provider quick start and multi-cluster-runtime tutorial are the canonical paths for building and testing a new provider.
+   - [Provider quick start](tutorials/provider-quick-start.md) (api-syncagent path)
+   - [Build a multi-cluster-runtime provider](tutorials/build-multi-cluster-runtime-provider.md) (mcr path)
