@@ -48,7 +48,7 @@ Claims can be scoped by verb (read-only versus full access) and, in principle, b
 
 For the full Platform Mesh examples, see [API sharing reference](/reference/components/kcp/api-sharing.md). For field-level semantics, see [permission claims](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/#permission-claims) in the kcp docs.
 
-## Virtual Workspaces
+## Virtual workspaces
 
 A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregates all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
 
@@ -83,3 +83,6 @@ Reference upstream kcp documentation for canonical behavior:
 - [Provider to consumer](./interaction-patterns/provider-to-consumer.md)
 - [Provider to provider](./interaction-patterns/provider-to-provider.md)
 - [Integration paths](./integration-paths.md)
+- [api-syncagent](/reference/components/api-syncagent.md) — CRD-based integration component
+- [multi-cluster-runtime](/reference/components/multi-cluster-runtime.md) — custom-controller integration component
+- [API sharing in kcp](/reference/components/kcp/api-sharing.md) — primitives reference

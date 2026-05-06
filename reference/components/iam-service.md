@@ -13,12 +13,12 @@ The service consumes per-organization OpenFGA stores provisioned by the [Securit
 
 The IAM service does not own `Store` lifecycle. It looks up the organization's OpenFGA store by name, writes role-assignment tuples, and evaluates tuples through OpenFGA. The `Store` CRD and authorization model are reconciled by the [Security operator](./security-operator.md).
 
-All routing goes through a GraphQL API. Requests pass through a KCP middleware layer that injects user context from the JWT token, then reach resolvers protected by an `@Authorized` directive that evaluates OpenFGA tuples before returning data.
+All routing goes through a GraphQL API. Requests pass through a kcp middleware layer that injects user context from the JWT token, then reach resolvers protected by an `@Authorized` directive that evaluates OpenFGA tuples before returning data.
 
 ```
 GraphQL Request
     ↓
-KCP Middleware (injects user context from JWT)
+kcp middleware (injects user context from JWT)
     ↓
 GraphQL Resolver (@Authorized directive)
     ↓
@@ -34,7 +34,7 @@ Response
 | `Owner` | Full access to all resources within the account |
 | `Member` | Limited access; can view and interact but cannot administrate |
 
-**No traditional database** — authorization state is stored exclusively as OpenFGA tuples, enabling distributed authorization decisions and consistency through KCP coordination.
+**No traditional database** — authorization state is stored exclusively as OpenFGA tuples, enabling distributed authorization decisions and consistency through kcp coordination.
 
 ## Technology stack
 
@@ -44,7 +44,7 @@ Response
 | API | GraphQL (schema-first via gqlgen) |
 | Authorization | OpenFGA (gRPC) |
 | Identity provider | Keycloak (OIDC / OAuth2) |
-| Multi-cluster | KCP (kcp-dev controller-runtime fork) |
+| Multi-cluster | kcp (kcp-dev controller-runtime fork) |
 | Observability | OpenTelemetry + zerolog |
 | Container | Distroless static binary, non-root (UID 1001) |
 
@@ -56,7 +56,7 @@ Response
 
 | Variable | Purpose |
 |---|---|
-| `KUBECONFIG` | Path to the Kubernetes / KCP cluster config |
+| `KUBECONFIG` | Path to the Kubernetes / kcp cluster config |
 | `KEYCLOAK_CLIENT_SECRET` | Keycloak OAuth2 client secret (environment only — never pass via CLI args) |
 
 Copy `.env.sample` to `.env` and populate the values before running locally.

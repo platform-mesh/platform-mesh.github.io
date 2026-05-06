@@ -20,8 +20,9 @@ URLs are not constructed by hand. Platform Mesh reads them from kcp status objec
 
 ```go
 // platform-mesh-operator/pkg/subroutines/scoped_provider_kubeconfig.go
-// virtualWorkspaceServerURLFromSlice returns status.apiExportEndpoints[0].url
-// as the kubeconfig cluster server (kcp's published VirtualWorkspace URL).
+// virtualWorkspaceServerURLFromSlice returns slice.Status.APIExportEndpoints[0].URL
+// (JSON/YAML path: status.endpoints[0].url) as the kubeconfig cluster server
+// (kcp's published VirtualWorkspace URL).
 func virtualWorkspaceServerURLFromSlice(slice *kcpapiv1alpha1.APIExportEndpointSlice) (string, error) {
     if len(slice.Status.APIExportEndpoints) == 0 {
         return "", fmt.Errorf("no APIExport endpoints in slice %s", slice.Name)

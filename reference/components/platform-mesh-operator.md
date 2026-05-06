@@ -104,9 +104,9 @@ Deploys platform-mesh infrastructure and application components:
 
 - Templates and applies `platform-mesh-operator-infra-components` (HelmRelease + OCM Resource), then waits for readiness.
 - Templates and applies `platform-mesh-operator-components` (HelmRelease + OCM Resource).
-- Manages the authorization webhook secret (issuer, certificate, KCP webhook, CA bundle).
+- Manages the authorization webhook secret (issuer, certificate, kcp webhook, CA bundle).
 - Waits for the Istio control plane (`istio-istiod` HelmRelease if istio is enabled).
-- Waits for KCP infrastructure (`RootShard`, `FrontProxy`).
+- Waits for kcp infrastructure (`RootShard`, `FrontProxy`).
 
 Values from `spec.values` and `spec.infraValues` are templated with `baseDomain`, `baseDomainPort`, `port`, `protocol`, and `iamWebhookCA` before being written to HelmRelease objects.
 
@@ -196,11 +196,11 @@ Additional annotations:
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--workspace-dir` | `/operator/` | Directory containing operator manifests |
-| `--kcp-url` | _(auto-detected)_ | KCP API server URL |
-| `--kcp-namespace` | `platform-mesh-system` | Namespace where KCP components run |
-| `--kcp-front-proxy-name` | `frontproxy` | Name of the KCP front-proxy service |
-| `--kcp-front-proxy-port` | `6443` | Port of the KCP front-proxy |
-| `--kcp-root-shard-name` | `root` | Name of the KCP root shard |
+| `--kcp-url` | _(auto-detected)_ | kcp API server URL |
+| `--kcp-namespace` | `platform-mesh-system` | Namespace where kcp components run |
+| `--kcp-front-proxy-name` | `frontproxy` | Name of the kcp front-proxy service |
+| `--kcp-front-proxy-port` | `6443` | Port of the kcp front-proxy |
+| `--kcp-root-shard-name` | `root` | Name of the kcp root shard |
 | `--kcp-cluster-admin-secret-name` | `kcp-cluster-admin-client-cert` | Secret with cluster-admin credentials |
 | `--subroutines-deployment-enabled` | `true` | Enable the Deployment subroutine |
 | `--subroutines-deployment-enable-istio` | `true` | Enable Istio integration in Deployment |

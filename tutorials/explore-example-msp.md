@@ -118,4 +118,5 @@ Optional branches:
 
 - [Access kcp admin](/how-to-guides/access-kcp-admin.md) to inspect the workspace tree behind the portal.
 - [Access Keycloak](/how-to-guides/access-keycloak.md) to see how the organization maps to a realm.
+- [Account model](/concepts/account-model.md) for how the organization and account you created map to kcp workspaces.
 - [Why Platform Mesh?](/concepts/why-platform-mesh.md) for the motivation behind the model.

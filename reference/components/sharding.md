@@ -1,7 +1,7 @@
 # Sharding
 
 > [!WARNING]
-> In Platform Mesh 0.3 sharding is experimental an expected to break. It
+> In Platform Mesh 0.3 sharding is experimental and expected to break. It
 > is possible to deploy the local-setup with multiple shards by using
 > one of the `:sharded` tasks or adding `--sharded` to the deployment
 > script.
@@ -15,13 +15,13 @@ https://docs.kcp.io/kcp/main/setup/sharding/
 > [!WARNING]
 > Always deploy in a sharded setup, even in development, to surface sharding issues early.
 
-## High Availability
+## High availability
 
 Sharding is a capacity mechanism, not a high availability mechanism.
 
 High availability is achieved by making each component highly available by itself, e.g. by deploying multiple replicas in different availability zones and making its backing storage highly available.
 
-## kcp Components
+## kcp components
 
 ### shard
 
@@ -83,7 +83,7 @@ spec:
     name: widgets.example.io
     path: root:providers:widget-provider
 status:
-  apiExportEndpoints:
+  endpoints:
     - url: https://root.kcp.example.io:6443/services/apiexport/abc123/widgets.example.io
     - url: https://nereus.kcp.example.io:6443/services/apiexport/abc123/widgets.example.io
     - url: https://triton.kcp.example.io:6443/services/apiexport/abc123/widgets.example.io
@@ -110,7 +110,8 @@ sequenceDiagram
 - [kcp](./kcp.md)
 - [API sharing](/reference/components/kcp/api-sharing.md)
 - [Control planes and workspaces](/concepts/control-planes.md)
-- [Virtual Workspaces](/reference/components/kcp/virtual-workspaces.md)
+- [Virtual workspaces](/reference/components/kcp/virtual-workspaces.md)
+- [kcp-operator](./kcp-operator.md)
 - [kcp sharding concepts](https://docs.kcp.io/kcp/main/concepts/sharding/)
 - [kcp sharding setup guide](https://docs.kcp.io/kcp/main/setup/sharding/)
 - [kcp logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster)

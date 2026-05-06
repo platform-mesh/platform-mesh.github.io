@@ -222,7 +222,7 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 | --- | --- |
 | **`KUBECONFIG`** | Kubeconfig to use |
 
-## Links
+## Repository
 
 | Kind | Link |
 | --- | --- |
@@ -235,3 +235,5 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 - [Account model](/concepts/account-model.md)
 - [Account resource](/reference/resources/account-resource.md)
 - [kcp](./kcp.md)
+- [Security operator](./security-operator.md)
+- [Platform Mesh operator](./platform-mesh-operator.md)

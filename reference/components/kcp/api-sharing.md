@@ -106,7 +106,7 @@ spec:
     name: core.platform-mesh.io
 ```
 
-The URLs land in `status.apiExportEndpoints[].url`. See [Virtual workspaces](./virtual-workspaces.md) for how Platform Mesh consumes them.
+The URLs land in `status.endpoints[].url`. See [Virtual workspaces](./virtual-workspaces.md) for how Platform Mesh consumes them.
 
 ## Claim patterns across the platform-mesh org
 

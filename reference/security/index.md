@@ -9,13 +9,13 @@ The scope of this document is:
 
 [SECURITY.md]: https://github.com/platform-mesh/.github/blob/main/SECURITY.md
 
-## Security Response Team
+## Security response team
 
 A dedicated Security Response Team owns all vulnerability-related activity. Responsibilities include receiving and acknowledging vulnerability reports, reviewing automated findings, coordinating fixes, publishing GitHub Security Advisories and CVEs, and communicating with reporters and users throughout the process.
 
 For an up-to-date list of all team members, see [the `platform-mesh/security` GitHub team](https://github.com/orgs/platform-mesh/teams/security).
 
-## Reporting Vulnerabilities
+## Reporting vulnerabilities
 
 Please do **NOT**:
 
@@ -24,15 +24,15 @@ Please do **NOT**:
 
 Instead, please follow the process explained in the [SECURITY.md] file.
 
-## Staying Up-To-Date
+## Staying up to date
 
 Information about security fixes and dependency updates are disclosed in **the changelog** upon publishing a new release. Hence, we strongly recommend that all users [subscribe to release notifications](https://github.blog/changelog/2018-11-26-watch-releases/) in GitHub repositories of projects they use.
 
-## Handling Security Vulnerabilities
+## Handling security vulnerabilities
 
 This section describes how security vulnerabilities are handled, assessed, fixed, and communicated to the end user community.
 
-### Direct Vulnerability Reports
+### Direct vulnerability reports
 
 Upon receiving a vulnerability report, the Security Response Team will act on it immediately. The reporter is expected to receive an acknowledgement within one business day of submitting a report.
 
@@ -42,11 +42,11 @@ The Security Response Team will do an assessment, and if needed, take action to 
 
 Communication to the end user community depends on the severity of the vulnerability.
 
-#### Low and Medium Severity Vulnerabilities
+#### Low and medium severity vulnerabilities
 
 In most cases, vulnerabilities rated as low and medium will **not** be pre-announced. Those vulnerabilities, including details of the vulnerabilities, will be communicated upon publishing a release containing the fix. Also, we will not issue a CVE number for those vulnerabilities; only a GitHub Security Advisory will be published.
 
-#### High and Critical Severity Vulnerabilities
+#### High and critical severity vulnerabilities
 
 Vulnerabilities rated high and critical are communicated differently from other vulnerabilities:
 
@@ -56,13 +56,13 @@ Vulnerabilities rated high and critical are communicated differently from other 
 
 Both a CVE number and a GitHub Security Advisory will be issued for these vulnerabilities.
 
-#### Information Disclosure
+#### Information disclosure
 
 Public disclosure happens through GitHub Security Advisories. A draft advisory is created on the affected repository upon receiving a report, enabling confidential fix development via Private Security Forks.
 
 Each advisory must contain a description, affected versions, patched versions, CVSS severity, and a CVE identifier (if applicable). The fix is highlighted in the changelog under a dedicated **Security Fixes** section. The advisory automatically feeds into the GitHub Advisory Database, so downstream consumers of libraries are also notified via GitHub.
 
-### Vulnerabilities in Dependencies
+### Vulnerabilities in dependencies
 
 As every project that uses external dependencies, Platform Mesh is potentially vulnerable to discovered vulnerabilities in those dependencies. In many cases, those vulnerabilities are not actually exploitable within the project, but to minimize risks, we have tooling that automatically updates dependencies for which a vulnerability is discovered or published.
 
@@ -74,6 +74,6 @@ An exception is highly-rated vulnerabilities that can be exploited; those will b
 - Security releases will be created according to the communicated timeline
 - Details about vulnerabilities will be published 24-48 hours after the security releases are created
 
-## Security Posture
+## Security posture
 
 The Platform Mesh project runs frequent checks to ensure the proper security posture in all user-facing repositories. For that, OpenSSF Scorecard is used. More details about that can be found in [the OpenSSF Scorecard document](./scorecard.md).

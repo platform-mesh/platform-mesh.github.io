@@ -118,3 +118,5 @@ Use these upstream docs for canonical behavior:
 - [Account model](./account-model.md)
 - [API sharing](./api-sharing.md)
 - [Integration paths](./integration-paths.md)
+- [Marketplace](/reference/components/marketplace.md)
+- [Provider to consumer](./interaction-patterns/provider-to-consumer.md)

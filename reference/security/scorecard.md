@@ -47,3 +47,10 @@ Samples, templates, PoCs, and meta repositories (e.g., `backlog`, `architecture`
 ## How to interpret scores
 
 Each check is scored independently and the overall score is a weighted average from 0 (worst) to 10 (best). The [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md) explains what each check measures and how to improve it. A score of 7 or above is generally considered a healthy posture for an actively maintained open-source project. If a check is failing, the Scorecard viewer shows the specific reason and links to remediation guidance.
+
+## Related
+
+- [Security overview](./)
+- [OpenSSF Scorecard](https://scorecard.dev)
+- [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md)
+- [Platform Mesh `.github` repository](https://github.com/platform-mesh/.github)
