@@ -32,7 +32,7 @@ After completing [Explore the example MSP](/tutorials/explore-example-msp.md), t
 
 ## Related
 
-- [Keycloak component reference](/reference/components/keycloak.md)
+- [Keycloak reference](/reference/components/keycloak.md)
 - [Account model](/concepts/account-model.md)
 - [Authentication](/concepts/security/authentication.md)
 - [Identity and authorization](/concepts/identity-and-authorization.md)

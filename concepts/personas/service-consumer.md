@@ -44,10 +44,7 @@ Start with [Explore the example MSP](/tutorials/explore-example-msp.md) for a gu
 
 ## Related
 
-- [Personas overview](./index.md)
-- [Platform owner](./platform-owner.md) — the role that operates the mesh on the consumer's behalf
-- [Service provider](./service-provider.md) — the role that publishes the APIs the consumer uses
 - [Account model](../account-model.md)
 - [API sharing](../api-sharing.md)
-- [Marketplace](/reference/components/marketplace.md)
 - [Portal](/reference/components/portal.md)
+- [Marketplace](/reference/components/marketplace.md)

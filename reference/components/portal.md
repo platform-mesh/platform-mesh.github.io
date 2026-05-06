@@ -28,9 +28,7 @@ Luigi `globalContext`, making it available to all child microfrontends without a
 
 ## Related
 
+- [Explore the example MSP](/tutorials/explore-example-msp.md)
 - [IAM UI](./iam-ui.md)
 - [Marketplace](./marketplace.md)
 - [Kubernetes GraphQL gateway](./kubernetes-graphql-gateway.md)
-- [Keycloak](./keycloak.md)
-- [ContentConfiguration](/reference/resources/content-configuration.md)
-- [Explore the example MSP](/tutorials/explore-example-msp.md)

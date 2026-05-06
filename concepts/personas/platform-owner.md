@@ -34,6 +34,5 @@ Start with [Why Platform Mesh?](../why-platform-mesh.md) for motivation, then re
 
 - [Personas overview](./index.md)
 - [Service provider](./service-provider.md) — the role onboarded by platform owners
-- [Service consumer](./service-consumer.md) — the role enabled by platform owners
 - [Account model](../account-model.md)
 - [Architecture](../architecture.md)

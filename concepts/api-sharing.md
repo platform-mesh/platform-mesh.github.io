@@ -36,7 +36,7 @@ The provider owns the API contract and service automation. The consumer owns the
 ## Platform Mesh usage
 
 - api-syncagent can publish CRD-based provider services through APIExports.
-- multi-cluster-runtime can be used by provider controllers that watch resources across workspaces.
+- multicluster-runtime can be used by provider controllers that watch resources across workspaces.
 - Marketplace and portal workflows can guide or create APIBindings for consumers.
 - Permission claims are part of the provider-consumer trust boundary and should be accepted intentionally.
 
@@ -50,7 +50,7 @@ For the full Platform Mesh examples, see [API sharing reference](/reference/comp
 
 ## Virtual workspaces
 
-A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregates all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
+A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregate all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
 
 Every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes virtual workspaces this way. Controllers do not construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
 
@@ -79,10 +79,7 @@ Reference upstream kcp documentation for canonical behavior:
 
 ## Related
 
-- [Control planes](./control-planes.md)
-- [Provider to consumer](./interaction-patterns/provider-to-consumer.md)
-- [Provider to provider](./interaction-patterns/provider-to-provider.md)
-- [Integration paths](./integration-paths.md)
-- [api-syncagent](/reference/components/api-syncagent.md) — CRD-based integration component
-- [multi-cluster-runtime](/reference/components/multi-cluster-runtime.md) — custom-controller integration component
 - [API sharing in kcp](/reference/components/kcp/api-sharing.md) — primitives reference
+- [Control planes](./control-planes.md)
+- [Integration paths](./integration-paths.md)
+- [Provider to consumer](./interaction-patterns/provider-to-consumer.md)

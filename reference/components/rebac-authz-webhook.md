@@ -69,7 +69,7 @@ flowchart LR
 | [kcp workspaces and logical clusters](https://docs.kcp.io/kcp/main/concepts/workspaces/) | [kcp workspaces](./kcp/workspaces.md) | Each kcp workspace is a logical cluster; the webhook reads `LogicalCluster` to identify the request's workspace. |
 | [kcp `APIExport` / `APIExportEndpointSlice`](https://docs.kcp.io/kcp/main/concepts/apis/exporting-apis/) | [API sharing](./kcp/api-sharing.md) | Used at startup to discover virtual-workspace URLs for per-shard access. |
 | [kcp virtual workspaces](https://docs.kcp.io/kcp/main/concepts/workspaces/virtual-workspaces/) | [Virtual workspaces](./kcp/virtual-workspaces.md) | Per-export endpoints the webhook uses to read kcp resources. |
-| [multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) + [kcp-dev/multicluster-provider](https://github.com/kcp-dev/multicluster-provider) | [multi-cluster-runtime](./multi-cluster-runtime.md) | Provide the multicluster manager used to watch kcp logical clusters. |
+| [multicluster-runtime](https://github.com/kubernetes-sigs/multicluster-runtime) + [kcp-dev/multicluster-provider](https://github.com/kcp-dev/multicluster-provider) | [multicluster-runtime](./multicluster-runtime.md) | Provide the multicluster manager used to watch kcp logical clusters. |
 | [kcp-operator](./kcp-operator.md) | [kcp-operator](./kcp-operator.md) | Reconciles `RootShard` and `Shard` CRs into running kcp shards, including the `spec.authorization.webhook` configuration that points kcp at this webhook. |
 | [OpenFGA](./openfga.md) | [OpenFGA](./openfga.md) | The relationship-based authorization engine the webhook delegates `Check` calls to. |
 
@@ -235,10 +235,7 @@ For local setup, see [Set up Platform Mesh locally](/how-to-guides/set-up-platfo
 
 ## Related
 
+- [Identity and authorization](../../concepts/identity-and-authorization.md)
 - [OpenFGA](./openfga.md)
 - [Security operator](./security-operator.md)
-- [Account operator](./account-operator.md)
-- [kcp](./kcp.md)
 - [kcp identity and authorization](./kcp/identity-and-authorization.md)
-- [Identity and authorization](../../concepts/identity-and-authorization.md)
-- [Authentication](../../concepts/security/authentication.md)

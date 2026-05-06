@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The **Security operator** automates security configuration across your platform mesh environment. It watches for new workspaces and automatically sets up everything needed to manage access control in Platform Mesh: creating authorization stores in [**OpenFGA**](https://openfga.dev/), provisioning realms and clients in [**Keycloak**](https://www.keycloak.org/), and keeping authorization models in sync as your APIs evolve.
+The **Security operator** automates security configuration across your Platform Mesh environment. It watches for new workspaces and automatically sets up everything needed to manage access control in Platform Mesh: creating authorization stores in [**OpenFGA**](https://openfga.dev/), provisioning realms and clients in [**Keycloak**](https://www.keycloak.org/), and keeping authorization models in sync as your APIs evolve.
 
 Instead of manually configuring authentication and authorization for each new workspace, the Security operator handles it all for you — ensuring consistent security posture across all organizations within your Platform Mesh deployment. 
 
@@ -15,10 +15,6 @@ The Security operator automates security configuration across Platform Mesh:
 **OpenFGA and Keycloak management** — Maintains authorization stores (one per organization) with fine-grained access control, writes authorization tuples mapping users to roles and resources, provisions isolated Keycloak realms with OIDC clients, and dynamically extends authorization models when APIs are bound.
 
 **APIExport binding control** — Enforces deny-by-default binding policy through `APIExportPolicy` resources, writes authorization tuples to OpenFGA enabling permitted workspaces to create `APIBinding` resources, and automatically creates `AuthorizationModel` resources in provider workspaces to extend consumer authorization models.
-
-## Repository
-
-- [platform-mesh/security-operator](https://github.com/platform-mesh/security-operator)
 
 ## Core concepts
 
@@ -473,21 +469,17 @@ Configure the validating webhook server for CRD validation. Webhooks are disable
 | `--webhooks-port` | `9443` | Webhook server port |
 | `--webhooks-cert-dir` | `/tmp/k8s-webhook-server/serving-certs` | Webhook certificate directory |
 
-::: info
-Refer to the [component repository](https://github.com/platform-mesh/security-operator) for the full configuration reference and environment variable options.
-:::
+## Architecture decision records
 
+- [ADR-002: APIExport Binding Access Control](https://github.com/platform-mesh/architecture/blob/main/adr/002-apiexport-binding-access-control.md)
+
+## Repository
+
+- [platform-mesh/security-operator](https://github.com/platform-mesh/security-operator)
 
 ## Related
 
 - [Identity and authorization](/concepts/identity-and-authorization.md)
 - [OpenFGA](./openfga.md)
 - [rebac-authz-webhook](./rebac-authz-webhook.md)
-- [Account operator](./account-operator.md)
-- [Keycloak](./keycloak.md)
 - [IAM Store resource](/reference/resources/iamstore-resource.md)
-- [Account resource](/reference/resources/account-resource.md)
-
-## Architecture decision records
-
-- [ADR-002: APIExport Binding Access Control](https://github.com/platform-mesh/architecture/blob/main/adr/002-apiexport-binding-access-control.md)

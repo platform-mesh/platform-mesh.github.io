@@ -6,7 +6,7 @@ outline: deep
 
 The **GraphQL Gateway** exposes Kubernetes resources as a [GraphQL](https://graphql.org/) API. It enables UIs and tools to query, mutate, and subscribe to cluster resources in a developer-friendly way using the GraphQL ecosystem.
 
-Within the Platform Mesh, the gateway serves as the **primary interface layer** between <Term>service consumers</Term> and the <Term>Kubernetes Resource Model</Term> (KRM). Instead of requiring direct interaction with Kubernetes API servers and `kubectl`, consumers can leverage GraphQL's typed, self-documenting query language to discover and manage resources across clusters.
+Within the Platform Mesh, the gateway serves as the **primary interface layer** between service consumers and the Kubernetes Resource Model (KRM). Instead of requiring direct interaction with Kubernetes API servers and `kubectl`, consumers can leverage GraphQL's typed, self-documenting query language to discover and manage resources across clusters.
 
 ## Architecture
 
@@ -112,14 +112,14 @@ The listener supports three provider modes, allowing the gateway to serve resour
 | Mode | Description |
 |---|---|
 | **single** (default) | Watches the local cluster from the current kubeconfig |
-| **kcp** | Connects to <Project>kcp</Project> workspaces via APIExport virtual workspaces |
+| **kcp** | Connects to kcp workspaces via APIExport virtual workspaces |
 | **multi** | Combines kcp and standard clusters, using separate kubeconfigs for each |
 
 In any mode, the `ClusterAccess` CRD controller can be enabled to additionally manage remote clusters declaratively.
 
 ### Integration with Platform Mesh control planes
 
-When running in **kcp mode**, the gateway integrates directly with the Platform Mesh [control plane](/concepts/control-planes) infrastructure. It discovers <Project>kcp</Project> workspaces and their APIs, making the resources offered by <Term>service providers</Term> through `APIExports` queryable via GraphQL. This enables <Term>service consumers</Term> to interact with provisioned <Term>capabilities</Term> through a unified, typed API surface rather than requiring direct `kubectl` access or workspace-aware tooling.
+When running in **kcp mode**, the gateway integrates directly with the Platform Mesh [control plane](/concepts/control-planes) infrastructure. It discovers kcp workspaces and their APIs, making the resources offered by service providers through `APIExports` queryable via GraphQL. This enables service consumers to interact with provisioned capabilities through a unified, typed API surface rather than requiring direct `kubectl` access or workspace-aware tooling.
 
 ## Configuration
 
@@ -156,7 +156,7 @@ When running in **kcp mode**, the gateway integrates directly with the Platform 
 | `--enable-clusteraccess-controller` | `false` | Enable the ClusterAccess CRD controller |
 
 ::: info
-Set any limit flag to `0` to disable that limit. Refer to the [component repository](https://github.com/platform-mesh/kubernetes-graphql-gateway) for the full configuration reference.
+Set any limit flag to `0` to disable it.
 :::
 
 ## Repository

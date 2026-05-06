@@ -456,5 +456,5 @@ Continue with [Consume a service from a controller](./consume-service-from-contr
 Optional branches:
 
 - [api-syncagent](/concepts/integration/api-syncagent.md) for the architecture behind what you just built.
-- [Build a multi-cluster-runtime provider](./build-multi-cluster-runtime-provider.md) for the advanced provider track.
+- [Build a multicluster-runtime provider](./build-multicluster-runtime-provider.md) for the advanced provider track.
 - [Service provider persona](/concepts/personas/service-provider.md) for the role context.
