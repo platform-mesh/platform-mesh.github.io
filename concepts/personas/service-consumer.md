@@ -49,3 +49,5 @@ Start with [Explore the example MSP](/tutorials/explore-example-msp.md) for a gu
 - [Service provider](./service-provider.md) — the role that publishes the APIs the consumer uses
 - [Account model](../account-model.md)
 - [API sharing](../api-sharing.md)
+- [Marketplace](/reference/components/marketplace.md)
+- [Portal](/reference/components/portal.md)

@@ -60,7 +60,7 @@ The templated `identityHash` values are filled in at apply time from the upstrea
 
 ## APIBinding — accepting permission claims
 
-Consumers must explicitly accept each claim. The matching binding for the export above uses the `v1alpha2` API, which adds `selector` and `verbs`:
+Consumers must explicitly accept each claim. The matching binding for the preceding export uses the `v1alpha2` API, which adds `selector` and `verbs`:
 
 ```yaml
 # platform-mesh-operator/manifests/kcp/01-platform-mesh-system/apibinding-core.platform-mesh.io.yaml
@@ -106,13 +106,13 @@ spec:
     name: core.platform-mesh.io
 ```
 
-The URLs land in `status.apiExportEndpoints[].url`. See [Virtual workspaces](./virtual-workspaces.md) for how Platform Mesh consumes them.
+The URLs land in `status.endpoints[].url`. See [Virtual workspaces](./virtual-workspaces.md) for how Platform Mesh consumes them.
 
 ## Claim patterns across the platform-mesh org
 
 Different providers claim different things. Three patterns to compare:
 
-- **`api-syncagent` — automatic claims.** Every APIExport managed by api-syncagent gets `events` and `namespaces` claims injected automatically. If a `PublishedResource` declares a `related` Secret (e.g. for connection credentials), api-syncagent adds a `secrets` claim too. Providers using api-syncagent rarely write claim YAML themselves. ([related resources](https://github.com/kcp-dev/api-syncagent/blob/main/docs/content/publish-resources/related-resources.md))
+- **`api-syncagent` — automatic claims.** Every APIExport managed by api-syncagent gets `events` and `namespaces` claims injected automatically. If a `PublishedResource` declares a `related` Secret (for example, for connection credentials), api-syncagent adds a `secrets` claim too. Providers using api-syncagent rarely write claim YAML themselves. ([related resources](https://github.com/kcp-dev/api-syncagent/blob/main/docs/content/publish-resources/related-resources.md))
 - **`gardener-syncer` — full-access claim on Secrets.** Claims `secrets` with `verbs: ["*"]` because it both reads provider credentials and writes Shoot-related secrets. ([apiexport-core.gardener.cloud.yaml](https://github.com/platform-mesh/gardener-syncer/blob/main/deploy/kcp/apiexport-core.gardener.cloud.yaml))
 - **`resource-broker` — verb-scoped read-only claim.** Claims `secrets` with `verbs: [get, list, watch]`. The provider can observe credentials but cannot mutate them — the kind of claim platform owners want to see when reviewing provider onboarding. ([apiexport-acceptapis.yaml](https://github.com/platform-mesh/resource-broker/blob/main/examples/platform-mesh/root:providers:resource-broker/apiexport-acceptapis.yaml))
 

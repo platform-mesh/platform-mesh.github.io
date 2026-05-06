@@ -20,7 +20,7 @@ html.dark .onion-light, html.dark .arch-light { display: none; }
 html:not(.dark) .onion-dark, html:not(.dark) .arch-dark { display: none; }
 </style>
 
-The **UI layer** includes the Platform Mesh portal and the Kubernetes GraphQL gateway. The portal is the consumer-facing experience. The gateway exposes Platform Mesh and kcp resources through GraphQL for UI clients.
+The **UI layer** includes the [Platform Mesh portal](/reference/components/portal.md) and the [Kubernetes GraphQL gateway](/reference/components/kubernetes-graphql-gateway.md). The portal is the consumer-facing experience. The gateway exposes Platform Mesh and kcp resources through GraphQL for UI clients.
 
 The **core control plane** is [kcp](https://kcp.io). Platform Mesh uses kcp workspaces, APIExports, and APIBindings as its control-plane substrate. The account operator maps Platform Mesh accounts to that workspace hierarchy.
 
@@ -43,7 +43,7 @@ The **connectivity layer** connects provider runtimes to the mesh. [api-syncagen
 
 </div>
 
-A typical request starts in the portal. The portal calls the Kubernetes GraphQL gateway, which translates the request into Kubernetes Resource Model operations against a kcp workspace. kcp authenticates the request through Keycloak and authorizes it through Kubernetes RBAC and OpenFGA-backed authorization.
+A typical request starts in the [portal](/reference/components/portal.md). The portal calls the [Kubernetes GraphQL gateway](/reference/components/kubernetes-graphql-gateway.md), which translates the request into Kubernetes Resource Model operations against a kcp workspace. kcp authenticates the request through Keycloak and authorizes it through Kubernetes RBAC and OpenFGA-backed authorization.
 
 When a consumer creates a resource in their workspace, the resource exists in kcp through an APIBinding to a provider APIExport. A provider-side integration mechanism synchronizes the desired state to the provider runtime. The provider operator reconciles the real service and reports status back through the same control-plane path.
 

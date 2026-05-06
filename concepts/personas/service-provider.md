@@ -43,3 +43,5 @@ When you are ready for hands-on work, follow the [Provider quick start](/tutoria
 - [Service consumer](./service-consumer.md) — the role on the other side of the API contract
 - [Integration paths](../integration-paths.md)
 - [API sharing](../api-sharing.md)
+- [api-syncagent](/reference/components/api-syncagent.md)
+- [multi-cluster-runtime](/reference/components/multi-cluster-runtime.md)

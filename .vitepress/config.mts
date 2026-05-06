@@ -102,12 +102,6 @@ export default withMermaid({
             { text: 'Consume a service from a controller', link: '/tutorials/consume-service-from-controller' },
             { text: 'Build a multi-cluster-runtime provider', link: '/tutorials/build-multi-cluster-runtime-provider' },
             ]
-        },
-        {
-            text: 'Components',
-            items: [
-            { text: 'GraphQL Gateway', link: '/reference/components/kubernetes-graphql-gateway' },
-            ]
         }
       ],
 

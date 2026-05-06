@@ -4,17 +4,17 @@
 
 [OpenSSF Scorecard](https://scorecard.dev) is an automated tool from the Open Source Security Foundation (OpenSSF) that assesses repositories against a set of [security best-practice checks](https://github.com/ossf/scorecard/blob/main/docs/checks.md) and assigns each a score of 0–10. Unlike vulnerability scanners that flag specific CVEs, Scorecard evaluates the project's **security posture** - whether the repository is configured to prevent vulnerabilities from being introduced in the first place.
 
-## Why we use it
+## Why Platform Mesh uses it
 
 Scorecard gives Platform Mesh continuous, public posture monitoring:
 
 - **Surfaces regressions** - runs on every push to `main` and weekly, so policy drift is caught quickly rather than discovered in a security audit.
-- **Public visibility** - results are published to `scorecard.dev` and linked via a per-repo badge, so adopters can verify our security hygiene without having to audit the repositories themselves.
-- **Complements other tools** - Renovate handles automated dependency updates and the Scorecard verifies that the surrounding process (branch protection, code review, signed artifacts, etc.) is in good shape.
+- **Public visibility** - results are published to `scorecard.dev` and linked via a per-repo badge, so adopters can verify the project's security hygiene without having to audit the repositories themselves.
+- **Complements other tools** - Renovate handles automated dependency updates and the Scorecard verifies that the surrounding process (branch protection, code review, signed artifacts, and so on) is in good shape.
 
-## How it's configured
+## How it is configured
 
-We use a reusable workflow defined in [`platform-mesh/.github`](https://github.com/platform-mesh/.github): `platform-mesh/.github/.github/workflows/job-ossf-scorecard.yml`.
+Platform Mesh uses a reusable workflow defined in [`platform-mesh/.github`](https://github.com/platform-mesh/.github): `platform-mesh/.github/.github/workflows/job-ossf-scorecard.yml`.
 
 Each participating repository calls it from its own caller workflow. In this repository the caller is [`.github/workflows/ossf-scorecard.yml`](https://github.com/platform-mesh/platform-mesh.github.io/blob/main/.github/workflows/ossf-scorecard.yml). It triggers on:
 
@@ -34,7 +34,7 @@ Scorecard is applied to the repositories that ship the Platform Mesh product - c
 - `provider-quickstart`, `ocm`, `platform-mesh.github.io`
 - `platform-mesh/.github`
 
-Samples, templates, PoCs, and meta repositories (e.g., `backlog`, `architecture`, `community`) are intentionally excluded. Applying Scorecard to repositories that have no releases, no shipped binaries, or are meant to be copied rather than depended on produces misleading low scores on checks that simply do not apply. See the discussion on [backlog#227](https://github.com/platform-mesh/backlog/issues/227) for the full rationale and the canonical list.
+Samples, templates, PoCs, and meta repositories (for example `backlog`, `architecture`, `community`) are intentionally excluded. Applying Scorecard to repositories that have no releases, no shipped binaries, or are meant to be copied rather than depended on produces misleading low scores on checks that do not apply. See the discussion on [backlog#227](https://github.com/platform-mesh/backlog/issues/227) for the full rationale and the canonical list.
 
 ## Where to see results
 
@@ -46,4 +46,11 @@ Samples, templates, PoCs, and meta repositories (e.g., `backlog`, `architecture`
 
 ## How to interpret scores
 
-Each check is scored independently and the overall score is a weighted average from 0 (worst) to 10 (best). The [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md) explains what each check measures and how to improve it. A score of 7 or above is generally considered a healthy posture for an actively maintained open-source project. If a check is failing, the Scorecard viewer shows the specific reason and links to remediation guidance.
+Each check is scored independently and the overall score is a weighted average from 0 (worst) to 10 (best). The [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md) explains what each check measures and how to improve it. A score of 7 or higher is generally considered a healthy posture for an actively maintained open-source project. If a check is failing, the Scorecard viewer shows the specific reason and links to remediation guidance.
+
+## Related
+
+- [Security overview](./)
+- [OpenSSF Scorecard](https://scorecard.dev)
+- [OpenSSF checks documentation](https://github.com/ossf/scorecard/blob/main/docs/checks.md)
+- [Platform Mesh `.github` repository](https://github.com/platform-mesh/.github)

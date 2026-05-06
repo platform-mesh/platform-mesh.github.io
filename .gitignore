@@ -10,3 +10,4 @@ test-deploy/
 .claude
 CLAUDE.local.md
 .DS_Store
+.ship

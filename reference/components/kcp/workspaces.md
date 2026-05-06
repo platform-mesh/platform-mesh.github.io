@@ -111,7 +111,7 @@ Controllers reference workspaces by path in `Workspace.spec.type.path`, in `APIB
 
 ## Lifecycle hooks
 
-`WorkspaceType` supports `spec.initializer` and `spec.terminator` flags. When set, kcp delays the `Ready` / `Removed` phase until the workspace is processed by an external controller. The endpoints those controllers consume are documented in [Virtual workspaces](./virtual-workspaces.md). The [security-operator](../security-operator.md) implements the terminating phase for accounts.
+`WorkspaceType` supports `spec.initializer` and `spec.terminator` flags. When set, kcp delays the `Ready` / `Deleting` phase until the workspace is processed by an external controller. The endpoints those controllers consume are documented in [Virtual workspaces](./virtual-workspaces.md). The [security-operator](../security-operator.md) implements the terminating phase for accounts.
 
 ## Related
 

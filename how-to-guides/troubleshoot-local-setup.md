@@ -69,3 +69,10 @@ Restart WSL2 after saving the file.
 kind delete cluster --name platform-mesh
 mkcert -uninstall
 ```
+
+## Related
+
+- [Set up Platform Mesh locally](./set-up-platform-mesh-locally.md)
+- [Speed up local rebuilds](./speed-up-local-rebuilds.md)
+- [Access the kcp admin workspace](./access-kcp-admin.md)
+- [Architecture](/concepts/architecture.md)
