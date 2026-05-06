@@ -6,7 +6,7 @@ The **Portal** is the primary web interface for Platform Mesh. It is an Angular 
 
 The Portal acts as the **orchestration layer** for the entire Platform Mesh UI surface. Its responsibilities are:
 
-- **Workspace navigation** — lets users traverse the KCP workspace hierarchy (root → org → account → namespace) with context-aware navigation nodes that update as the selected workspace changes
+- **Workspace navigation** — lets users traverse the kcp workspace hierarchy (root → org → account → namespace) with context-aware navigation nodes that update as the selected workspace changes
 - **Org / account / namespace management** — surfaces CRUD operations for the main Platform Mesh entities, delegating rendering to embedded microfrontends
 - **Kubeconfig download** — generates and serves a ready-to-use kubeconfig scoped to the current workspace
 - **Home dashboard** — shows a summary of the current workspace context (owner, path, service bindings)
@@ -16,9 +16,9 @@ The Portal acts as the **orchestration layer** for the entire Platform Mesh UI s
 
 ## Runtime role
 
-It lets users onboard organizations, navigate accounts, and navigate the KCP workspace hierarchy. All routing is owned by **Luigi**, not the Angular router — Luigi handles deep links, iframe lifecycle, and context propagation to child microfrontends. Navigation nodes (accounts, namespaces, IAM, Marketplace, Terminal) are built dynamically in TypeScript service classes that implement Luigi's node configuration interfaces.
+It lets users onboard organizations, navigate accounts, and navigate the kcp workspace hierarchy. All routing is owned by **Luigi**, not the Angular router — Luigi handles deep links, iframe lifecycle, and context propagation to child microfrontends. Navigation nodes (accounts, namespaces, IAM, Marketplace, Terminal) are built dynamically in TypeScript service classes that implement Luigi's node configuration interfaces.
 
-Every navigation node is scoped to a **KCP workspace path** (e.g. `root:orgs:my-org:my-account`). 
+Every navigation node is scoped to a **kcp workspace path** (for example `root:orgs:my-org:my-account`). 
 The backend derives the active workspace path from the authenticated user's context and injects it into the 
 Luigi `globalContext`, making it available to all child microfrontends without additional round-trips.
 
@@ -28,5 +28,9 @@ Luigi `globalContext`, making it available to all child microfrontends without a
 
 ## Related
 
+- [IAM UI](./iam-ui.md)
+- [Marketplace](./marketplace.md)
+- [Kubernetes GraphQL gateway](./kubernetes-graphql-gateway.md)
+- [Keycloak](./keycloak.md)
 - [ContentConfiguration](/reference/resources/content-configuration.md)
 - [Explore the example MSP](/tutorials/explore-example-msp.md)

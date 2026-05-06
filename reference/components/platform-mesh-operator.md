@@ -16,7 +16,7 @@ Given a `PlatformMesh` resource the operator:
 1. Deploys infrastructure and application components via FluxCD HelmReleases and OCM Resources.
 2. Configures kcp workspaces, provider connections, and API bindings.
 3. Generates scoped kubeconfig secrets for cross-cluster communication.
-4. Applies feature toggles (UI content configurations, authentication behaviour).
+4. Applies feature toggles (UI content configurations, authentication behavior).
 5. Waits for dependent resources to become ready before marking reconciliation complete.
 
 ## Custom resource
@@ -104,9 +104,9 @@ Deploys platform-mesh infrastructure and application components:
 
 - Templates and applies `platform-mesh-operator-infra-components` (HelmRelease + OCM Resource), then waits for readiness.
 - Templates and applies `platform-mesh-operator-components` (HelmRelease + OCM Resource).
-- Manages the authorization webhook secret (issuer, certificate, KCP webhook, CA bundle).
+- Manages the authorization webhook secret (issuer, certificate, kcp webhook, CA bundle).
 - Waits for the Istio control plane (`istio-istiod` HelmRelease if istio is enabled).
-- Waits for KCP infrastructure (`RootShard`, `FrontProxy`).
+- Waits for kcp infrastructure (`RootShard`, `FrontProxy`).
 
 Values from `spec.values` and `spec.infraValues` are templated with `baseDomain`, `baseDomainPort`, `port`, `protocol`, and `iamWebhookCA` before being written to HelmRelease objects.
 
@@ -161,7 +161,7 @@ Fills in default values for `ocm.repo.name` and `ocm.component.name` when not ex
 A separate read-only controller that watches OCM `Resource` objects (`delivery.ocm.software/v1alpha1`).
 When an OCM Resource's status is updated with resolved artifact information, this controller syncs those references into the corresponding FluxCD objects so that Flux can fetch and deploy them.
 
-The behaviour is driven by `repo` and `artifact` annotations (or labels) on the Resource object:
+The behavior is driven by `repo` and `artifact` annotations (or labels) on the Resource object:
 
 | `repo` | `artifact` | Action |
 |--------|-----------|--------|
@@ -196,11 +196,11 @@ Additional annotations:
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--workspace-dir` | `/operator/` | Directory containing operator manifests |
-| `--kcp-url` | _(auto-detected)_ | KCP API server URL |
-| `--kcp-namespace` | `platform-mesh-system` | Namespace where KCP components run |
-| `--kcp-front-proxy-name` | `frontproxy` | Name of the KCP front-proxy service |
-| `--kcp-front-proxy-port` | `6443` | Port of the KCP front-proxy |
-| `--kcp-root-shard-name` | `root` | Name of the KCP root shard |
+| `--kcp-url` | _(auto-detected)_ | kcp API server URL |
+| `--kcp-namespace` | `platform-mesh-system` | Namespace where kcp components run |
+| `--kcp-front-proxy-name` | `frontproxy` | Name of the kcp front-proxy service |
+| `--kcp-front-proxy-port` | `6443` | Port of the kcp front-proxy |
+| `--kcp-root-shard-name` | `root` | Name of the kcp root shard |
 | `--kcp-cluster-admin-secret-name` | `kcp-cluster-admin-client-cert` | Secret with cluster-admin credentials |
 | `--subroutines-deployment-enabled` | `true` | Enable the Deployment subroutine |
 | `--subroutines-deployment-enable-istio` | `true` | Enable Istio integration in Deployment |
@@ -284,7 +284,7 @@ This allows umbrella charts to set shared defaults via `global.*` while individu
 ```mermaid
 graph TD
     PM["PlatformMesh CR"] --> OP["platform-mesh-operator"]
-    OP -->|"deploys"| INFRA["Infra HelmRelease<br/>(cert-manager, Istio, KCP)"]
+    OP -->|"deploys"| INFRA["Infra HelmRelease<br/>(cert-manager, Istio, kcp)"]
     OP -->|"deploys"| COMP["Components HelmRelease<br/>(services)"]
     OP -->|"configures"| KCP["kcp<br/>(workspaces, API bindings)"]
     OP -->|"generates"| SEC["Provider Secrets<br/>(kubeconfigs)"]

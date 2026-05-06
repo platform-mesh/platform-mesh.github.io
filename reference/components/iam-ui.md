@@ -16,9 +16,9 @@ The key capabilities are:
 IAM UI calls the [IAM service](./iam-service.md) via GraphQL to read and write authorization state. It surfaces as two independently deployable artifacts inside the Portal:
 
 - **Standalone UI** — a full-page Angular microfrontend loaded by Luigi inside an iframe, mounted at `/ui/iam/ui/`. It handles the members listing page (`/:entityId/members`) and the add-members flow (`/:entityId/add-members`).
-- **Web components** — self-registering custom elements loaded by Luigi as ES modules, mounted at `/ui/iam/wc/`. These embed lightweight member views (e.g. a `members-sidebar`) into compound layout slots without a full iframe.
+- **Web components** — self-registering custom elements loaded by Luigi as ES modules, mounted at `/ui/iam/wc/`. These embed lightweight member views (for example a `members-sidebar`) into compound layout slots without a full iframe.
 
-Both artifacts read their runtime context (IAM service URL, tenant, entity, and KCP workspace path) from the Luigi `globalContext`, so they require no static configuration.
+Both artifacts read their runtime context (IAM service URL, tenant, entity, and kcp workspace path) from the Luigi `globalContext`, so they require no static configuration.
 
 ```
 Luigi globalContext
@@ -66,7 +66,7 @@ The UI reads all runtime configuration from the Luigi node context injected by t
 | `tenantId` | Tenant scope for multi-tenant deployments |
 | `entityType` / `entityId` | The resource being administered |
 | `resourceDefinition` | Kubernetes resource metadata (group, kind, scope, namespace) |
-| `kcpPath` | KCP workspace path for multi-cluster routing |
+| `kcpPath` | kcp workspace path for multi-cluster routing |
 | `analyticsTrackerConfig` | Optional Matomo analytics configuration |
 
 For local development, copy `.env-example` to `.env` and populate the required values before running.

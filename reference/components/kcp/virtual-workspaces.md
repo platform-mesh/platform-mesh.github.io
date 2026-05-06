@@ -20,8 +20,9 @@ URLs are not constructed by hand. Platform Mesh reads them from kcp status objec
 
 ```go
 // platform-mesh-operator/pkg/subroutines/scoped_provider_kubeconfig.go
-// virtualWorkspaceServerURLFromSlice returns status.apiExportEndpoints[0].url
-// as the kubeconfig cluster server (kcp's published VirtualWorkspace URL).
+// virtualWorkspaceServerURLFromSlice returns slice.Status.APIExportEndpoints[0].URL
+// (JSON/YAML path: status.endpoints[0].url) as the kubeconfig cluster server
+// (kcp's published VirtualWorkspace URL).
 func virtualWorkspaceServerURLFromSlice(slice *kcpapiv1alpha1.APIExportEndpointSlice) (string, error) {
     if len(slice.Status.APIExportEndpoints) == 0 {
         return "", fmt.Errorf("no APIExport endpoints in slice %s", slice.Name)
@@ -62,7 +63,7 @@ GetVWs: func(obj client.Object) ([]string, error) {
 | Component | What it watches |
 | --- | --- |
 | [account-operator](../account-operator.md) | `core.platform-mesh.io` — reconciles `Account` and `Workspace` objects across consumer workspaces. |
-| [rebac-authz-webhook](../rebac-authz-webhook.md) | The endpoint slice it's pointed at — resolves which workspace a `SubjectAccessReview` came from. |
+| [rebac-authz-webhook](../rebac-authz-webhook.md) | The endpoint slice it is pointed at — resolves which workspace a `SubjectAccessReview` came from. |
 | [security-operator](../security-operator.md) | `core.platform-mesh.io` for IAM stores; `WorkspaceType.status.virtualWorkspaces[type=terminating]` for cleanup during workspace deletion. |
 | [Kubernetes GraphQL gateway](../kubernetes-graphql-gateway.md) | Configurable export — exposes the bound APIs as GraphQL. |
 | `terminal-controller-manager`, `search-operator`, `gardener-syncer`, `extension-manager-operator`, [marketplace `virtual-workspaces`](../marketplace.md), `resource-broker` | Each watches its own APIExport's VW. |

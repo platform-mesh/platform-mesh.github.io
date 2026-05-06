@@ -59,9 +59,9 @@ Reconciliation of an `Account` resource runs through the following steps:
 1. Webhooks validate the `Account` and set `spec.creator` to the respective Kubernetes user creating the resource.
 2. Depending on the account type, one or more finalizers are added for later cleanup.
 3. For accounts of type `org`, `WorkspaceTypes` for the organization's `Workspace` itself and its child `Accounts` are created.
-4. A `Workspace` for the `Account` is created, using one of the above mentioned `WorkspaceTypes`, depending on the account type.
+4. A `Workspace` for the `Account` is created, using one of the previously created `WorkspaceTypes`, depending on the account type.
 5. An `AccountInfo` resource of name `account` is created within the `Account`'s `Workspace` and populated with information.
-6. Readiness of the resource itself is blocked until the earlier created `Workspace` is ready, i.e. potential initializers have finished. This ensures that the [security operator](/reference/components/security-operator.md) is finished with its work.
+6. Readiness of the resource itself is blocked until the earlier created `Workspace` is ready, that is, potential initializers have finished. This ensures that the [security operator](/reference/components/security-operator.md) is finished with its work.
 
 #### Example
 
@@ -97,14 +97,14 @@ as the high-level readiness signal; inspect per-subroutine conditions when
 debugging..
 
 ### **AccountInfo (`core.platform-mesh.io/v1alpha1`)**
-An `AccountInfo` resource with name `account` is created by the account operator in an account's workspace and holds information about the account the workspace belongs to. Its purpose is to expose that information to internal components that don't have information about or permission to workspaces/accounts higher up in the tree.
+An `AccountInfo` resource with name `account` is created by the account operator in an account's workspace and holds information about the account the workspace belongs to. Its purpose is to expose that information to internal components that do not have information about or permission to workspaces/accounts higher up in the tree.
 
 It is **cluster-scoped** in each **account workspace** logical cluster. Conventional
 **`metadata.name`** is **`account`**. Do not hand-apply these in normal flows;
 the **ManageAccountInfo** subroutine creates or updates them from each `Account`.
 
 Reconciliation of an `AccountInfo` resource runs through the following steps:
-1. A finalizer is added. There are no other actions happening until the resource is deleted. Other components like the [security operator](/reference/components/security-operator.md) are expected to add their own finalizers when depending on information of the resource for e.g. `Workspace` termination.
+1. A finalizer is added. There are no other actions happening until the resource is deleted. Other components like the [security operator](/reference/components/security-operator.md) are expected to add their own finalizers when depending on information of the resource, for example for `Workspace` termination.
 2. During deletion, removal of the resource is blocked by withholding finalizer removal until the `Workspace`/`Account` does not have any child accounts anymore.
 
 #### Example
@@ -198,7 +198,7 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 | Common | **`--debug-label-value`** | *(empty)* | Debug label value for controller filters |
 | Common | **`--max-concurrent-reconciles`** | `10` | Max concurrent reconciles per controller |
 | Common | **`--environment`** | *(empty)* | Service environment label |
-| Common | **`--region`** | `local` | Region label (e.g. local, staging, prod) |
+| Common | **`--region`** | `local` | Region label (for example local, staging, prod) |
 | Common | **`--kubeconfig`** | *(empty)* | Kubeconfig file path |
 | Common | **`--is-local`** | `false` | Mark execution as local |
 | Common | **`--image-name`** | *(empty)* | Image name metadata |
@@ -222,7 +222,7 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 | --- | --- |
 | **`KUBECONFIG`** | Kubeconfig to use |
 
-## Links
+## Repository
 
 | Kind | Link |
 | --- | --- |
@@ -235,3 +235,5 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 - [Account model](/concepts/account-model.md)
 - [Account resource](/reference/resources/account-resource.md)
 - [kcp](./kcp.md)
+- [Security operator](./security-operator.md)
+- [Platform Mesh operator](./platform-mesh-operator.md)

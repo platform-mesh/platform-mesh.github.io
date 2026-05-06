@@ -17,11 +17,12 @@ See [Virtual workspaces](./virtual-workspaces.md) for the kcp endpoint primitive
 
 ## Manager wiring (account-operator)
 
-The account-operator wires a `pathaware` provider against an `APIExportEndpointSlice` and gives it to a multi-cluster manager:
+The account-operator wires an `apiexport` provider against an `APIExportEndpointSlice` and gives it to a multi-cluster manager:
 
 ```go
 // account-operator/cmd/operator.go
-provider, err := pathaware.New(restCfg, operatorCfg.Kcp.ApiExportEndpointSliceName, apiexport.Options{
+// import "github.com/kcp-dev/multicluster-provider/apiexport"
+provider, err := apiexport.New(restCfg, operatorCfg.Kcp.ApiExportEndpointSliceName, apiexport.Options{
     Log:    &ctrl.Log,
     Scheme: scheme,
 })
