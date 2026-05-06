@@ -7,11 +7,11 @@ The **IAM service** is a GraphQL-based identity and access management service fo
 - **Keycloak** — the OIDC identity provider used for authentication. Users log in via Keycloak and receive JWT tokens consumed by all Platform Mesh services. The IAM service uses the Keycloak Admin API for user queries and enrichment.
 - **OpenFGA** — a relationship-based authorisation engine (inspired by Google Zanzibar). Fine-grained permissions (e.g. workspace membership, role assignments) are stored as tuples and evaluated by OpenFGA at request time.
 
-The service provisions and reconciles per-account OpenFGA stores, manages the relationship-based authorization model, and exposes IAM operations consumed by the Portal and other Platform Mesh components. It is the runtime peer of the [Account operator](./account-operator.md) for everything authorization-related.
+The service consumes per-organization OpenFGA stores provisioned by the [Security operator](./security-operator.md), writes role-assignment tuples for IAM workflows, and exposes IAM operations consumed by the Portal and other Platform Mesh components. It is the runtime peer of the [Account operator](./account-operator.md) for identity and access-management workflows.
 
 ## Runtime role
 
-The IAM service owns the lifecycle of IAM Stores (per-account authorization stores backed by OpenFGA), seeds them with the initial authorization model, and updates them as APIBindings activate or accounts change.
+The IAM service does not own `Store` lifecycle. It looks up the organization's OpenFGA store by name, writes role-assignment tuples, and evaluates tuples through OpenFGA. The `Store` CRD and authorization model are reconciled by the [Security operator](./security-operator.md).
 
 All routing goes through a GraphQL API. Requests pass through a KCP middleware layer that injects user context from the JWT token, then reach resolvers protected by an `@Authorized` directive that evaluates OpenFGA tuples before returning data.
 
