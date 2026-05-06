@@ -99,7 +99,7 @@ spec:
       user: role:authenticated#assignee
 ```
 
-The two tuples wire every authenticated user into the `orgs` workspace as a `member`, which through the model definition above grants account create/list/get/watch on `core.platform-mesh.io`.
+The two tuples wire every authenticated user into the `orgs` workspace as a `member`, which through the preceding model definition grants account create/list/get/watch on `core.platform-mesh.io`.
 
 ## Related
 

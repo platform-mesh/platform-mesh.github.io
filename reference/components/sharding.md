@@ -19,7 +19,7 @@ https://docs.kcp.io/kcp/main/setup/sharding/
 
 Sharding is a capacity mechanism, not a high availability mechanism.
 
-High availability is achieved by making each component highly available by itself, e.g. by deploying multiple replicas in different availability zones and making its backing storage highly available.
+High availability is achieved by making each component highly available by itself, for example by deploying multiple replicas in different availability zones and making its backing storage highly available.
 
 ## kcp components
 
@@ -28,7 +28,7 @@ High availability is achieved by making each component highly available by itsel
 A shard is a kcp process (or processes with replicas) with its own etcd and hosts a set of [logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster), the low-level primitive of [Workspaces](/reference/components/kcp/workspaces.md).
 
 Every kcp instance consists of one `root` shard, which also contains the special [`root` Workspace](https://docs.kcp.io/kcp/main/concepts/workspaces/workspace-types/#root-workspace).
-The `root` Workspace contains e.g. the `Shard` resource, which is managed by each shard itself to signal to the front-proxy and other shards that it exists.
+The `root` Workspace contains, for example, the `Shard` resource, which is managed by each shard itself to signal to the front-proxy and other shards that it exists.
 
 Shards contain the controllers and reconcilers that make kcp mechanisms like [API sharing](/reference/components/kcp/api-sharing.md) work.
 
@@ -40,7 +40,7 @@ The front-proxy is a stateless proxy routing client requests for a workspace to 
 
 Data between shards is primarily replicated through the cache-server - an eventually-consistent fan-in point for shared data.
 
-It replicates e.g. APIExports without direct shard-to-shard connections.
+It replicates APIExports without direct shard-to-shard connections, for example.
 
 For more details on the cache-server review the kcp [cache-server](https://docs.kcp.io/kcp/main/concepts/sharding/cache-server/) documentation.
 

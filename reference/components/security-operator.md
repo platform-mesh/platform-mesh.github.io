@@ -161,7 +161,7 @@ When somebody creates an `APIBinding` to consume a provider's API, the Security 
 2. Updates the consumer organization's `Store` with the extended authorization model
 3. Enables fine-grained access control for the newly bound API's resources
 
-This dynamic model extension means providers don't need to manually configure authorization for each consumer — the Security operator handles it automatically as APIs are bound and unbound.
+This dynamic model extension means providers do not need to manually configure authorization for each consumer — the Security operator handles it automatically as APIs are bound and unbound.
 
 **Example AuthorizationModel resource:**
 
@@ -411,7 +411,7 @@ The Keycloak client secret is read from the `KEYCLOAK_CLIENT_SECRET` environment
 
 #### SMTP configuration
 
-Configure email delivery for user invitations and notifications. All SMTP settings are optional — if not configured, email-based features will be disabled.
+Configure email delivery for user invitations and notifications. All SMTP settings are optional — if not configured, email-based features are disabled.
 
 | Flag | Default | Description |
 |---|---|---|

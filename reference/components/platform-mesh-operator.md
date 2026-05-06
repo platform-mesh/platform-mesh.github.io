@@ -16,7 +16,7 @@ Given a `PlatformMesh` resource the operator:
 1. Deploys infrastructure and application components via FluxCD HelmReleases and OCM Resources.
 2. Configures kcp workspaces, provider connections, and API bindings.
 3. Generates scoped kubeconfig secrets for cross-cluster communication.
-4. Applies feature toggles (UI content configurations, authentication behaviour).
+4. Applies feature toggles (UI content configurations, authentication behavior).
 5. Waits for dependent resources to become ready before marking reconciliation complete.
 
 ## Custom resource
@@ -161,7 +161,7 @@ Fills in default values for `ocm.repo.name` and `ocm.component.name` when not ex
 A separate read-only controller that watches OCM `Resource` objects (`delivery.ocm.software/v1alpha1`).
 When an OCM Resource's status is updated with resolved artifact information, this controller syncs those references into the corresponding FluxCD objects so that Flux can fetch and deploy them.
 
-The behaviour is driven by `repo` and `artifact` annotations (or labels) on the Resource object:
+The behavior is driven by `repo` and `artifact` annotations (or labels) on the Resource object:
 
 | `repo` | `artifact` | Action |
 |--------|-----------|--------|
@@ -284,7 +284,7 @@ This allows umbrella charts to set shared defaults via `global.*` while individu
 ```mermaid
 graph TD
     PM["PlatformMesh CR"] --> OP["platform-mesh-operator"]
-    OP -->|"deploys"| INFRA["Infra HelmRelease<br/>(cert-manager, Istio, KCP)"]
+    OP -->|"deploys"| INFRA["Infra HelmRelease<br/>(cert-manager, Istio, kcp)"]
     OP -->|"deploys"| COMP["Components HelmRelease<br/>(services)"]
     OP -->|"configures"| KCP["kcp<br/>(workspaces, API bindings)"]
     OP -->|"generates"| SEC["Provider Secrets<br/>(kubeconfigs)"]

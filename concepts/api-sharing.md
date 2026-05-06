@@ -52,7 +52,7 @@ For the full Platform Mesh examples, see [API sharing reference](/reference/comp
 
 A provider with many consumer bindings cannot watch each consumer workspace separately. kcp solves this by publishing *virtual workspace* endpoints — wildcard views that aggregates all bound objects across consumers on one kcp shard. Provider controllers connect to that one endpoint, see every relevant object annotated with its source workspace, and write status back through the same path.
 
-Every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes virtual workspaces this way. Controllers don't construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
+Every Platform Mesh operator (account-operator, security-operator, rebac-authz-webhook, the GraphQL gateway, marketplace, and per-service operators) consumes virtual workspaces this way. Controllers do not construct URLs by hand; they read them from `APIExportEndpointSlice.status`.
 
 For URL contracts, terminating-phase endpoints, and Go discovery snippets, see [Virtual workspaces reference](/reference/components/kcp/virtual-workspaces.md).
 
@@ -64,7 +64,7 @@ The kcp primitives are generic. Platform Mesh layers account structure and lifec
 - **Who consumes.** Consumer workspaces are mapped to [Accounts](./account-model.md) in the Platform Mesh hierarchy. APIBindings live inside a consumer Account's workspace.
 - **Authorization wiring.** When a binding is activated, Platform Mesh updates the consumer Account's [IAM store](./identity-and-authorization.md) so the new API surfaces are covered by OpenFGA alongside the rest of the workspace.
 
-A bare APIExport without Platform Mesh wiring works fine in vanilla kcp but will not appear in the marketplace, will not participate in IAM enforcement, and will not be discoverable through the Platform Mesh Portal.
+A bare APIExport without Platform Mesh wiring works fine in vanilla kcp but does not appear in the marketplace, does not participate in IAM enforcement, and is not discoverable through the Platform Mesh Portal.
 
 ## Upstream kcp ownership
 

@@ -63,7 +63,7 @@ GetVWs: func(obj client.Object) ([]string, error) {
 | Component | What it watches |
 | --- | --- |
 | [account-operator](../account-operator.md) | `core.platform-mesh.io` — reconciles `Account` and `Workspace` objects across consumer workspaces. |
-| [rebac-authz-webhook](../rebac-authz-webhook.md) | The endpoint slice it's pointed at — resolves which workspace a `SubjectAccessReview` came from. |
+| [rebac-authz-webhook](../rebac-authz-webhook.md) | The endpoint slice it is pointed at — resolves which workspace a `SubjectAccessReview` came from. |
 | [security-operator](../security-operator.md) | `core.platform-mesh.io` for IAM stores; `WorkspaceType.status.virtualWorkspaces[type=terminating]` for cleanup during workspace deletion. |
 | [Kubernetes GraphQL gateway](../kubernetes-graphql-gateway.md) | Configurable export — exposes the bound APIs as GraphQL. |
 | `terminal-controller-manager`, `search-operator`, `gardener-syncer`, `extension-manager-operator`, [marketplace `virtual-workspaces`](../marketplace.md), `resource-broker` | Each watches its own APIExport's VW. |

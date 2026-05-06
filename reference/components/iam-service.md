@@ -5,7 +5,7 @@
 The **IAM service** is a GraphQL-based identity and access management service for Platform Mesh. It is composed of two integrated layers:
 
 - **Keycloak** — the OIDC identity provider used for authentication. Users log in via Keycloak and receive JWT tokens consumed by all Platform Mesh services. The IAM service uses the Keycloak Admin API for user queries and enrichment.
-- **OpenFGA** — a relationship-based authorisation engine (inspired by Google Zanzibar). Fine-grained permissions (e.g. workspace membership, role assignments) are stored as tuples and evaluated by OpenFGA at request time.
+- **OpenFGA** — a relationship-based authorization engine (inspired by Google Zanzibar). Fine-grained permissions (for example workspace membership, role assignments) are stored as tuples and evaluated by OpenFGA at request time.
 
 The service consumes per-organization OpenFGA stores provisioned by the [Security operator](./security-operator.md), writes role-assignment tuples for IAM workflows, and exposes IAM operations consumed by the Portal and other Platform Mesh components. It is the runtime peer of the [Account operator](./account-operator.md) for identity and access-management workflows.
 

@@ -18,7 +18,7 @@ The Portal acts as the **orchestration layer** for the entire Platform Mesh UI s
 
 It lets users onboard organizations, navigate accounts, and navigate the kcp workspace hierarchy. All routing is owned by **Luigi**, not the Angular router — Luigi handles deep links, iframe lifecycle, and context propagation to child microfrontends. Navigation nodes (accounts, namespaces, IAM, Marketplace, Terminal) are built dynamically in TypeScript service classes that implement Luigi's node configuration interfaces.
 
-Every navigation node is scoped to a **kcp workspace path** (e.g. `root:orgs:my-org:my-account`). 
+Every navigation node is scoped to a **kcp workspace path** (for example `root:orgs:my-org:my-account`). 
 The backend derives the active workspace path from the authenticated user's context and injects it into the 
 Luigi `globalContext`, making it available to all child microfrontends without additional round-trips.
 
