@@ -32,4 +32,4 @@ The components that run as part of a Platform Mesh installation. Most pages are 
 Listed under [Reference > Integration paths](/reference/) — these connect external service runtimes into the mesh and are tracked separately from the Platform Mesh runtime.
 
 - [api-syncagent](./api-syncagent.md)
-- [multi-cluster-runtime](./multi-cluster-runtime.md)
+- [multicluster-runtime](./multicluster-runtime.md)

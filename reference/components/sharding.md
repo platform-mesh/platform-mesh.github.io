@@ -108,12 +108,6 @@ sequenceDiagram
 ## Related
 
 - [kcp](./kcp.md)
-- [API sharing](/reference/components/kcp/api-sharing.md)
-- [Control planes and workspaces](/concepts/control-planes.md)
-- [Virtual workspaces](/reference/components/kcp/virtual-workspaces.md)
 - [kcp-operator](./kcp-operator.md)
-- [kcp sharding concepts](https://docs.kcp.io/kcp/main/concepts/sharding/)
+- [Virtual workspaces](/reference/components/kcp/virtual-workspaces.md)
 - [kcp sharding setup guide](https://docs.kcp.io/kcp/main/setup/sharding/)
-- [kcp logical clusters](https://docs.kcp.io/kcp/main/concepts/terminology/#logical-cluster)
-- [kcp root Workspace](https://docs.kcp.io/kcp/main/concepts/workspaces/workspace-types/#root-workspace)
-- [kcp cache-server](https://docs.kcp.io/kcp/main/concepts/sharding/cache-server/)

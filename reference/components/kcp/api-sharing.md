@@ -25,27 +25,38 @@ The Platform Mesh core APIExport publishes the `Account`, `AccountInfo`, `Author
 
 ```yaml
 # platform-mesh-operator/manifests/kcp/01-platform-mesh-system/apiexport-core.platform-mesh.io.yaml
+# Excerpt — schema versions and the claim list change between releases.
+# For the canonical content, see the manifest in the platform-mesh-operator
+# release that ships with your Platform Mesh version.
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
   name: core.platform-mesh.io
 spec:
   latestResourceSchemas:
-  - v260126-7c674ee.accountinfos.core.platform-mesh.io
-  - v260109-82344be.accounts.core.platform-mesh.io
-  - v260112-5925c7e.authorizationmodels.core.platform-mesh.io
-  - v250718-a64f278.stores.core.platform-mesh.io
-  - v260213-fbdf981.invites.core.platform-mesh.io
+    - <version>.accountinfos.core.platform-mesh.io
+    - <version>.accounts.core.platform-mesh.io
+    - <version>.contentconfigurations.ui.platform-mesh.io
+    - <version>.providermetadatas.ui.platform-mesh.io
+    - <version>.authorizationmodels.core.platform-mesh.io
+    - <version>.stores.core.platform-mesh.io
+    - <version>.invites.core.platform-mesh.io
   permissionClaims:
-    - all: true
+    - resource: workspaces
       group: tenancy.kcp.io
-      identityHash: {{ .apiExportRootTenancyKcpIoIdentityHash }}
-      resource: workspaces
-    - all: true
+      all: true
+      identityHash: <tenancy-kcp-io-identity-hash>
+    - resource: workspacetypes
       group: tenancy.kcp.io
-      identityHash: {{ .apiExportRootTenancyKcpIoIdentityHash }}
-      resource: workspacetypes
+      all: true
+      identityHash: <tenancy-kcp-io-identity-hash>
     - resource: apibindings
+      group: apis.kcp.io
+      all: true
+    - resource: apiexports
+      group: apis.kcp.io
+      all: true
+    - resource: apiresourceschemas
       group: apis.kcp.io
       all: true
     - resource: logicalclusters
@@ -56,7 +67,7 @@ spec:
       all: true
 ```
 
-The templated `identityHash` values are filled in at apply time from the upstream tenancy.kcp.io APIExport's status.
+The `identityHash` values are filled in at apply time from the upstream `tenancy.kcp.io` APIExport's status. The schema and claim lists in the live manifest evolve with each release; treat the YAML above as a structural example rather than a copy-paste source.
 
 ## APIBinding — accepting permission claims
 

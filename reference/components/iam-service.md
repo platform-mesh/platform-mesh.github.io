@@ -48,10 +48,6 @@ Response
 | Observability | OpenTelemetry + zerolog |
 | Container | Distroless static binary, non-root (UID 1001) |
 
-## Repository
-
-- [github.com/platform-mesh/iam-service](https://github.com/platform-mesh/iam-service)
-
 ## Configuration
 
 | Variable | Purpose |
@@ -60,6 +56,10 @@ Response
 | `KEYCLOAK_CLIENT_SECRET` | Keycloak OAuth2 client secret (environment only — never pass via CLI args) |
 
 Copy `.env.sample` to `.env` and populate the values before running locally.
+
+## Repository
+
+- [github.com/platform-mesh/iam-service](https://github.com/platform-mesh/iam-service)
 
 ## Related
 

@@ -39,8 +39,6 @@ This means that OpenFGA is not a hardwired component: any authorizer conforming 
 - [Authentication](./authentication) — how identity is established before authorization runs
 - [Identity and authorization](/concepts/identity-and-authorization) — runtime view of the authorizer chain
 - [OpenFGA](/reference/components/openfga) — reference for the authorization engine component
-- [rebac-authz-webhook](/reference/components/rebac-authz-webhook) — reference for the kcp ↔ OpenFGA bridge
-- [kcp identity and authorization](/reference/components/kcp/identity-and-authorization) — reference for the AuthorizationConfiguration YAML and webhook deployment
 
 [^1]: [Kubernetes RBAC Documentation](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 [^2]: [OpenFGA](https://openfga.dev/)

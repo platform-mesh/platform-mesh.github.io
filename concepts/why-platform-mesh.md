@@ -41,8 +41,6 @@ The result is a consistent consumer experience while providers retain implementa
 ## Related
 
 - [Architecture](./architecture.md)
-- [Account model](./account-model.md)
-- [Control planes](./control-planes.md)
 - [Personas](./personas/)
+- [Account model](./account-model.md)
 - [Integration paths](./integration-paths.md)
-- [Interaction patterns](./interaction-patterns/provider-to-consumer.md)

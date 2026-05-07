@@ -97,7 +97,7 @@ Sentence case. Only the first word and proper nouns are capitalized.
 | `OpenFGA` | All-caps `O`, `FGA`. Never `openfga` in prose. |
 | `Keycloak` | One word, capital `K`. |
 | `api-syncagent` | Lowercase, hyphenated. |
-| `multi-cluster-runtime` | Lowercase, hyphenated. The upstream `kubernetes-sigs/multicluster-runtime` URL is unhyphenated; that is correct in URLs, not in prose. |
+| `multicluster-runtime` | Lowercase, single hyphen. Matches the upstream `kubernetes-sigs/multicluster-runtime` repository name. Never write `multi-cluster-runtime` (two hyphens) in prose. |
 | `kube-bind` | Lowercase, hyphenated. |
 | `rebac-authz-webhook` | Lowercase, hyphenated. |
 | `IAM service`, `IAM UI` | `IAM` is an acronym, stays uppercase. |
@@ -263,7 +263,7 @@ A pull request that adds or modifies a content page is ready to merge when:
 
 - The page lives in exactly one Diátaxis section
 - Headings use sentence case
-- Body prose uses British English (with the proper-noun and code exceptions in [Spelling and language](#spelling-and-language))
+- Body prose uses US English (with the proper-noun and code exceptions in [Spelling and language](#spelling-and-language))
 - Project nouns use the canonical form from [Capitalization](#capitalization)
 - The page ends with a `## Related` section (or `## Next` for tutorials)
 - `npm run build` succeeds

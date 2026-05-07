@@ -85,7 +85,7 @@ Each store's authorization model is assembled by the Security operator from seve
 3. Privileged RBAC-derived model fragments for resources such as Kubernetes RBAC objects.
 4. `AuthorizationModel` resources created for bound provider APIs.
 
-The Security operator writes the merged model to OpenFGA using schema version `1.2` and records the resulting model ID in `Store.status.authorizationModelId`. See the [Security operator component reference](./security-operator.md) for the `Store` and `AuthorizationModel` resource shapes.
+The Security operator writes the merged model to OpenFGA using schema version `1.2` and records the resulting model ID in `Store.status.authorizationModelId`. See the [Security operator](./security-operator.md) reference for the `Store` and `AuthorizationModel` resource shapes.
 
 For the `Store` CRD fields and lifecycle, see [IAM Store resource](/reference/resources/iamstore-resource.md).
 
@@ -207,10 +207,7 @@ OpenFGA ships with the standard Platform Mesh local setup. For local access to t
 
 ## Related
 
-- [Access OpenFGA](/how-to-guides/access-openfga.md)
 - [Identity and authorization](/concepts/identity-and-authorization.md)
+- [Access OpenFGA](/how-to-guides/access-openfga.md)
 - [Security operator](./security-operator.md)
 - [rebac-authz-webhook](./rebac-authz-webhook.md)
-- [IAM service](./iam-service.md)
-- [IAM Store resource](/reference/resources/iamstore-resource.md)
-- [kcp identity and authorization](./kcp/identity-and-authorization.md)

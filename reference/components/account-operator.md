@@ -94,7 +94,7 @@ lifecycle](https://github.com/platform-mesh/subroutines) adds:
 Common `reason` values include `Complete`, `Pending`, `Stopped`, `Skipped`,
 `Error`, and `Unknown` (see the shared conditions package). Use `Ready == True`
 as the high-level readiness signal; inspect per-subroutine conditions when
-debugging..
+debugging.
 
 ### **AccountInfo (`core.platform-mesh.io/v1alpha1`)**
 An `AccountInfo` resource with name `account` is created by the account operator in an account's workspace and holds information about the account the workspace belongs to. Its purpose is to expose that information to internal components that do not have information about or permission to workspaces/accounts higher up in the tree.
@@ -234,6 +234,5 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 
 - [Account model](/concepts/account-model.md)
 - [Account resource](/reference/resources/account-resource.md)
-- [kcp](./kcp.md)
 - [Security operator](./security-operator.md)
 - [Platform Mesh operator](./platform-mesh-operator.md)

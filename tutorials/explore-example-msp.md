@@ -1,6 +1,6 @@
 # Explore the example MSP
 
-This tutorial uses the local setup with example data to show the Platform Mesh portal workflow from first login to provisioning a managed service.
+This tutorial uses the local setup with example data to show the Platform Mesh Portal workflow from first login to provisioning a managed service.
 
 ::: warning Development preview
 The local setup is under active development. Features and workflows may change.

@@ -105,7 +105,5 @@ The two tuples wire every authenticated user into the `orgs` workspace as a `mem
 
 - [Identity and authorization](/concepts/identity-and-authorization.md) — conceptual model and authorizer chain
 - [Security operator](/reference/components/security-operator.md) — reconciles Stores, authorization models, and tuples
-- [IAM service](/reference/components/iam-service.md) — reads and writes role-assignment data in OpenFGA
 - [OpenFGA](/reference/components/openfga.md) — the authorization engine
 - [rebac-authz-webhook](/reference/components/rebac-authz-webhook.md) — connects kcp authorization to the Store
-- [OpenFGA modeling language](https://openfga.dev/docs/configuration-language)

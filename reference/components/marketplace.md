@@ -53,10 +53,6 @@ The active `accountId` is forwarded from the Luigi context to every GraphQL requ
 | Language | TypeScript (ES2022, strict mode) |
 | Container | nginx:alpine, served on port 8080 |
 
-## Repository
-
-- [github.com/platform-mesh/marketplace-ui](https://github.com/platform-mesh/marketplace-ui)
-
 ## Configuration
 
 The UI reads all runtime configuration from the Luigi node context injected by the Portal. No static environment files are required in production. The relevant context fields are:
@@ -68,11 +64,14 @@ The UI reads all runtime configuration from the Luigi node context injected by t
 | `token` | Bearer token forwarded to every GraphQL request |
 | `analyticsTrackerConfig` | Optional Matomo analytics configuration |
 
+## Repository
+
+- [github.com/platform-mesh/marketplace-ui](https://github.com/platform-mesh/marketplace-ui)
+
 
 ## Related
 
-- [Kubernetes GraphQL Gateway](./kubernetes-graphql-gateway.md)
 - [Portal](./portal.md)
+- [Kubernetes GraphQL gateway](./kubernetes-graphql-gateway.md)
 - [API sharing](/concepts/api-sharing.md)
 - [Provider to consumer](/concepts/interaction-patterns/provider-to-consumer.md)
-- [Cross-consumption](/concepts/interaction-patterns/cross-consumption.md)

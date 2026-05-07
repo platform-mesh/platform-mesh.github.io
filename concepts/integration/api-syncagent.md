@@ -44,7 +44,7 @@ Use api-syncagent when:
 - the provider wants a configuration-driven integration
 - related resources such as Secrets or ConfigMaps need to be synchronized
 
-Use [multi-cluster-runtime](./multi-cluster-runtime.md) when the provider needs full control over synchronization logic.
+Use [multicluster-runtime](./multicluster-runtime.md) when the provider needs full control over synchronization logic.
 
 ## How api-syncagent works
 
@@ -177,7 +177,6 @@ api-syncagent owns the detailed configuration and object semantics. Use the upst
 ## Related
 
 - [Provider quick start](/tutorials/provider-quick-start.md) — runnable tutorial that builds an api-syncagent provider end to end.
-- [multi-cluster-runtime](./multi-cluster-runtime.md) — the alternative path for custom controller logic.
+- [api-syncagent reference](/reference/components/api-syncagent.md)
+- [multicluster-runtime](./multicluster-runtime.md) — the alternative path for custom controller logic.
 - [Integration paths](../integration-paths.md)
-- [api-syncagent component reference](/reference/components/api-syncagent.md)
-- [API sharing](../api-sharing.md)

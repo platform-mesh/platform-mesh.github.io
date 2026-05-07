@@ -51,10 +51,6 @@ OpenFGA tuple evaluation + Keycloak user enrichment
 | Language | TypeScript (ES2022, strict mode) |
 | Container | nginx:alpine, served on port 8080 |
 
-## Repository
-
-- [github.com/platform-mesh/iam-ui](https://github.com/platform-mesh/iam-ui)
-
 ## Configuration
 
 The UI reads all runtime configuration from the Luigi node context injected by the Portal. No static environment files are required in production. The relevant context fields are:
@@ -70,6 +66,10 @@ The UI reads all runtime configuration from the Luigi node context injected by t
 | `analyticsTrackerConfig` | Optional Matomo analytics configuration |
 
 For local development, copy `.env-example` to `.env` and populate the required values before running.
+
+## Repository
+
+- [github.com/platform-mesh/iam-ui](https://github.com/platform-mesh/iam-ui)
 
 ## Related
 
