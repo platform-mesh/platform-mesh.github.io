@@ -49,7 +49,7 @@ flowchart LR
     agent -. "status sync" .-> hb
 ```
 
-The controller uses standard `controller-runtime` against the consumer workspace endpoint. Cross-workspace orchestration is the [advanced provider tutorial's](./build-multi-cluster-runtime-provider.md) job; this tutorial keeps the topology to a single workspace.
+The controller uses standard `controller-runtime` against the consumer workspace endpoint. Cross-workspace orchestration is the [advanced provider tutorial's](./build-multicluster-runtime-provider.md) job; this tutorial keeps the topology to a single workspace.
 
 ## Point a kubeconfig at the consumer workspace
 
@@ -256,7 +256,7 @@ The same pattern scales to any provider that publishes through api-syncagent: bi
 
 ## Next
 
-Continue with [Build a multi-cluster-runtime provider](./build-multi-cluster-runtime-provider.md) to see the advanced provider counterpart of this consumer pattern.
+Continue with [Build a multicluster-runtime provider](./build-multicluster-runtime-provider.md) to see the advanced provider counterpart of this consumer pattern.
 
 Optional branches:
 

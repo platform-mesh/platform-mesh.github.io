@@ -12,7 +12,7 @@ See [Identity and authorization](/concepts/identity-and-authorization.md) for th
 | `--authentication-config` | Cluster-wide OIDC config (kcp flag, takes an `AuthenticationConfiguration`). | [Authentication](https://docs.kcp.io/kcp/main/concepts/authorization/authentication/) |
 | `WorkspaceAuthenticationConfiguration` | Per-workspace OIDC config referenced by a `WorkspaceType`. Platform Mesh uses this to give each org its own Keycloak realm. | [Workspace authentication](https://docs.kcp.io/kcp/main/concepts/authorization/authentication/) |
 | `--authorization-webhook-config-file` | Wires a `SubjectAccessReview` webhook into the kcp authorizer chain. | [Authorization](https://docs.kcp.io/kcp/main/concepts/authorization/) |
-| Built-in authorizer chain | RBAC → required-groups → workspace-content → max-permission-policy → local/global/bootstrap. Webhook layers after. | [Authorization](https://docs.kcp.io/kcp/main/concepts/authorization/) |
+| Built-in authorizer chain | Required Groups → Workspace Content → System CRD → Maximal Permission Policy → one of {Local, Global, Bootstrap}. The webhook is configured as a sibling authorizer in `AuthorizationConfiguration`. | [Authorizers](https://docs.kcp.io/kcp/main/concepts/authorization/authorizers/) |
 
 ## Per-workspace OIDC
 

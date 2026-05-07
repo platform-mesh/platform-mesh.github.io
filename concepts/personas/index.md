@@ -7,7 +7,7 @@ Use this section to identify which role matches your work, what that role owns, 
 | Persona | Primary goal | Owns | Start with |
 | --- | --- | --- | --- |
 | [Platform owner](./platform-owner.md) | Run the mesh as a shared service platform | Platform Mesh runtime, account hierarchy, identity, authorization, policy, provider onboarding, component lifecycle | [Why Platform Mesh?](../why-platform-mesh.md), [Architecture](../architecture.md), [Account model](../account-model.md), [Control planes](../control-planes.md) |
-| [Service provider](./service-provider.md) | Publish a service capability as a declarative API | API contract, provider automation, service runtime integration, lifecycle status, integration path | [Integration paths](../integration-paths.md), [api-syncagent](../integration/api-syncagent.md), [multi-cluster-runtime](../integration/multi-cluster-runtime.md), [Interaction patterns](../interaction-patterns/provider-to-consumer.md) |
+| [Service provider](./service-provider.md) | Publish a service capability as a declarative API | API contract, provider automation, service runtime integration, lifecycle status, integration path | [Integration paths](../integration-paths.md), [api-syncagent](../integration/api-syncagent.md), [multicluster-runtime](../integration/multicluster-runtime.md), [Interaction patterns](../interaction-patterns/provider-to-consumer.md) |
 | [Service consumer](./service-consumer.md) | Discover and consume provider services through a consistent API | Account resources, bound provider APIs, desired-state resources, application service dependencies | [Explore the example MSP](/tutorials/explore-example-msp.md), [Interaction patterns](../interaction-patterns/provider-to-consumer.md), [Account model](../account-model.md), [API sharing](../api-sharing.md) |
 
 ## How the personas interact
@@ -73,9 +73,6 @@ Personas explain audience and ownership. Task steps, component facts, and upstre
 ## Related
 
 - [Why Platform Mesh?](../why-platform-mesh.md)
+- [Architecture](../architecture.md)
 - [Account model](../account-model.md)
-- [Integration paths](../integration-paths.md)
 - [Provider to consumer](../interaction-patterns/provider-to-consumer.md)
-- [Provider to provider](../interaction-patterns/provider-to-provider.md)
-- [Cross-consumption](../interaction-patterns/cross-consumption.md)
-- [API sharing](../api-sharing.md)

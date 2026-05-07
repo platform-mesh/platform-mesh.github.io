@@ -8,7 +8,7 @@
 
 Keycloak integrates with Platform Mesh through two primary paths:
 
-**kcp workspace authentication** — Keycloak is configured as an OIDC provider through kcp's `WorkspaceAuthenticationConfiguration` resources. The Security Operator creates one `WorkspaceAuthenticationConfiguration` per organization, named after the workspace, which configures a JWT authenticator pointing to the Keycloak realm issuer URL (`https://<base-domain>/keycloak/realms/<workspace-name>`). This configuration includes:
+**kcp workspace authentication** — Keycloak is configured as an OIDC provider through kcp's `WorkspaceAuthenticationConfiguration` resources. The Security operator creates one `WorkspaceAuthenticationConfiguration` per organization, named after the workspace, which configures a JWT authenticator pointing to the Keycloak realm issuer URL (`https://<base-domain>/keycloak/realms/<workspace-name>`). This configuration includes:
 - **Audience validation**: All OIDC client IDs from the organization's `AccountInfo` resource, ensuring tokens issued for any client in the realm are accepted
 - **Claim mappings**: Extracts user identity from the `email` claim and groups from the `groups` claim in JWT tokens
 - **WorkspaceType linking**: The configuration is referenced by all `WorkspaceType` resources labeled with the organization, applying authentication rules to all workspaces of that type
@@ -17,24 +17,17 @@ This per-organization JWT configuration enables isolated identity management whi
 
 **Portal authentication** — The portal uses Keycloak's interactive browser-based OIDC flows for user authentication, establishing browser sessions that carry identity claims to downstream services.
 
-**Automated provisioning** — The [Security Operator](./security-operator.md) automatically configures Keycloak through `IdentityProviderConfiguration` resources. When an organization is created, the operator provisions a dedicated Keycloak realm with two pre-configured OIDC clients: a confidential client for web applications (including the portal) and a public client for CLI tools like `kubectl` with PKCE support.
+**Automated provisioning** — The [Security operator](./security-operator.md) automatically configures Keycloak through `IdentityProviderConfiguration` resources. When an organization is created, the operator provisions a dedicated Keycloak realm with two pre-configured OIDC clients: a confidential client for web applications (including the portal) and a public client for CLI tools like `kubectl` with PKCE support.
 
-## Repository
+## Realm lifecycle
 
-- [platform-mesh/keycloak](https://github.com/platform-mesh/keycloak)
-- Upstream: [keycloak/keycloak](https://github.com/keycloak/keycloak)
-
-## Future component reference
-
-### Realm lifecycle
-
-Keycloak realms are created, updated, and deleted automatically in sync with organization lifecycle through `IdentityProviderConfiguration` resources managed by the Security Operator.
+Keycloak realms are created, updated, and deleted automatically in sync with organization lifecycle through `IdentityProviderConfiguration` resources managed by the Security operator.
 
 ::: info
-See more information about [IdentityProviderConfiguration](/reference/components/security-operator.md#identityproviderconfiguration-idp) in the Security Operator component documentation.
+See [IdentityProviderConfiguration](/reference/components/security-operator.md#identityproviderconfiguration-idp) on the Security operator page.
 :::
 
-**Creation** — When an organization is created, the Security Operator provisions an `IdentityProviderConfiguration` resource named after the workspace. The IDP controller reconciles this resource and creates a corresponding Keycloak realm with the same name through the Keycloak Admin API.
+**Creation** — When an organization is created, the Security operator provisions an `IdentityProviderConfiguration` resource named after the workspace. The IDP controller reconciles this resource and creates a corresponding Keycloak realm with the same name through the Keycloak Admin API.
 
 **Configuration** — Each realm is initialized with standard defaults:
 
@@ -55,7 +48,7 @@ See more information about [IdentityProviderConfiguration](/reference/components
 
 This lifecycle ensures that identity infrastructure is automatically provisioned and cleaned up alongside the organizational structure.
 
-### Client management
+## Client management
 
 Each Keycloak realm provisions two OIDC clients by default, both managed through the OIDC Dynamic Client Registration protocol.
 
@@ -91,8 +84,13 @@ Each Keycloak realm provisions two OIDC clients by default, both managed through
 Client credentials and registration access tokens are stored in Kubernetes secrets referenced by the `IdentityProviderConfiguration` resource, enabling the controller to manage client lifecycle through the OIDC protocol.
 
 
+## Repository
+
+- [platform-mesh/keycloak](https://github.com/platform-mesh/keycloak)
+- Upstream: [keycloak/keycloak](https://github.com/keycloak/keycloak)
+
 ## Related
 - [Access Keycloak](/how-to-guides/access-keycloak.md)
 - [Authentication](/concepts/security/authentication.md) — authentication concepts and Keycloak's role as internal IDP
 - [Identity and authorization](/concepts/identity-and-authorization.md) — runtime view of the authentication and authorization chain
-- [Security Operator](./security-operator.md) — automated provisioning of Keycloak realms and clients
+- [Security operator](./security-operator.md) — automated provisioning of Keycloak realms and clients

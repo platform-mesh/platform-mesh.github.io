@@ -64,4 +64,3 @@ Account lifecycle is tied to identity and authorization state. Keycloak provides
 - [API sharing](./api-sharing.md)
 - [Identity and authorization](./identity-and-authorization.md)
 - [Account resource](/reference/resources/account-resource.md)
-- [Account operator](/reference/components/account-operator.md)

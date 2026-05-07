@@ -27,5 +27,5 @@ After completing [Explore the example MSP](/tutorials/explore-example-msp.md), t
 
 ## Related
 
-- [OpenFGA component reference](/reference/components/openfga.md)
+- [OpenFGA reference](/reference/components/openfga.md)
 - [Identity and authorization](/concepts/identity-and-authorization.md)

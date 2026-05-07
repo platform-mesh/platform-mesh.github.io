@@ -84,6 +84,3 @@ The security architecture integrates deeply with the Platform Mesh [account mode
 - [Authorization](./authorization) — design view of layered RBAC + ReBAC decisions
 - [Identity and authorization](/concepts/identity-and-authorization) — runtime view of the same components
 - [Account model](/concepts/account-model) — organizational hierarchy that frames per-org isolation
-- [Keycloak](/reference/components/keycloak) — reference for the identity provider component
-- [OpenFGA](/reference/components/openfga) — reference for the authorization engine component
-- [rebac-authz-webhook](/reference/components/rebac-authz-webhook) — reference for the kcp ↔ OpenFGA bridge

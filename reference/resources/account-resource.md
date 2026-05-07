@@ -105,7 +105,5 @@ Applied at the root workspace, this provisions the top-level `platform-mesh` org
 
 - [Account model](/concepts/account-model.md)
 - [Control planes and workspaces](/concepts/control-planes.md)
-- [Identity and authorization](/concepts/identity-and-authorization.md)
 - [Account operator](/reference/components/account-operator.md)
-- [Security operator](/reference/components/security-operator.md)
 - [Metadata catalog](./metadata-catalog.md)
