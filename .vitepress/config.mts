@@ -207,6 +207,7 @@ export default withMermaid({
             { text: 'Kubernetes GraphQL gateway', link: '/reference/components/kubernetes-graphql-gateway' },
             { text: 'Portal', link: '/reference/components/portal' },
             { text: 'Marketplace', link: '/reference/components/marketplace' },
+            { text: 'virtual-workspaces', link: '/reference/components/virtual-workspaces' },
             ]
         },
         {
