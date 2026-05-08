@@ -31,4 +31,4 @@ Luigi `globalContext`, making it available to all child microfrontends without a
 - [Explore the example MSP](/tutorials/explore-example-msp.md)
 - [IAM UI](./iam-ui.md)
 - [Marketplace](./marketplace.md)
-- [Kubernetes GraphQL gateway](./kubernetes-graphql-gateway.md)
+- [virtual-workspaces](./virtual-workspaces.md) — serves the aggregated `ContentConfiguration` view the Portal renders from
