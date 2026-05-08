@@ -168,5 +168,5 @@ Set any limit flag to `0` to disable it.
 
 - [Portal](./portal.md)
 - [Marketplace](./marketplace.md)
-- [kcp virtual workspaces](./kcp/virtual-workspaces.md)
+- [virtual-workspaces](./virtual-workspaces.md) — Platform Mesh virtual workspace apiserver fronted as GraphQL through `ClusterAccess`
 - [Architecture](/concepts/architecture.md)

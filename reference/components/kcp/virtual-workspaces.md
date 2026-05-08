@@ -66,7 +66,8 @@ GetVWs: func(obj client.Object) ([]string, error) {
 | [rebac-authz-webhook](../rebac-authz-webhook.md) | The endpoint slice it is pointed at — resolves which workspace a `SubjectAccessReview` came from. |
 | [security-operator](../security-operator.md) | `core.platform-mesh.io` for IAM stores; `WorkspaceType.status.virtualWorkspaces[type=terminating]` for cleanup during workspace deletion. |
 | [Kubernetes GraphQL gateway](../kubernetes-graphql-gateway.md) | Configurable export — exposes the bound APIs as GraphQL. |
-| `terminal-controller-manager`, `search-operator`, `gardener-syncer`, `extension-manager-operator`, [marketplace `virtual-workspaces`](../marketplace.md), `resource-broker` | Each watches its own APIExport's VW. |
+| [`virtual-workspaces`](../virtual-workspaces.md) | A standalone Platform Mesh virtual workspace apiserver that publishes `contentconfigurations` and `marketplace` views for the Portal and Marketplace UIs. |
+| `terminal-controller-manager`, `search-operator`, `gardener-syncer`, `extension-manager-operator`, `resource-broker` | Each watches its own APIExport's VW. |
 
 The Helm value naming the slice each component watches is `kcp.apiExportEndpointSliceName`; account-operator defaults to `core.platform-mesh.io` ([helm-charts](https://github.com/platform-mesh/helm-charts/blob/main/charts/account-operator/values.yaml)).
 

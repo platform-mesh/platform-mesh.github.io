@@ -73,5 +73,5 @@ The UI reads all runtime configuration from the Luigi node context injected by t
 
 - [Portal](./portal.md)
 - [Kubernetes GraphQL gateway](./kubernetes-graphql-gateway.md)
-- [API sharing](/concepts/api-sharing.md)
+- [virtual-workspaces](./virtual-workspaces.md) — serves the `MarketplaceEntry` view this UI consumes
 - [Provider to consumer](/concepts/interaction-patterns/provider-to-consumer.md)
