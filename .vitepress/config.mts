@@ -33,6 +33,10 @@ export default withMermaid({
 
   description: "Platform Mesh - Building upon the Kubernetes API & Resource Model",
 
+  // Internal design specs and notes live under docs/superpowers/ and are not
+  // part of the published docs site. Exclude them from VitePress's source scan.
+  srcExclude: ['docs/superpowers/**'],
+
   // Auto-redirect stub pages: any page with `redirect: /new/path` in its frontmatter
   // gets a <meta http-equiv="refresh"> tag injected. Old v0.2 URLs that map to a
   // single new location use this to bounce visitors automatically; the visible
@@ -76,7 +80,7 @@ export default withMermaid({
       { text: 'How-to guides', link: '/how-to-guides/' },
       { text: 'Concepts', link: '/concepts/' },
       { text: 'Reference', link: '/reference/' },
-      { text: 'Get involved', link: '/get-involved' },
+      { text: 'Community', link: '/community/' },
     ],
 
     logo: {
@@ -231,6 +235,18 @@ export default withMermaid({
             link: '/reference/security/',
             items: [
             { text: 'OpenSSF Scorecard', link: '/reference/security/scorecard' },
+            ]
+        }
+      ],
+
+      '/community/': [
+        {
+            text: 'Community',
+            items: [
+            { text: 'Welcome', link: '/community/' },
+            { text: 'Chat', link: '/community/chat' },
+            { text: 'Community calls', link: '/community/calls' },
+            { text: 'Talks', link: '/community/talks' },
             ]
         }
       ],
