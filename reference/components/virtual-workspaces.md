@@ -96,7 +96,7 @@ The component owns the `MarketplaceEntry` cluster-scoped resource:
 
 ### `marketplace.platform-mesh.io` APIExport
 
-The component ships a static `apis.kcp.io/v1alpha2.APIExport` named `marketplace.platform-mesh.io`. The export references the `marketplaceentries` schema and is what consumer workspaces bind to gain access to the marketplace virtual workspace.
+The component ships a static `apis.kcp.io/v1alpha2.APIExport` named `marketplace.platform-mesh.io`. The export references the `marketplaceentries` schema. Consumer workspaces bind provider `APIExports` to install provider APIs, while the Marketplace UI reads the catalog via the `marketplace` virtual workspace and infers installation state from `APIBindings` in the consumer workspace.
 
 ## URL contract
 
