@@ -128,6 +128,8 @@ apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
   name: orchestrate.platform-mesh.io
+  labels:
+    ui.platform-mesh.io/content-for: orchestrate.platform-mesh.io
 spec: {}
 EOF
 ```
@@ -438,6 +440,198 @@ sequenceDiagram
 ```
 
 The HttpBin operator did not need Platform Mesh-specific code. api-syncagent handled the integration path by publishing the CRD to kcp and synchronizing resources between the consumer workspace and the service cluster.
+
+## Marketplace
+
+So far the HttpBin API works end-to-end on the command line, but the Platform Mesh portal still has no idea it exists. To make the provider discoverable in the [Marketplace](/reference/components/marketplace.md) and to add a navigation entry for the resource in the UI, you create two resources in the provider workspace:
+
+| Resource | Purpose |
+| --- | --- |
+| `ProviderMetadata` | Registers your provider with the Marketplace — display name, description, contacts, icons. |
+| `ContentConfiguration` | Adds Luigi navigation nodes and views to the portal for your APIExport. |
+
+Both resources live in the provider workspace alongside the `APIExport`:
+
+```bash
+KUBECONFIG=$PM_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
+```
+
+### Register the provider
+
+Apply a `ProviderMetadata` whose name matches the `APIExport` name. The Marketplace virtual workspace joins these two on name to build a `MarketplaceEntry`.
+
+```bash
+KUBECONFIG=$PM_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: ui.platform-mesh.io/v1alpha1
+kind: ProviderMetadata
+metadata:
+  name: orchestrate.platform-mesh.io
+spec:
+  displayName: HttpBin Provider
+  description: |
+    Example provider for the Platform Mesh quickstart.
+    Provisions HttpBin instances on a service cluster.
+  contacts:
+    - displayName: HttpBin Team
+      email: httpbin@platform-mesh.io
+      role: ["Maintainer"]
+  preferredSupportChannels:
+    - displayName: HttpBin Support
+      url: https://github.com/platform-mesh/platform-mesh.github.io
+  icon:
+    light:
+      data: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkwIiBmaWxsPSIjMmM3YmU1IiAvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTE1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5IVFRQPC90ZXh0Pgo8L3N2Zz4K"
+    dark:
+      data: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkwIiBmaWxsPSIjMmM3YmU1IiAvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTE1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5IVFRQPC90ZXh0Pgo8L3N2Zz4K"
+EOF
+```
+
+::: tip Matching names
+The `metadata.name` of the `ProviderMetadata` **must** match the `APIExport` name (`orchestrate.platform-mesh.io`). The Marketplace builds entries by joining the two.
+:::
+
+### Add a UI navigation entry
+
+`ContentConfiguration` carries a Luigi config fragment that the portal merges into its navigation tree. The `ui.platform-mesh.io/content-for` label links the configuration to your APIExport — without it, the portal will not load this fragment when the consumer binds the API.
+
+```bash
+KUBECONFIG=$PM_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: ui.platform-mesh.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  labels:
+    ui.platform-mesh.io/entity: core_platform-mesh_io_account
+    ui.platform-mesh.io/content-for: orchestrate.platform-mesh.io
+  name: httpbin-ui
+spec:
+  inlineConfiguration:
+    content: |-
+      {
+          "name": "httpbins",
+          "creationTimestamp": "2022-05-17T11:37:17Z",
+          "luigiConfigFragment": {
+              "data": {
+                  "nodes": [
+                      {
+                          "pathSegment": "orchestrate_platform-mesh_io_httpbins",
+                          "navigationContext": "orchestrate_platform-mesh_io_httpbins",
+                          "label": "Http Bins",
+                          "icon": "paint-bucket",
+                          "order": 800,
+                          "entityType": "main.core_platform-mesh_io_account",
+                          "loadingIndicator": {
+                              "enabled": false
+                          },
+                          "keepSelectedForChildren": true,
+                          "url": "/assets/platform-mesh-portal-ui-wc.js#generic-list-view",
+                          "webcomponent": {
+                              "selfRegistered": true
+                          },
+                          "context": {
+                              "resourceDefinition": {
+                                  "apiGroup": "orchestrate_platform_mesh_io",
+                                  "entityCollection": "HttpBins",
+                                  "version": "v1alpha1",
+                                  "entity": "HttpBin",
+                                  "scope": "Namespaced",
+                                  "namespace": null,
+                                  "readyCondition": {
+                                    "jsonPathExpression": "status.ready",
+                                    "property": ["status.ready"]
+                                  },
+                                  "ui": {
+                                      "logoUrl": "https://www.kcp.io/icons/logo.svg",
+                                      "listView": {
+                                          "fields": [
+                                              {
+                                                  "label": "Name",
+                                                  "property": "metadata.name"
+                                              },
+                                              {
+                                                  "label": "Ready",
+                                                  "property": "status.ready",
+                                                  "uiSettings": {
+                                                    "displayAs": "boolIcon"
+                                                  }
+                                              },
+                                              {
+                                                  "label": "Link",
+                                                  "property": "status.url",
+                                                  "uiSettings": {
+                                                    "displayAs": "link"
+                                                  }
+                                              }
+                                          ]
+                                      },
+                                      "detailView": {
+                                        "fields": [
+                                          {
+                                            "label": "Name",
+                                            "property": "metadata.name"
+                                          }
+                                        ]
+                                      },
+                                      "createView": {
+                                          "fields": [
+                                              {
+                                                  "label": "Name",
+                                                  "property": "metadata.name",
+                                                  "required": true
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          },
+                          "children": [
+                            {
+                                "pathSegment": ":httpbinId",
+                                "hideFromNav": true,
+                                "keepSelectedForChildren": false,
+                                "defineEntity": {
+                                    "id": "orchestrate_platform-mesh_io_httpbin",
+                                    "contextKey": "httpbinId",
+                                    "graphqlEntity": {
+                                        "group": "orchestrate_platform-mesh_io",
+                                        "version": "v1alpha1",
+                                        "kind": "HttpBin",
+                                        "query": "{ metadata { name } }"
+                                    }
+                                },
+                                "context": {
+                                    "accountId": ":accountId",
+                                    "httpbinId": ":httpbinId",
+                                    "resourceId": ":httpbinId"
+                                }
+                            }
+                          ]
+                      },
+                      {
+                        "entityType": "main.core_platform-mesh_io_account.orchestrate_platform-mesh_io_httpbin",
+                        "pathSegment": "dashboard",
+                        "label": "Dashboard",
+                        "url": "/assets/platform-mesh-portal-ui-wc.js#generic-detail-view",
+                        "webcomponent": {
+                          "selfRegistered": true
+                        },
+                        "defineEntity": {
+                            "id": "dashboard"
+                        },
+                        "compound": {
+                            "children": []
+                        }
+                      }
+                  ]
+              }
+          }
+      }
+    contentType: json
+EOF
+```
+
+### See it in the portal
+
+Open the portal at `https://portal.localhost:8443` as the consumer account you created earlier. Under **Marketplace**, the HttpBin Provider tile should now appear. Clicking **Install** creates an `APIBinding` in the consumer workspace — equivalent to the manifest you applied by hand in the [Test the consumer flow](#test-the-consumer-flow) step. After installation, a **HttpBins** entry appears in the left navigation, listing the resources you created.
 
 ## Next
 
