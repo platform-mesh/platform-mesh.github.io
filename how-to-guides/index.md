@@ -5,6 +5,7 @@ How-to guides are task-focused. Use them when you already know what you want to 
 ## Set up and run
 
 - [Set up Platform Mesh locally](./set-up-platform-mesh-locally.md)
+- [Set up remote deployment](./set-up-remote-deployment.md)
 - [Speed up local rebuilds](./speed-up-local-rebuilds.md)
 
 ## Access local services

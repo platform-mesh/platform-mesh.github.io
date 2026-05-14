@@ -261,6 +261,34 @@ The operator supports two deployment technologies, configured per-section in the
 
 Remote deployment is used when the **Runtime** cluster (KCP, OCM) and the **Infra** cluster (FluxCD/ArgoCD) are different clusters.
 
+```mermaid
+graph LR
+    subgraph Local["Local cluster"]
+        OP["platform-mesh-operator"]
+    end
+
+    subgraph Runtime["Runtime cluster"]
+        PM["PlatformMesh CR"]
+        PROF["Profile ConfigMap"]
+        KCP["kcp (RootShard, FrontProxy)"]
+        OCM["OCM Resources"]
+    end
+
+    subgraph Infra["Infra cluster"]
+        FLUX["FluxCD / ArgoCD"]
+        HR["HelmReleases"]
+        OCI["OCIRepositories"]
+        APPS["ArgoCD Applications"]
+    end
+
+    OP -->|"reconciles (remote-runtime-kubeconfig)"| PM
+    OP -->|"reads"| PROF
+    OP -->|"creates OCM Resources"| OCM
+    OP -->|"creates HelmReleases / Apps"| HR
+    OP -->|"creates HelmReleases / Apps"| APPS
+    FLUX -->|"deploys workloads via kubeConfig secret"| Runtime
+```
+
 | Cluster | Role |
 |---------|------|
 | **Local** | Where the operator pod runs |
@@ -369,6 +397,7 @@ graph TD
 
 ## Related
 
+- [Set up remote deployment](/how-to-guides/set-up-remote-deployment.md)
 - [Control planes and workspaces](/concepts/control-planes)
 - [Account model](/concepts/account-model)
 - [Architecture](/concepts/architecture)
