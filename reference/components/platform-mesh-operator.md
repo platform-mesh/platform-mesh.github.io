@@ -234,7 +234,7 @@ The ConfigMap must contain a `profile.yaml` key with two sections:
 - **`infra`** — infrastructure components (cert-manager, traefik, etcd-druid, gateway-api) with enabled state, Helm values, intervals
 - **`components`** — application services with enabled state, chart source, Helm values, dependsOn, syncWave, imageResources
 
-The profile itself is rendered as a Go template with variables derived from `spec.exposure` (e.g., `{{ .baseDomain }}`).
+The profile itself is rendered as a Go template with variables derived from `spec.exposure` (for example, <code v-pre>{{ .baseDomain }}</code>).
 
 ### Configuration and values flow
 
