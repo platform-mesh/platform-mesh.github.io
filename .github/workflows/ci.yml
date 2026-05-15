@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release-*'
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: pages-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - id: configure
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+
+      - id: set-version
+        name: Set documentation version
+        run: echo "version=" >> $GITHUB_OUTPUT
+
+      - run: npm ci
+      - run: npm run build
+        env:
+          DOCS_VERSION: ${{ steps.set-version.outputs.version }}
+          PAGES_BASE: ${{ format('pr-preview/pr-{0}', github.event.pull_request.number) }}
+
+      - uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        with:
+          source-dir: .vitepress/dist
