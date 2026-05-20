@@ -1,0 +1,72 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+      - 'release-*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - id: configure
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+
+      - id: set-version
+        name: Set documentation version
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "version=main" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/heads/release-* ]]; then
+            echo "version=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          else
+            echo "version=" >> $GITHUB_OUTPUT
+          fi
+
+      - run: npm ci
+      - run: npm run build
+        env:
+          DOCS_VERSION: ${{ steps.set-version.outputs.version }}
+          PAGES_BASE: ''
+
+      - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
+        if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-') }}
+        with:
+          folder: .vitepress/dist
+          branch: gh-pages
+          target-folder: ${{ steps.set-version.outputs.version }}
+          clean-exclude: pr-preview
+          force: false
+
+      - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          folder: .
+          branch: gh-pages
+          target-folder: .
+          clean: false
+          clean-exclude: |
+            pr-preview
+            main
+            release-*
+          force: false
+          include: |
+            index.html
+            llms.txt
