@@ -2,6 +2,11 @@
 
 This tutorial walks you through building your first service provider in Platform Mesh with api-syncagent. You will publish the HttpBin custom resource from a Kubernetes service cluster into kcp, then verify that a consumer workspace can create an HttpBin resource and receive status back.
 
+::: tip No code provider
+This provider is considered "no code", as all components are built and deployed. 
+It is using generic UI of Platform-Mesh and api-syncagent, without any custom provider-specific code. You will deploy the HttpBin operator as a black box and use api-syncagent to publish its CRD into kcp and synchronize resources.
+:::
+
 By the end of this tutorial, you will have:
 
 - a provider workspace in kcp with an APIExport for the HttpBin API
@@ -10,7 +15,6 @@ By the end of this tutorial, you will have:
 - a PublishedResource that tells api-syncagent which CRD to expose
 - a consumer workspace that can bind the API and create an HttpBin resource
 
-The full source code is available in [`platform-mesh/provider-quickstart`](https://github.com/platform-mesh/provider-quickstart).
 
 ::: warning Development preview
 The local setup is under active development. Commands and component versions may change.
@@ -85,17 +89,17 @@ You will use two kubeconfigs:
 Run this from `helm-charts/local-setup`:
 
 ```bash
-export KCP_KUBECONFIG=$(pwd)/.secret/kcp/admin.kubeconfig
+export PM_KUBECONFIG=$(pwd)/.secret/kcp/admin.kubeconfig
 
 kind export kubeconfig --name platform-mesh
-export KIND_KUBECONFIG=$HOME/.kube/config
+export COMPUTE_KUBECONFIG=$HOME/.kube/config
 ```
 
 Verify both connections:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root
-kubectl --kubeconfig $KIND_KUBECONFIG get nodes
+KUBECONFIG=$PM_KUBECONFIG kubectl kcp workspace use :root
+kubectl --kubeconfig $COMPUTE_KUBECONFIG get nodes
 ```
 
 ## Create the provider workspace
@@ -103,21 +107,9 @@ kubectl --kubeconfig $KIND_KUBECONFIG get nodes
 Provider workspaces are organized under `root:providers`. Create the container workspace and the HttpBin provider workspace:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl create-workspace providers \
-  --type=root:providers \
-  --ignore-existing \
-  --server="https://localhost:8443/clusters/root"
-
-KUBECONFIG=$KCP_KUBECONFIG kubectl create-workspace httpbin-provider \
-  --type=root:provider \
-  --ignore-existing \
-  --server="https://localhost:8443/clusters/root:providers"
-```
-
-Switch to the provider workspace:
-
-```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
+KUBECONFIG=$PM_KUBECONFIG kubectl ws use :
+KUBECONFIG=$PM_KUBECONFIG kubectl create-workspace providers --type=root:providers --enter --ignore-existing
+KUBECONFIG=$PM_KUBECONFIG kubectl create-workspace httpbin-provider --type=root:provider --enter --ignore-existing
 ```
 
 Expected output:
@@ -131,11 +123,13 @@ Current workspace is "root:providers:httpbin-provider" (type root:provider).
 The APIExport makes the service API visible to consumers. Create it in the provider workspace:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+KUBECONFIG=$PM_KUBECONFIG kubectl apply -f - <<EOF
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
   name: orchestrate.platform-mesh.io
+  labels:
+    ui.platform-mesh.io/content-for: orchestrate.platform-mesh.io
 spec: {}
 EOF
 ```
@@ -143,7 +137,7 @@ EOF
 Grant bind permission so a consumer workspace can create an APIBinding to this export:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+KUBECONFIG=$PM_KUBECONFIG kubectl apply -f - <<EOF
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -171,7 +165,7 @@ EOF
 Verify the APIExport:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl get apiexports
+KUBECONFIG=$PM_KUBECONFIG kubectl get apiexports
 ```
 
 Expected output:
@@ -190,9 +184,9 @@ Run this from the `helm-charts` repository root:
 ```bash
 cd ..
 
-helm install example-httpbin-operator \
+helm upgrade --install example-httpbin-operator \
   ./charts/example-httpbin-operator \
-  --kubeconfig $KIND_KUBECONFIG \
+  --kubeconfig $COMPUTE_KUBECONFIG \
   -n example-httpbin-provider \
   --create-namespace
 ```
@@ -200,15 +194,13 @@ helm install example-httpbin-operator \
 Verify the operator:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG \
-  get pods -n example-httpbin-provider
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl get pods -n example-httpbin-provider
 ```
 
 Verify the CRD:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG \
-  get crd httpbins.orchestrate.platform-mesh.io
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl get crd httpbins.orchestrate.platform-mesh.io
 ```
 
 The CRD defines an `HttpBin` resource with a `spec.region` field and a status subresource:
@@ -235,19 +227,12 @@ api-syncagent runs on the service cluster and connects to kcp. It needs a kubeco
 Create the Secret:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG \
-  create secret generic httpbin-kubeconfig \
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl create secret generic httpbin-kubeconfig \
   -n example-httpbin-provider \
-  --from-file=kubeconfig=$KCP_KUBECONFIG
+  --from-file=kubeconfig=$PM_KUBECONFIG
 ```
 
-In the local setup, kcp is exposed through Traefik on `localhost:8443`. Pods need a host alias so in-cluster traffic can resolve that address correctly.
-
-```bash
-TRAEFIK_IP=$(kubectl --kubeconfig $KIND_KUBECONFIG \
-  get svc traefik -n default -o jsonpath='{.spec.clusterIP}')
-echo "Traefik ClusterIP: $TRAEFIK_IP"
-```
+In the local setup, kcp is exposed through Traefik on `localhost:8443` at the pinned ClusterIP `10.96.188.4`. Pods need host aliases so in-cluster traffic can resolve the kcp hostnames to that address. These values match the `hostAliases` block in the canonical `example-httpbin-provider` HelmRelease in the local-setup.
 
 Install api-syncagent:
 
@@ -255,21 +240,24 @@ Install api-syncagent:
 helm repo add kcp https://kcp-dev.github.io/helm-charts
 helm repo update
 
-helm install api-syncagent kcp/api-syncagent \
-  --kubeconfig $KIND_KUBECONFIG \
+helm upgrade --install api-syncagent kcp/api-syncagent \
+  --kubeconfig $COMPUTE_KUBECONFIG \
   -n example-httpbin-provider \
   --set apiExportEndpointSliceName=orchestrate.platform-mesh.io \
   --set agentName=kcp-api-syncagent \
   --set kcpKubeconfig=httpbin-kubeconfig \
   --set hostAliases.enabled=true \
-  --set "hostAliases.values[0].ip=$TRAEFIK_IP" \
-  --set "hostAliases.values[0].hostnames[0]=localhost"
+  --set "hostAliases.values[0].ip=10.96.188.4" \
+  --set "hostAliases.values[0].hostnames[0]=localhost" \
+  --set "hostAliases.values[0].hostnames[1]=portal.localhost" \
+  --set "hostAliases.values[0].hostnames[2]=kcp.localhost" \
+  --set "hostAliases.values[0].hostnames[3]=root.kcp.localhost"
 ```
 
 Grant RBAC for api-syncagent on the service cluster:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG apply -f - <<EOF
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl apply -f - <<EOF
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -300,8 +288,7 @@ EOF
 Verify api-syncagent:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG \
-  get pods -n example-httpbin-provider -l app.kubernetes.io/name=kcp-api-syncagent
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl get pods -n example-httpbin-provider -l app.kubernetes.io/name=kcp-api-syncagent
 ```
 
 ## Create a PublishedResource
@@ -309,7 +296,7 @@ kubectl --kubeconfig $KIND_KUBECONFIG \
 PublishedResource tells api-syncagent which CRD to publish into kcp. Create it on the service cluster:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG apply -f - <<EOF
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl apply -f - <<EOF
 apiVersion: syncagent.kcp.io/v1alpha1
 kind: PublishedResource
 metadata:
@@ -327,14 +314,14 @@ api-syncagent will create an APIResourceSchema in kcp and update the APIExport.
 Verify the schema:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
-KUBECONFIG=$KCP_KUBECONFIG kubectl get apiresourceschemas
+KUBECONFIG=$PM_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
+KUBECONFIG=$PM_KUBECONFIG kubectl get apiresourceschemas
 ```
 
 Verify the APIExport references the schema:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl get apiexport orchestrate.platform-mesh.io -o yaml
+KUBECONFIG=$PM_KUBECONFIG kubectl get apiexport orchestrate.platform-mesh.io -o yaml
 ```
 
 Look for the published schemas in the `spec` block.
@@ -342,25 +329,31 @@ Look for the published schemas in the `spec` block.
 Check the agent logs:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG \
-  logs -n example-httpbin-provider -l app.kubernetes.io/name=kcp-api-syncagent --tail=20
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl logs -n example-httpbin-provider -l app.kubernetes.io/name=kcp-api-syncagent --tail=20
 ```
 
 ## Test the consumer flow
 
-Create a consumer workspace:
+Login into https://portal.localhost:8443 and create organization `test-consumer`:
+
+![Platform Mesh Login](/img/quickstart/pm-login.png)
+
+Create an account under the organization. 
+
+![Platform Mesh Account](/img/quickstart/pm-account-create.png)
+
+Wait until the account is ready, then download the kubeconfig and set the environment variable:
+
+![Platform Mesh KubeConfig](/img/quickstart/pm-download-kubeconfig.png)
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl create-workspace test-consumer \
-  --server="https://localhost:8443/clusters/root"
-
-KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:test-consumer
+export CONSUMER_KUBECONFIG=/path/to/consumer-kubeconfig
 ```
 
 Create an APIBinding:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+KUBECONFIG=$CONSUMER_KUBECONFIG kubectl apply -f - <<EOF
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIBinding
 metadata:
@@ -383,19 +376,19 @@ EOF
 Verify the binding:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl get apibindings
+KUBECONFIG=$CONSUMER_KUBECONFIG kubectl get apibindings
 ```
 
 Verify the API is available:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl api-resources | grep httpbin
+KUBECONFIG=$CONSUMER_KUBECONFIG kubectl api-resources | grep httpbin
 ```
 
 Create an HttpBin instance:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl apply -f - <<EOF
+KUBECONFIG=$CONSUMER_KUBECONFIG kubectl apply -f - <<EOF
 apiVersion: orchestrate.platform-mesh.io/v1alpha1
 kind: HttpBin
 metadata:
@@ -409,15 +402,14 @@ EOF
 Check the service cluster for the synchronized resource:
 
 ```bash
-kubectl --kubeconfig $KIND_KUBECONFIG get httpbins --all-namespaces
-kubectl --kubeconfig $KIND_KUBECONFIG get pods --all-namespaces | grep httpbin
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl get httpbins --all-namespaces
+KUBECONFIG=$COMPUTE_KUBECONFIG kubectl get pods --all-namespaces | grep httpbin
 ```
 
 Check status back in kcp:
 
 ```bash
-KUBECONFIG=$KCP_KUBECONFIG kubectl kcp workspace use :root:test-consumer
-KUBECONFIG=$KCP_KUBECONFIG kubectl get httpbin my-httpbin -n default -o yaml
+KUBECONFIG=$CONSUMER_KUBECONFIG kubectl get httpbin my-httpbin -n default -o yaml
 ```
 
 Look for a populated `status` section with readiness and URL information. If status is still empty, wait a few seconds and check the operator and api-syncagent logs.
@@ -448,6 +440,198 @@ sequenceDiagram
 ```
 
 The HttpBin operator did not need Platform Mesh-specific code. api-syncagent handled the integration path by publishing the CRD to kcp and synchronizing resources between the consumer workspace and the service cluster.
+
+## Marketplace
+
+So far the HttpBin API works end-to-end on the command line, but the Platform Mesh portal still has no idea it exists. To make the provider discoverable in the [Marketplace](/reference/components/marketplace.md) and to add a navigation entry for the resource in the UI, you create two resources in the provider workspace:
+
+| Resource | Purpose |
+| --- | --- |
+| `ProviderMetadata` | Registers your provider with the Marketplace — display name, description, contacts, icons. |
+| `ContentConfiguration` | Adds Luigi navigation nodes and views to the portal for your APIExport. |
+
+Both resources live in the provider workspace alongside the `APIExport`:
+
+```bash
+KUBECONFIG=$PM_KUBECONFIG kubectl kcp workspace use :root:providers:httpbin-provider
+```
+
+### Register the provider
+
+Apply a `ProviderMetadata` whose name matches the `APIExport` name. The Marketplace virtual workspace joins these two on name to build a `MarketplaceEntry`.
+
+```bash
+KUBECONFIG=$PM_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: ui.platform-mesh.io/v1alpha1
+kind: ProviderMetadata
+metadata:
+  name: orchestrate.platform-mesh.io
+spec:
+  displayName: HttpBin Provider
+  description: |
+    Example provider for the Platform Mesh quickstart.
+    Provisions HttpBin instances on a service cluster.
+  contacts:
+    - displayName: HttpBin Team
+      email: httpbin@platform-mesh.io
+      role: ["Maintainer"]
+  preferredSupportChannels:
+    - displayName: HttpBin Support
+      url: https://github.com/platform-mesh/platform-mesh.github.io
+  icon:
+    light:
+      data: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkwIiBmaWxsPSIjMmM3YmU1IiAvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTE1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5IVFRQPC90ZXh0Pgo8L3N2Zz4K"
+    dark:
+      data: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjkwIiBmaWxsPSIjMmM3YmU1IiAvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTE1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZmIj5IVFRQPC90ZXh0Pgo8L3N2Zz4K"
+EOF
+```
+
+::: tip Matching names
+The `metadata.name` of the `ProviderMetadata` **must** match the `APIExport` name (`orchestrate.platform-mesh.io`). The Marketplace builds entries by joining the two.
+:::
+
+### Add a UI navigation entry
+
+`ContentConfiguration` carries a Luigi config fragment that the portal merges into its navigation tree. The `ui.platform-mesh.io/content-for` label links the configuration to your APIExport — without it, the portal will not load this fragment when the consumer binds the API.
+
+```bash
+KUBECONFIG=$PM_KUBECONFIG kubectl apply -f - <<EOF
+apiVersion: ui.platform-mesh.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  labels:
+    ui.platform-mesh.io/entity: core_platform-mesh_io_account
+    ui.platform-mesh.io/content-for: orchestrate.platform-mesh.io
+  name: httpbin-ui
+spec:
+  inlineConfiguration:
+    content: |-
+      {
+          "name": "httpbins",
+          "creationTimestamp": "2022-05-17T11:37:17Z",
+          "luigiConfigFragment": {
+              "data": {
+                  "nodes": [
+                      {
+                          "pathSegment": "orchestrate_platform-mesh_io_httpbins",
+                          "navigationContext": "orchestrate_platform-mesh_io_httpbins",
+                          "label": "Http Bins",
+                          "icon": "paint-bucket",
+                          "order": 800,
+                          "entityType": "main.core_platform-mesh_io_account",
+                          "loadingIndicator": {
+                              "enabled": false
+                          },
+                          "keepSelectedForChildren": true,
+                          "url": "/assets/platform-mesh-portal-ui-wc.js#generic-list-view",
+                          "webcomponent": {
+                              "selfRegistered": true
+                          },
+                          "context": {
+                              "resourceDefinition": {
+                                  "apiGroup": "orchestrate_platform_mesh_io",
+                                  "entityCollection": "HttpBins",
+                                  "version": "v1alpha1",
+                                  "entity": "HttpBin",
+                                  "scope": "Namespaced",
+                                  "namespace": null,
+                                  "readyCondition": {
+                                    "jsonPathExpression": "status.ready",
+                                    "property": ["status.ready"]
+                                  },
+                                  "ui": {
+                                      "logoUrl": "https://www.kcp.io/icons/logo.svg",
+                                      "listView": {
+                                          "fields": [
+                                              {
+                                                  "label": "Name",
+                                                  "property": "metadata.name"
+                                              },
+                                              {
+                                                  "label": "Ready",
+                                                  "property": "status.ready",
+                                                  "uiSettings": {
+                                                    "displayAs": "boolIcon"
+                                                  }
+                                              },
+                                              {
+                                                  "label": "Link",
+                                                  "property": "status.url",
+                                                  "uiSettings": {
+                                                    "displayAs": "link"
+                                                  }
+                                              }
+                                          ]
+                                      },
+                                      "detailView": {
+                                        "fields": [
+                                          {
+                                            "label": "Name",
+                                            "property": "metadata.name"
+                                          }
+                                        ]
+                                      },
+                                      "createView": {
+                                          "fields": [
+                                              {
+                                                  "label": "Name",
+                                                  "property": "metadata.name",
+                                                  "required": true
+                                              }
+                                          ]
+                                      }
+                                  }
+                              }
+                          },
+                          "children": [
+                            {
+                                "pathSegment": ":httpbinId",
+                                "hideFromNav": true,
+                                "keepSelectedForChildren": false,
+                                "defineEntity": {
+                                    "id": "orchestrate_platform-mesh_io_httpbin",
+                                    "contextKey": "httpbinId",
+                                    "graphqlEntity": {
+                                        "group": "orchestrate_platform-mesh_io",
+                                        "version": "v1alpha1",
+                                        "kind": "HttpBin",
+                                        "query": "{ metadata { name } }"
+                                    }
+                                },
+                                "context": {
+                                    "accountId": ":accountId",
+                                    "httpbinId": ":httpbinId",
+                                    "resourceId": ":httpbinId"
+                                }
+                            }
+                          ]
+                      },
+                      {
+                        "entityType": "main.core_platform-mesh_io_account.orchestrate_platform-mesh_io_httpbin",
+                        "pathSegment": "dashboard",
+                        "label": "Dashboard",
+                        "url": "/assets/platform-mesh-portal-ui-wc.js#generic-detail-view",
+                        "webcomponent": {
+                          "selfRegistered": true
+                        },
+                        "defineEntity": {
+                            "id": "dashboard"
+                        },
+                        "compound": {
+                            "children": []
+                        }
+                      }
+                  ]
+              }
+          }
+      }
+    contentType: json
+EOF
+```
+
+### See it in the portal
+
+Open the portal at `https://portal.localhost:8443` as the consumer account you created earlier. Under **Marketplace**, the HttpBin Provider tile should now appear. Clicking **Install** creates an `APIBinding` in the consumer workspace — equivalent to the manifest you applied by hand in the [Test the consumer flow](#test-the-consumer-flow) step. After installation, a **HttpBins** entry appears in the left navigation, listing the resources you created.
 
 ## Next
 

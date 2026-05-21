@@ -99,10 +99,16 @@ export default withMermaid({
 
       '/tutorials/': [
         {
+            text: 'Quickstarts',
+            items: [
+            { text: 'No-code provider (HttpBin)', link: '/tutorials/provider-quick-start' },
+            { text: 'Code-based provider (Wild West)', link: '/tutorials/code-based-provider-quick-start' },
+            ]
+        },
+        {
             text: 'Tutorials',
             items: [
             { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
-            { text: 'Provider quick start', link: '/tutorials/provider-quick-start' },
             { text: 'Consume a service from a controller', link: '/tutorials/consume-service-from-controller' },
             { text: 'Build a multicluster-runtime provider', link: '/tutorials/build-multicluster-runtime-provider' },
             ]
