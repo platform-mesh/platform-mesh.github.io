@@ -29,6 +29,48 @@
   max-width: 1168px !important;
 }
 
+/* Stabilise the scrollbar gutter.
+
+   The whole page scrolls on <html>, and the entire layout (navbar + doc) is
+   centered within --vp-layout-max-width. Pages whose content overflows show a
+   vertical scrollbar; pages that fit do not. On browsers that reserve space for
+   classic scrollbars (e.g. macOS "Show scroll bars: Always", common on external
+   monitors), that ~15px width change re-centers the layout, so the logo, nav and
+   content column visibly shift left/right when navigating between a scrolling and
+   a non-scrolling page (e.g. /reference/ vs /concepts/). Reserving the gutter on
+   every page keeps the layout fixed. No-op where scrollbars are overlays. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Keep internal (sidebar) pages gutter-aware so the navbar and content line up
+   with the home page.
+
+   VitePress positions the sidebar-page navbar and main content with 100vw-based
+   padding, e.g. padding-right: calc((100vw - var(--vp-layout-max-width)) / 2).
+   100vw includes the scrollbar gutter reserved above, but the home page navbar
+   centers via 100% (gutter-aware, margin: 0 auto). On wide screens that half-
+   gutter difference makes the navbar's right-hand items (search, version
+   selector, social links) and the content/outline column sit ~half a scrollbar
+   width off from the home page — so the version selector visibly shifts when
+   navigating Home <-> any menu page.
+
+   Recomputing the same offsets with 100% instead of 100vw makes the internal
+   pages gutter-aware too, so the home navbar, the internal-page navbars and the
+   content/outline column all align at every width. max() floors the values so
+   narrow viewports fall back to VitePress defaults. Revisit if VitePress changes
+   these paddings upstream. */
+@media (min-width: 1440px) {
+  .VPNavBar.has-sidebar .content {
+    padding-right: max(32px, calc((100% - var(--vp-layout-max-width)) / 2 + 32px)) !important;
+  }
+
+  .VPContent.has-sidebar {
+    padding-right: max(0px, calc((100% - var(--vp-layout-max-width)) / 2)) !important;
+    padding-left: calc(max(0px, (100% - var(--vp-layout-max-width)) / 2) + var(--vp-sidebar-width)) !important;
+  }
+}
+
 
 @media (min-width: 640px) {
     :root {
