@@ -66,8 +66,8 @@ spec:
 |-------|-------------|
 | `exposure` | External exposure settings: `baseDomain`, `port`, `protocol` |
 | `kcp` | kcp workspace topology: provider connections, extra workspaces, API bindings |
-| `values` | Free-form JSON deep-merged with the profile's `components` section and passed as Helm values to each service |
-| `infraValues` | Free-form JSON merged with the profile's `infra` section |
+| `values` | Free-form JSON merged with the profile's `components` section and passed as Helm values to each service. The merge is recursive — keys present in both the profile and `spec.values` are combined per nested level, and any leaf value in `spec.values` wins over the profile |
+| `infraValues` | Free-form JSON recursively merged with the profile's `infra` section (same merge semantics as `values`) |
 | `ocm` | OCM repository, component name, and reference path for component delivery |
 | `profileConfigMap` | Optional reference to profile ConfigMap (name/namespace). Defaults to `<instance-name>-profile` in the instance namespace |
 | `featureToggles` | List of named feature flags (see [Feature toggles](#feature-toggles)) |
@@ -263,7 +263,7 @@ Remote deployment is used when the **Runtime** cluster (KCP, OCM) and the **Infr
 
 ```mermaid
 graph LR
-    subgraph Local["Local cluster"]
+    subgraph Operator["Operator cluster"]
         OP["platform-mesh-operator"]
     end
 
@@ -291,14 +291,14 @@ graph LR
 
 | Cluster | Role |
 |---------|------|
-| **Local** | Where the operator pod runs |
+| **Operator** | Where the operator pod runs |
 | **Runtime** | KCP, OCM Resources, PlatformMesh CR, profile ConfigMap |
 | **Infra** | FluxCD HelmReleases / ArgoCD Applications, OCIRepositories, HelmRepositories |
 
 When using remote deployment:
 - The PlatformMesh resource and profile ConfigMap must be created on the **runtime** cluster — the operator reconciles them remotely.
 - `--remote-runtime-kubeconfig` points the operator's manager to the runtime cluster.
-- `--remote-infra-kubeconfig` is only needed if the operator does not run on the infra cluster (**Local** != **Infra**).
+- `--remote-infra-kubeconfig` is only needed if the operator does not run on the infra cluster (**Operator** != **Infra**).
 - HelmReleases gain `spec.kubeConfig.secretRef` pointing to the runtime cluster secret.
 - ArgoCD Applications use `destination.server` to point to the remote runtime cluster.
 

@@ -7,47 +7,61 @@ personas: [platform-owner]
 
 Use this how-to to deploy Platform Mesh across multiple clusters, where the operator runs on one cluster but manages resources on separate runtime and infra clusters.
 
+## When to use this
+
+Remote deployment fits scenarios where Platform Mesh's control-plane workloads cannot live on the same cluster as the operator. Common cases:
+
+- **Separation of concerns** — keep kcp, OCM, and the `PlatformMesh` resource on a dedicated runtime cluster, while the operator and GitOps tooling run elsewhere.
+- **Shared GitOps cluster** — a central cluster runs FluxCD or ArgoCD and rolls out releases to one or more runtime clusters.
+- **Compliance or isolation** — runtime workloads must run in a network or tenant boundary that the operator cluster cannot host.
+
+If everything runs on the same cluster, you do not need this guide.
+
 ::: warning Alpha feature
 Remote deployment is functional but limited to a single remote deployment per operator instance. APIs and Helm values may change.
 :::
 
 ## Prerequisites
 
-- A running Kubernetes cluster for the operator (the **local** cluster)
+- A running Kubernetes cluster for the operator (the **operator** cluster)
 - A separate Kubernetes cluster for the runtime workloads (the **runtime** cluster) — this is where kcp, OCM, and the PlatformMesh resource live
-- Optionally, a third cluster for FluxCD or ArgoCD (the **infra** cluster) — if not provided, the local cluster serves this role
+- Optionally, a third cluster for FluxCD or ArgoCD (the **infra** cluster) — if not provided, the operator cluster serves this role
 - `kubectl` configured to access all clusters
 - Helm 3.x installed
 
 ## Architecture overview
 
-```
-┌─────────────────────┐     ┌─────────────────────────────────┐
-│   Local cluster     │     │       Runtime cluster            │
-│                     │     │                                  │
-│  platform-mesh-     │────▶│  PlatformMesh CR                 │
-│  operator           │     │  Profile ConfigMap               │
-│                     │     │  kcp (RootShard, FrontProxy)     │
-│  (leader election)  │     │  OCM Resources                   │
-└─────────────────────┘     └─────────────────────────────────┘
-          │
-          │  (if Local != Infra)
-          ▼
-┌─────────────────────────────────┐
-│        Infra cluster            │
-│                                 │
-│  FluxCD / ArgoCD                │
-│  HelmReleases                   │
-│  OCIRepositories                │
-│  HelmRepositories               │
-└─────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Operator["Operator cluster"]
+        OP["platform-mesh-operator<br/>(leader election)"]
+    end
+
+    subgraph Runtime["Runtime cluster"]
+        PM["PlatformMesh CR"]
+        PROF["Profile ConfigMap"]
+        KCP["kcp (RootShard, FrontProxy)"]
+        OCM["OCM Resources"]
+    end
+
+    subgraph Infra["Infra cluster (optional)"]
+        FLUX["FluxCD / ArgoCD"]
+        HR["HelmReleases"]
+        OCI["OCIRepositories"]
+        APPS["HelmRepositories"]
+    end
+
+    OP -->|"reconciles"| PM
+    OP -->|"reads"| PROF
+    OP -->|"creates"| HR
+    FLUX -->|"deploys via kubeConfig secret"| Runtime
 ```
 
 Remote deployment is considered when the **Runtime** and **Infra** clusters are different. FluxCD HelmReleases receive a `kubeConfig.secretRef` that tells FluxCD to deploy workloads to the runtime cluster. ArgoCD Applications receive a `destination.server` pointing to the runtime cluster API.
 
 ## Step 1: Create a kubeconfig secret for the runtime cluster
 
-Generate a kubeconfig that gives the operator access to the runtime cluster. Create a Secret on the **local** cluster:
+Generate a kubeconfig that gives the operator access to the runtime cluster. Create a Secret on the **operator** cluster:
 
 ```bash
 kubectl create secret generic platform-mesh-kubeconfig \
@@ -69,7 +83,7 @@ This secret is referenced by every HelmRelease via `spec.kubeConfig.secretRef`.
 
 ## Step 3: (Optional) Create a kubeconfig secret for the infra cluster
 
-If the operator does not run on the infra cluster (that is, **Local** != **Infra**), create a Secret on the local cluster with credentials to reach the infra cluster:
+If the operator does not run on the infra cluster (that is, **Operator** != **Infra**), create a Secret on the operator cluster with credentials to reach the infra cluster:
 
 ```bash
 kubectl create secret generic platform-mesh-infra-kubeconfig \
@@ -94,7 +108,7 @@ helm install platform-mesh-operator \
   --set remoteRuntime.infra.secretKey=kubeconfig
 ```
 
-If **Local** != **Infra**, also add:
+If **Operator** != **Infra**, also add:
 
 ```bash
   --set remoteInfra.enabled=true \
@@ -111,7 +125,7 @@ If **Local** != **Infra**, also add:
 | `remoteRuntime.secretKey` | `kubeconfig` | Key within the secret |
 | `remoteRuntime.infra.secretName` | `platform-mesh-secret` | Secret for FluxCD to deploy to the runtime cluster |
 | `remoteRuntime.infra.secretKey` | `kubeconfig` | Key within the infra secret |
-| `remoteInfra.enabled` | `false` | Enable remote infra cluster (only if Local != Infra) |
+| `remoteInfra.enabled` | `false` | Enable remote infra cluster (only if Operator != Infra) |
 | `remoteInfra.secretName` | `platform-mesh-kubeconfig` | Secret with kubeconfig to reach the infra cluster |
 | `remoteInfra.secretKey` | `kubeconfig` | Key within the secret |
 
@@ -182,8 +196,6 @@ spec:
     referencePath:
     - name: core
   kcp:
-    adminSecretRef:
-      name: platform-mesh-kcp-internal-admin-kubeconfig
     providerConnections:
     - endpointSliceName: core.platform-mesh.io
       path: root:platform-mesh-system
@@ -195,7 +207,7 @@ The operator links the two resources by naming convention: a PlatformMesh instan
 
 ## Step 6: Verify the deployment
 
-Check the operator logs on the local cluster:
+Check the operator logs on the operator cluster:
 
 ```bash
 kubectl logs -n platform-mesh-system -l app=platform-mesh-operator --tail=50
