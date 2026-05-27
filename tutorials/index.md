@@ -17,6 +17,10 @@ Set up a local Platform Mesh environment first: [Set up Platform Mesh locally](/
 
 Use [How-to guides](/how-to-guides/) for specific local tasks, or read [Concepts](/concepts/) to understand the architecture behind what you just ran.
 
+## Community and support
+
+Platform Mesh welcomes contributions from the community. The project's [contributing guide](https://github.com/platform-mesh/.github/blob/main/CONTRIBUTING.md) covers how to find work, open pull requests, and review changes. If you have any questions or want to leave feedback, please reach out via [our community channels](/community/).
+
 ## Related sections
 
 - [How-to guides](/how-to-guides/) - task-focused operational instructions.
