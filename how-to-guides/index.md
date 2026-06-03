@@ -8,6 +8,14 @@ How-to guides are task-focused. Use them when you already know what you want to 
 - [Set up remote deployment](./set-up-remote-deployment.md)
 - [Speed up local rebuilds](./speed-up-local-rebuilds.md)
 
+## Platform operators
+
+- [Onboard a managed service](./onboard-managed-service.md)
+
+## Service providers
+
+- [Bootstrap a provider](./bootstrap-provider.md)
+
 ## Access local services
 
 - [Access the Keycloak admin console](./access-keycloak.md)

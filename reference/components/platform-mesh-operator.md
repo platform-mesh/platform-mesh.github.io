@@ -93,6 +93,8 @@ The operator runs two independent controllers:
 |------------|---------|---------|
 | `PlatformMeshReconciler` | `PlatformMesh` (`core.platform-mesh.io/v1alpha1`) | Bootstraps and maintains the environment via subroutines |
 | `ResourceReconciler` | `Resource` (`delivery.ocm.software/v1alpha1`) | Syncs OCM-resolved artifacts into FluxCD sources / ArgoCD Applications |
+| `ProviderReconciler` | `Provider` (`providers.platform-mesh.io/v1alpha1`) | Provisions kcp workspaces and kubeconfig Secrets for service providers |
+| `ManagedProviderReconciler` | `ManagedProvider` (`providers.platform-mesh.io/v1alpha1`) | Orchestrates end-to-end onboarding of platform-owned services |
 
 ## PlatformMesh subroutines
 

@@ -106,6 +106,10 @@ kubectl --kubeconfig $COMPUTE_KUBECONFIG get nodes
 
 Provider workspaces are organized under `root:providers`. Create the container workspace and the HttpBin provider workspace:
 
+::: tip Using the Provider resource
+This tutorial creates the workspace directly using kcp admin credentials. Service providers who follow the normal onboarding path would instead create a `Provider` resource and let the controller provision the workspace and kubeconfig — see [Bootstrap a provider](/how-to-guides/bootstrap-provider.md).
+:::
+
 ```bash
 KUBECONFIG=$PM_KUBECONFIG kubectl ws use :
 KUBECONFIG=$PM_KUBECONFIG kubectl create-workspace providers --type=root:providers --enter --ignore-existing
