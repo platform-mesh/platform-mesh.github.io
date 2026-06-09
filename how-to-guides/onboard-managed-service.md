@@ -52,11 +52,13 @@ kubectl get managedprovider my-service -n platform-mesh-system -w
 Expected progression:
 
 ```
-NAME         PHASE                 READY
-my-service   WaitingForProvider    False
-my-service   CopyingKubeconfig     False
-my-service   Deploying             False
-my-service   Deployed              True
+NAME         PHASE                    READY
+my-service   Pending                  False
+my-service   WaitingForPlatformMesh   False
+my-service   WaitingForProvider       False
+my-service   CopyingKubeconfig        False
+my-service   Deploying                False
+my-service   Ready                    True
 ```
 
 If the phase stalls, check the `conditions` field on the resource:
@@ -73,7 +75,7 @@ kubectl logs -n platform-mesh-system -l app=platform-mesh-operator --tail=50
 
 ## Step 3: Verify the kubeconfig Secret
 
-Once `Deployed`, the controller writes a kubeconfig Secret into the runtime cluster. Verify it exists:
+Once `Ready`, the controller writes a kubeconfig Secret into the runtime cluster. Verify it exists:
 
 ```bash
 kubectl get secret my-service-provider-kubeconfig -n platform-mesh-system
@@ -96,7 +98,7 @@ kubectl get pods -n platform-mesh-system -l app.kubernetes.io/name=my-service-op
 | Stuck at `WaitingForProvider` | The `Provider` has not yet reached `Ready` — check the Provider controller logs for workspace or kubeconfig provisioning errors |
 | Stuck at `CopyingKubeconfig` | The Provider workspace is ready but the kubeconfig copy failed — check the ManagedProvider controller logs for Secret write errors |
 | Stuck at `Deploying` | The OCM component version does not exist in the registry, or FluxCD is not reconciling — check HelmRelease status in the namespace |
-| `Deployed` but pods not running | The operator chart values may be misconfigured — check the HelmRelease events and operator pod logs |
+| `Ready` but pods not running | The operator chart values may be misconfigured — check the HelmRelease events and operator pod logs |
 
 ## Related
 
