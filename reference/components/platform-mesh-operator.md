@@ -87,7 +87,7 @@ The operator reports per-subroutine conditions on the status subresource:
 
 ## Controllers
 
-The operator runs two independent controllers:
+The operator binary provides the following controllers:
 
 | Controller | Watches | Purpose |
 |------------|---------|---------|
