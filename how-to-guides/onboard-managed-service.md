@@ -75,7 +75,7 @@ kubectl logs -n platform-mesh-system -l app=platform-mesh-operator --tail=50
 
 ## Step 3: Verify the kubeconfig Secret
 
-Once `Ready`, the controller writes a kubeconfig Secret into the runtime cluster. Verify it exists:
+The controller writes the kubeconfig Secret during the `CopyingKubeconfig` phase. Once the resource is `Ready`, verify it exists:
 
 ```bash
 kubectl get secret my-service-provider-kubeconfig -n platform-mesh-system
@@ -95,8 +95,10 @@ kubectl get pods -n platform-mesh-system -l app.kubernetes.io/name=my-service-op
 
 | Symptom | Likely cause |
 | --- | --- |
-| Stuck at `WaitingForProvider` | The `Provider` has not yet reached `Ready` — check the Provider controller logs for workspace or kubeconfig provisioning errors |
-| Stuck at `CopyingKubeconfig` | The Provider workspace is ready but the kubeconfig copy failed — check the ManagedProvider controller logs for Secret write errors |
+| Stuck at `WaitingForPlatformMesh` | The referenced `PlatformMesh` resource is not yet `Ready` — check the platform-mesh-operator logs and the `PlatformMesh` conditions |
+| Stuck at `WaitingForProvider` | The associated `Provider` has not yet reached `Ready` — check the Provider controller logs for workspace or kubeconfig provisioning errors |
+| Stuck at `CopyingKubeconfig` | The Provider controller has not yet populated the kubeconfig Secret — check the Provider controller logs |
+| Stuck at `CopyingKubeconfigFailed` | The `providerKubeconfigSecret` spec on the `Provider` does not match what the `ManagedProvider` expects — ensure the `providerKubeconfigSecret` fields are aligned between both resources |
 | Stuck at `Deploying` | The OCM component version does not exist in the registry, or FluxCD is not reconciling — check HelmRelease status in the namespace |
 | `Ready` but pods not running | The operator chart values may be misconfigured — check the HelmRelease events and operator pod logs |
 

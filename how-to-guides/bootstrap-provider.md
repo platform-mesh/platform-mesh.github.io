@@ -55,7 +55,7 @@ my-service   Ready   True
 The controller writes a kubeconfig Secret into the workspace where the `Provider` lives. Retrieve it:
 
 ```bash
-kubectl get secret my-service-provider-kubeconfig -o jsonpath='{.data.kubeconfig}' | base64 -d > provider-kubeconfig.yaml
+kubectl get secret my-service-provider-kubeconfig -n default -o jsonpath='{.data.kubeconfig}' | base64 -d > provider-kubeconfig.yaml
 ```
 
 Use this kubeconfig to authenticate against the provider workspace in kcp.
