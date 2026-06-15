@@ -130,6 +130,7 @@ export default withMermaid({
             { text: 'Access the Keycloak admin console', link: '/how-to-guides/access-keycloak' },
             { text: 'Access the OpenFGA playground', link: '/how-to-guides/access-openfga' },
             { text: 'Access the kcp admin workspace', link: '/how-to-guides/access-kcp-admin' },
+            { text: 'Access the observability stack', link: '/how-to-guides/access-observability' },
             ]
         },
         {
@@ -186,6 +187,12 @@ export default withMermaid({
             { text: 'api-syncagent', link: '/concepts/integration/api-syncagent' },
             { text: 'multicluster-runtime', link: '/concepts/integration/multicluster-runtime' },
             ]
+        },
+        {
+            text: 'Operations',
+            items: [
+            { text: 'Observability', link: '/concepts/observability' },
+            ]
         }
       ],
 
@@ -219,6 +226,7 @@ export default withMermaid({
             { text: 'Portal', link: '/reference/components/portal' },
             { text: 'Marketplace', link: '/reference/components/marketplace' },
             { text: 'virtual-workspaces', link: '/reference/components/virtual-workspaces' },
+            { text: 'Observability', link: '/reference/components/observability' },
             ]
         },
         {

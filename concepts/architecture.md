@@ -52,4 +52,5 @@ When a consumer creates a resource in their workspace, the resource exists in kc
 - [Why Platform Mesh?](./why-platform-mesh.md)
 - [Control planes](./control-planes.md)
 - [Integration paths](./integration-paths.md)
+- [Observability](./observability.md)
 - [Component reference](/reference/components/)
