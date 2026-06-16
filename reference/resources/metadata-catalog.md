@@ -17,6 +17,7 @@ Platform Mesh uses a small set of API groups, labels, finalizers, and annotation
 | --- | --- | --- |
 | `core.platform-mesh.io/v1alpha1` | account-operator, IAM service | `Account`, `AccountExtension`, `Store` |
 | `ui.platform-mesh.io/v1alpha1` | extension manager operator | `ContentConfiguration`, `ExtensionClass` (portal extensions) |
+| `providers.platform-mesh.io/v1alpha1` | platform-mesh-operator (Provider and ManagedProvider controllers) | `Provider`, `ManagedProvider` |
 
 API resources outside these groups are upstream kcp (`apis.kcp.io`, `tenancy.kcp.io`), upstream Kubernetes, or provider-specific.
 
@@ -42,6 +43,11 @@ Finalizers ensure that Platform Mesh resources are torn down in the right order 
 | `account.core.platform-mesh.io/info` | account-operator | Holds the Account until its account-info status fields are reconciled to children. |
 | `workspacetype.core.platform-mesh.io/finalizer` | account-operator (workspacetype subroutine) | Holds the WorkspaceType created for an org until all child workspaces are gone. |
 | `platform-mesh.core.platform-mesh.io/finalizer` | platform-mesh-operator | Coordinates teardown of platform-level provider secrets and kcp setup state. |
+| `providers.platform-mesh.io/provider-workspace` | platform-mesh-operator (Provider controller) | Holds the `Provider` until the kcp workspace is deleted. |
+| `providers.platform-mesh.io/scoped-kubeconfig` | platform-mesh-operator (Provider controller) | Holds the `Provider` until the kubeconfig Secret and RBAC resources are cleaned up. |
+| `providers.platform-mesh.io/provider-resource` | platform-mesh-operator (ManagedProvider controller) | Holds the `ManagedProvider` until the kcp `Provider` resource is deleted. Only registered when `spec.cleanupOnDelete: true`. |
+| `providers.platform-mesh.io/kubeconfig-secret` | platform-mesh-operator (ManagedProvider controller) | Holds the `ManagedProvider` until the copied kubeconfig Secret is removed from the runtime cluster. |
+| `providers.platform-mesh.io/runtime-deployments` | platform-mesh-operator (ManagedProvider controller) | Holds the `ManagedProvider` until deployed Flux OCIRepository and HelmRelease objects are removed. |
 
 You should not normally remove these finalizers by hand. If a resource is stuck on a finalizer, check the operator logs to see which subroutine is blocked rather than force-deleting.
 
@@ -66,5 +72,7 @@ This catalog is updated as Platform Mesh component owners contribute the support
 
 - [Account resource](./account-resource.md) — uses the `core.platform-mesh.io` API group and its finalizers
 - [ContentConfiguration](./content-configuration.md) — uses the `ui.platform-mesh.io` API group and the `ui.platform-mesh.io/entity` label
+- [Provider resource](./provider-resource.md) — uses the `providers.platform-mesh.io` API group and its finalizers
+- [ManagedProvider resource](./managed-provider-resource.md) — uses the `providers.platform-mesh.io` API group and its finalizers
 - [Account model](/concepts/account-model.md)
 - [Component reference](/reference/components/)
