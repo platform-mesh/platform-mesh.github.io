@@ -1,11 +1,5 @@
 # Sharding
 
-> [!WARNING]
-> In Platform Mesh 0.3 sharding is experimental and expected to break. It
-> is possible to deploy the local-setup with multiple shards by using
-> one of the `:sharded` tasks or adding `--sharded` to the deployment
-> script.
-
 kcp's architecture primarily consists of the front-proxy, the cache-server and shards. Shards are kcp's primary scaling mechanism for workspace capacity.
 
 This page only provides a terse overview of kcp's sharding to convey the concept. For a detailed discussion review the official kcp documentation:
@@ -104,6 +98,57 @@ sequenceDiagram
     Op->>VW: connect to each URL
     VW-->>Op: consumer resources
 ```
+
+## Configuration
+
+Platform Mesh configures sharding through the `infra` Helm chart. The `kcp.shards` array defines additional shards beyond the root shard.
+
+### Shard configuration
+
+| Value | Type | Default | Description |
+| --- | --- | --- | --- |
+| `kcp.shards` | list | `[{name: nereus}, {name: triton}]` | Additional shards beyond the root shard |
+| `kcp.shards[].name` | string | — | Shard name, used in resource names and DNS |
+| `kcp.shards[].hostname` | string | `<name>.kcp.<external.hostname>` | External hostname for the shard |
+| `kcp.shards[].spec` | object | inherits from `kcp.rootShard` | Per-shard overrides for replicas, resources, extraArgs |
+| `kcp.shards[].etcd` | object | inherits from `kcp.etcd` | Per-shard etcd configuration |
+
+### Root shard and front proxy
+
+| Value | Type | Default | Description |
+| --- | --- | --- | --- |
+| `kcp.rootShard.replicas` | int | `1` | Root shard replicas |
+| `kcp.rootShard.shardBaseURL` | string | `https://root.kcp.localhost:8443/` | Root shard external URL |
+| `kcp.rootShard.resources` | object | `{}` | Resource requests and limits |
+| `kcp.frontProxy.replicas` | int | `1` | Front proxy replicas |
+| `kcp.frontProxy.port` | int | `8443` | Front proxy service port |
+| `kcp.cacheServer.name` | string | `cache-server` | Cache server name |
+
+### Example
+
+```yaml
+kcp:
+  shards:
+    - name: triton
+      hostname: triton.kcp.localhost
+    - name: nereus
+      hostname: nereus.kcp.localhost
+```
+
+Each shard in the list gets its own etcd instance, TLS certificates, and TLSRoute for external access.
+
+## Local setup
+
+The Platform Mesh local setup runs in sharded mode by default with two additional shards (`nereus` and `triton`) alongside the root shard.
+
+To run without additional shards, use the `:single-shard` task variants:
+
+```bash
+task local-setup:single-shard
+task local-setup:single-shard:iterate
+```
+
+The sharded kustomize overlay is at `local-setup/kustomize/overlays/platform-mesh-resource-sharded/`.
 
 ## Related
 
