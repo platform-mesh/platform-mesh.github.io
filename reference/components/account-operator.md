@@ -236,3 +236,4 @@ The deployment chart is **`account-operator`** in [platform-mesh/helm-charts](ht
 - [Account resource](/reference/resources/account-resource.md)
 - [Security operator](./security-operator.md)
 - [Platform Mesh operator](./platform-mesh-operator.md)
+- [Observability](./observability.md)

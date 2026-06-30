@@ -403,3 +403,4 @@ graph TD
 - [Control planes and workspaces](/concepts/control-planes)
 - [Account model](/concepts/account-model)
 - [Architecture](/concepts/architecture)
+- [Observability](./observability.md)

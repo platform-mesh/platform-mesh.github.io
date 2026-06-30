@@ -211,3 +211,4 @@ OpenFGA ships with the standard Platform Mesh local setup. For local access to t
 - [Access OpenFGA](/how-to-guides/access-openfga.md)
 - [Security operator](./security-operator.md)
 - [rebac-authz-webhook](./rebac-authz-webhook.md)
+- [Observability](./observability.md)
