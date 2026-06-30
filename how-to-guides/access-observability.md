@@ -7,6 +7,10 @@ personas: [platform-owner]
 
 The observability stack includes a bundled Prometheus instance for metrics during local development and testing. This guide shows how to access it.
 
+::: tip Other Telemetry Data
+Platform Mesh also collects traces and can forward metrics to external backends. Accessing this data depends on your chosen storage backend – see [Observability concepts](/concepts/observability.md) for the full architecture and integration patterns.
+:::
+
 ::: warning Local setup only
 The bundled Prometheus is intended for development and testing. For production deployments, configure the OpenTelemetry Collector to forward metrics and traces to your existing infrastructure.
 :::
