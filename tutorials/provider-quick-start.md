@@ -25,7 +25,7 @@ The local setup is under active development. Commands and component versions may
 Before you begin, make sure you have:
 
 - a local Platform Mesh setup without example data from [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md)
-- `kubectl` with the `kubectl-kcp` plugin installed
+- `kubectl` with the `kubectl-kcp`and `kubelogin` plugins installed
 - Helm 3 installed
 - basic familiarity with Kubernetes CRDs and operators
 
@@ -183,6 +183,18 @@ orchestrate.platform-mesh.io   5s
 
 The HttpBin operator runs on the service cluster. api-syncagent handles the integration with kcp, so the operator itself does not need to know about Platform Mesh.
 
+Create the following `values.yaml` file:
+
+```yaml
+operator:
+  args:
+    - --local-http-route
+    - --local-http-route-port=8443
+    - --local-http-route-gateway-name=k8sapi-gateway
+    - --local-http-route-gateway-namespace=platform-mesh-system
+    - --domain=httpbin.services.portal.localhost
+```
+
 Run this from the `helm-charts` repository root:
 
 ```bash
@@ -192,7 +204,8 @@ helm upgrade --install example-httpbin-operator \
   ./charts/example-httpbin-operator \
   --kubeconfig $COMPUTE_KUBECONFIG \
   -n example-httpbin-provider \
-  --create-namespace
+  --create-namespace \
+  -f ./values.yaml
 ```
 
 Verify the operator:
