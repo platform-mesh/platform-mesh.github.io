@@ -54,7 +54,7 @@ The **Provider controller**, part of the [Platform Mesh operator](/reference/com
 ## What happens when you apply one
 
 1. Finalizers are added for ordered cleanup.
-2. A workspace (WorkspaceType **`root:provider`**) is created under `root:providers`. Its name is `<Provider.name>-<random-suffix>`.
+2. A workspace (WorkspaceType **`provider`**, declared in `root`) is created under `root:providers`. Its name is `<Provider.name>-<cluster-id>`, where `<cluster-id>` is the logical cluster ID (the `kcp.io/cluster` annotation) of the workspace holding the `Provider`. The name is deterministic: recreating the same `Provider` in the same workspace maps back to the same provider workspace, while equal names created by different tenants do not collide.
 3. Inside that workspace, a ServiceAccount, ClusterRoleBinding, and token Secret are created.
 4. A kubeconfig is generated from those credentials and written to the Secret specified by `providerKubeconfigSecret` (or the default location). The Secret is placed in the workspace where the `Provider` object lives, not in the provider workspace itself.
 5. `status.phase` transitions to `Ready` once provisioning completes.
