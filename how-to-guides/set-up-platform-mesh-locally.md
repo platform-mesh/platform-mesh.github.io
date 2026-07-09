@@ -45,7 +45,7 @@ Set `KIND_EXPERIMENTAL_PROVIDER=podman` before running the setup.
 ```bash
 git clone https://github.com/platform-mesh/helm-charts.git
 cd helm-charts
-git checkout 0.3.0
+git checkout 0.4.0
 cd local-setup
 ```
 
