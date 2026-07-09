@@ -11,7 +11,7 @@ The local setup is under active development. Features and workflows may change.
 ```bash
 git clone https://github.com/platform-mesh/helm-charts.git
 cd helm-charts
-git checkout 0.3.0
+git checkout 0.4.0
 ```
 
 ## Run the setup with example data
