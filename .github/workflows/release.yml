@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: read # Baseline for actions/checkout; elevated scopes are granted per-job
 
 concurrency:
   group: pages-${{ github.ref_name }}
@@ -18,15 +18,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # Needed to push the built site to the gh-pages branch
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24
-          cache: npm
+          cache: npm # zizmor: ignore[cache-poisoning]
 
       - id: configure
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
@@ -34,9 +35,9 @@ jobs:
       - id: set-version
         name: Set documentation version
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
             echo "version=main" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/release-* ]]; then
+          elif [[ "${GITHUB_REF}" == refs/heads/release-* ]]; then
             echo "version=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
           else
             echo "version=" >> $GITHUB_OUTPUT
