@@ -121,6 +121,7 @@ export default withMermaid({
             items: [
             { text: 'Set up Platform Mesh locally', link: '/how-to-guides/set-up-platform-mesh-locally' },
             { text: 'Set up remote deployment', link: '/how-to-guides/set-up-remote-deployment' },
+            { text: 'Air-gapped deployment', link: '/how-to-guides/install-air-gapped' },
             { text: 'Speed up local rebuilds', link: '/how-to-guides/speed-up-local-rebuilds' },
             ]
         },
