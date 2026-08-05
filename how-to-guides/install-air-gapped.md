@@ -7,9 +7,9 @@ personas: [platform-owner]
 
 Install Platform Mesh in an environment that cannot reach public container registries.
 
-You copy the whole product into your own registry once, with a single command. You then
-tell the cluster to use that registry. From there the installation is the normal one.
-Platform Mesh rewrites every image reference it manages so that nothing reaches out to
+You copy the whole product into your own registry once, using a single command. Then you
+tell the cluster to use that registry. From there, installation works exactly like a normal
+install: Platform Mesh rewrites every image reference it manages so nothing reaches out to
 the internet.
 
 ::: warning Development preview
@@ -19,40 +19,46 @@ release gate. Expect it to work; do not yet expect it to keep working without ch
 
 ## How it works
 
-Platform Mesh ships as an [OCM](https://ocm.software) component: a manifest that lists
-every chart and every image belonging to a release.
+Platform Mesh ships as an [OCM](https://ocm.software) component: essentially a manifest
+listing every chart and every image that belongs to a release.
 
-`ocm transfer` copies that component and all its images into your registry, and rewrites
-the addresses inside the manifest as it goes. When the operator later installs a chart, it
-reads the image address from the transferred manifest rather than from the chart's
-defaults, and writes it into the Helm values.
+Running `ocm transfer` copies that component, and all its images, into your registry. As it
+copies, it rewrites the addresses inside the manifest to point at your registry instead of
+the public one.
 
-That is the whole trick, and it has a pleasant consequence: there is no air-gap mode. The
-same configuration works either way. Point it at a public registry and the injected values
-happen to match the chart defaults; point it at yours and everything comes from yours.
+Later, when the operator installs a chart, it does not use the chart's default image
+address. Instead it reads the address from the transferred manifest, and writes that into
+the Helm values.
+
+That is the whole trick, and it has a pleasant consequence: there is no separate air-gap
+mode. The same configuration works either way. Point it at a public registry and the
+injected values happen to match the chart defaults. Point it at your own registry and
+everything comes from there instead.
 
 ## Before you start
 
 You need:
 
-- **OCM CLI v1**, version 0.24.0 or newer. Not the v2 CLI: releases are written by v1
-  tooling, and the two generations handle uploads differently. Do not mix them against the
-  same registry.
-- **A registry** the target cluster can reach, and credentials that can push and pull.
-- **Platform Mesh operator v0.83.0 or newer.** Older versions inject only the image tag and
+- **OCM CLI v1**, version 0.24.0 or newer. This matters: not the v2 CLI. Releases are built
+  with v1 tooling, and the two generations handle uploads differently, so mixing them
+  against the same registry causes problems.
+- **A registry** that the target cluster can reach, with credentials that can both push and
+  pull.
+- **Platform Mesh operator v0.83.9 or newer.** Older versions inject only the image tag and
   leave the registry pointing at the public default, so the transfer has no effect.
 
 ::: warning Use the charts from the release
-Third-party charts are fine. openfga, cert-manager, Traefik, etcd-druid and the
-OpenTelemetry operator are all upstream charts and all get localized. What matters is not
-who wrote the chart but that the release knows how to address its images: which values
-field holds them, and whether that field expects a separate registry or a host-qualified
-repository.
+Third-party charts are fine to use. openfga, cert-manager, Traefik, etcd-druid and the
+OpenTelemetry operator are all upstream charts, and all of them get localized correctly.
+What actually matters is not who wrote the chart, but whether the release knows how to
+address its images: which values field holds the address, and whether that field expects a
+separate registry or a full host-qualified repository path.
 
-That knowledge is tied to a chart version. If you install a different version than the one
-in the release, or a fork, or a copy you patched, the values field may have moved and the
-injection lands nowhere. Nothing will tell you: the release installs, the pods start, and
-they pull from the chart's own defaults.
+That knowledge is tied to one exact chart version. If you install a different version than
+the one in the release, or a fork, or a copy you patched yourself, the values field may have
+moved, and the image injection lands nowhere. Nothing will warn you about this: the release
+installs, the pods start, and they quietly pull from the chart's own public defaults
+instead.
 :::
 
 ## 1. Copy the release into your registry
@@ -66,9 +72,9 @@ ocm transfer componentversion \
   ./platform-mesh-<version>.ctf
 ```
 
-Both flags matter. `--recursive` follows references to the components a release is built
-from; `--copy-resources` puts the images themselves into the archive instead of leaving
-pointers to where they used to live.
+Both flags matter here. `--recursive` follows the references to every component the release
+is built from. `--copy-resources` puts the actual images into the archive, instead of just
+leaving pointers to where they currently live.
 
 Carry the archive across the gap, as a directory or a tar, and push it into your
 registry:
@@ -86,9 +92,10 @@ ocm get componentversions -r registry.internal/platform-mesh//github.com/platfor
   | grep -A2 'type: ociImage'
 ```
 
-Each entry should say `type: ociArtifact` and point into your registry. If you see
-`localBlob` instead, that image was carried across but never unpacked into the registry.
-The operator cannot use it, and the corresponding `Resource` will stay not ready.
+Each entry should say `type: ociArtifact` and point at your registry. If you see
+`localBlob` instead, that image was carried across the gap but never unpacked into the
+registry. The operator cannot use it, and the corresponding `Resource` will stay stuck in a
+not-ready state.
 
 ## 2. Tell the cluster which registry to use
 
@@ -110,26 +117,108 @@ spec:
 ```
 
 ::: tip Do not leave the interval at one minute
-An installation has around sixty `Resource` objects, and each of them resolves against
-this repository. At a one-minute interval that is a steady stream of requests for
-something that only changes when you transfer a new release. A self-hosted Harbor will
-start rate-limiting you.
+A typical installation has around sixty `Resource` objects, and every one of them resolves
+against this repository. At a one-minute interval, that adds up to a steady stream of
+requests for something that only actually changes when you transfer a new release. A
+self-hosted Harbor will start rate-limiting you well before that.
 
-Fifteen minutes is a reasonable starting point. Nothing depends on a short interval here:
-a new release is picked up when you change the version, not when the repository polls.
+Fifteen minutes is a reasonable starting point. There is no benefit to a short interval
+here: a new release is picked up as soon as you change the version, not when the repository
+happens to poll.
 :::
 
 This object is not something extra you create for air-gapped installs. It is part of the
-bootstrap manifests you apply anyway, next to Flux and the OCM controller. You are
+bootstrap manifests you apply anyway, next to Flux and the OCM controller. You are just
 changing one field in it.
 
-It also has to be you, not the operator. The operator's own image lives in that registry,
-so the address must be known before the operator can run at all.
+You do have to create this object yourself, though; the operator cannot do it for you. That
+is because the operator's own image also lives in this registry, so the registry address
+has to be known before the operator can even start running.
 
-**This is the only air-gap-specific change.** Everything after this is the normal
-installation.
+**This is the only change to how Platform Mesh itself resolves images.** Getting kubelet
+to actually pull them is a separate step, covered next.
 
-## 3. Install
+## 3. Grant pull access
+
+Having a correct, localized image address is not the same thing as having permission to
+pull it. Your registry almost certainly requires authentication, and neither the
+`Repository` object above nor the operator itself grants any Pod that access. That
+permission is strictly between your cluster and your registry; Platform Mesh does not
+manage it.
+
+Two things need to happen, in every namespace that will run a localized image:
+
+1. **A pull secret exists, and every ServiceAccount that already exists references it.**
+
+   ```bash
+   kubectl create secret docker-registry registry-auth \
+     --docker-server=registry.internal \
+     --docker-username=<user> --docker-password=<password> \
+     -n <namespace>
+
+   kubectl patch serviceaccount default -n <namespace> \
+     -p '{"imagePullSecrets": [{"name": "registry-auth"}]}'
+   ```
+
+2. **New ServiceAccounts get the same treatment automatically.** Most charts create their
+   own dedicated ServiceAccount as part of their install, and that install usually happens
+   well after you ran step 1 for that namespace. So patching only what exists today misses
+   everything a later `HelmRelease` still creates. A `MutatingAdmissionPolicy` fixes this
+   properly: instead of patching at one point in time, it attaches the pull secret
+   automatically, every time a ServiceAccount is created:
+
+   ```yaml
+   apiVersion: admissionregistration.k8s.io/v1beta1
+   kind: MutatingAdmissionPolicy
+   metadata:
+     name: inject-registry-pull-secret
+   spec:
+     failurePolicy: Fail
+     matchConstraints:
+       resourceRules:
+       - apiGroups: [""]
+         apiVersions: ["v1"]
+         operations: ["CREATE", "UPDATE"]
+         resources: ["serviceaccounts"]
+     matchConditions:
+     - name: not-already-set
+       expression: '!has(object.imagePullSecrets) || !object.imagePullSecrets.exists(s, s.name == "registry-auth")'
+     mutations:
+     - patchType: JSONPatch
+       jsonPatch:
+         expression: |
+           [
+             JSONPatch{
+               op: "add",
+               path: "/imagePullSecrets",
+               value: (has(object.imagePullSecrets) ? object.imagePullSecrets : []) +
+                      [{"name": "registry-auth"}]
+             }
+           ]
+   ---
+   apiVersion: admissionregistration.k8s.io/v1beta1
+   kind: MutatingAdmissionPolicyBinding
+   metadata:
+     name: inject-registry-pull-secret
+   spec:
+     policyName: inject-registry-pull-secret
+   ```
+
+   One detail worth noting: the patch type is `JSONPatch`, not `ApplyConfiguration`. In the
+   OpenAPI schema, `imagePullSecrets` is an atomic list rather than a mergeable one, so a
+   server-side-apply patch gets rejected outright whenever the create request already sets
+   a value for it, even an empty `[]`. Some charts' own ServiceAccount templates do exactly
+   that.
+
+::: tip Flux needs its own credential separately
+`OCIRepository.spec.secretRef` is resolved separately, by source-controller, in the
+`OCIRepository`'s own namespace. This is independent of the ServiceAccount-based pulls that
+kubelet does, described above. A chart's Helm-sourced OCI pull and its Pods' image pulls
+both read from the same registry, but they authenticate through completely separate
+mechanisms. So set `secretRef` on every `OCIRepository` that points at your registry too.
+:::
+
+## 4. Install
 
 Install as usual. For each image, the operator creates a `Resource` object, looks up its
 address in the transferred manifest, and writes it into the Helm values before the chart
@@ -158,7 +247,7 @@ kubectl get resources.delivery.ocm.software -A \
 ```
 
 **Is anything still pulling from outside?** Bootstrap and distribution images are expected
-here; anything else is a gap:
+to show up here; anything else means a gap in your mirror:
 
 ```bash
 kubectl get pods -A -o jsonpath='{range .items[*]}{.spec.containers[*].image}{"\n"}{end}' \
@@ -172,32 +261,35 @@ kubectl get pods -A --field-selector=status.phase!=Running
 ```
 
 ::: tip These checks only mean something with the gap closed
-While the cluster still has internet access, a wrongly configured image pulls happily from
-its public default. Every check above passes and the installation is still not air-gap
-capable. Run them once with egress blocked, or they prove nothing.
+While the cluster still has internet access, a misconfigured image will happily pull from
+its public default instead of failing. Every check above can pass even though the
+installation is not actually air-gap capable. Run them once with egress blocked, or they do
+not prove anything.
 :::
 
 ## When something goes wrong
 
-**A pod pulls from Docker Hub, which you never configured anywhere.**
+**A pod pulls from Docker Hub, even though you never configured Docker Hub anywhere.**
 
-This looks stranger than it is. Some charts expect the registry to be part of
-`image.repository`, so `ghcr.io/kcp-dev/kcp-operator` rather than a separate `registry`
-field. If the operator writes the repository without the host, the reference is no longer
-qualified, and the container runtime completes it for you. On containerd and Docker that
-means `docker.io`, so a missing host surfaces as a Docker Hub pull. On CRI-O it depends on
-`unqualified-search-registries`, and the pull may fail outright instead.
+This looks stranger than it actually is. Some charts expect the registry to be baked into
+`image.repository` itself, for example `ghcr.io/kcp-dev/kcp-operator`, rather than having a
+separate `registry` field. If the operator writes only the repository, without the host,
+the reference is no longer fully qualified, so the container runtime fills in the missing
+piece for you. On containerd and Docker, that default is `docker.io`, which is why a
+missing host shows up as a Docker Hub pull. On CRI-O, the behavior depends on
+`unqualified-search-registries`, and the pull may just fail outright instead.
 
-Those images need the `image-ref: combined` annotation, which keeps the registry inside the
-repository. It affects openfga, kcp-operator, init-agent, etcd-druid and the OpenTelemetry
-operator.
+Images like this need the `image-ref: combined` annotation, which keeps the registry folded
+into the repository string. This affects openfga, kcp-operator, init-agent, etcd-druid and
+the OpenTelemetry operator.
 
-**A `Resource` stays not ready with `resource with identity … not found`.**
+**A `Resource` stays not ready, with an error like `resource with identity … not found`.**
 
-The release you transferred does not declare that image. Check the component version.
+This means the release you transferred does not declare that image at all. Check that you
+transferred the right component version.
 
-**A service pulls from the public registry and nothing reports an error.**
+**A service pulls from the public registry, and nothing reports an error.**
 
-The service has no image declared, so no `Resource` was created and the chart default
-applies. Nothing fails, nothing warns, and you only notice once the gap is closed. The second
-check above finds these.
+This service simply has no image declared for it, so no `Resource` was created, and the
+chart's own default just applies quietly. Nothing fails, nothing warns you, and you will
+not notice until the gap is actually closed. The second check above is what catches these.
