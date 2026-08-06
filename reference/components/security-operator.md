@@ -159,6 +159,8 @@ When somebody creates an `APIBinding` to consume a provider's API, the Security 
 
 This dynamic model extension means providers do not need to manually configure authorization for each consumer — the Security operator handles it automatically as APIs are bound and unbound.
 
+By default, the generated authorization model uses standard permission mappings (e.g., `member` can `get`, `update`, `patch`, `watch`; `owner` can `delete`). Providers who need custom roles or permissions can create a [`ProviderPermissions`](#providerpermissions) resource to customize the generated model.
+
 **Example AuthorizationModel resource:**
 
 ```yaml
@@ -363,6 +365,44 @@ status:
   managedAllowExpressions:
   - :root:orgs:*
 ```
+
+### ProviderPermissions
+
+The `ProviderPermissions` resource allows API providers to customize the authorization model for their resources. While the Security operator auto-generates default permission mappings for provider APIs, `ProviderPermissions` enables providers to:
+
+- Define custom roles with display names and descriptions for the IAM UI
+- Override default verb permissions
+- Add custom permissions beyond standard CRUD operations (e.g., `scan`, `approve`, etc.)
+
+Providers create this resource in their workspace under `:root:providers:<provider-name>`, alongside the `APIExport` and other provider resources. When a consumer creates an `APIBinding`, the Security operator merges the custom relations from `ProviderPermissions` into the generated `AuthorizationModel`.
+
+**Example ProviderPermissions resource:**
+
+```yaml
+apiVersion: providers.platform-mesh.io/v1alpha1
+kind: ProviderPermissions
+metadata:
+  name: orchestrate.platform-mesh.io
+spec:
+  apiExport:
+    ref:
+      name: orchestrate.platform-mesh.io
+  roles:
+    - groupResource: httpbin.orchestrate.platform-mesh.io
+      roles:
+        - id: codeviewer
+          displayName: Code Viewer
+          description: Can view code and related resources.
+  permissions:
+    httpbin.orchestrate.platform-mesh.io:
+      defaultPermissions:
+        get: "codeviewer or member"
+        delete: "owner"
+      additionalPermissions:
+        scan: "member"
+```
+
+For detailed field documentation and examples, see the [ProviderPermissions resource reference](/reference/resources/provider-permissions-resource.md).
 
 ## Configuration
 
