@@ -224,6 +224,42 @@ Install as usual. For each image, the operator creates a `Resource` object, look
 address in the transferred manifest, and writes it into the Helm values before the chart
 is applied.
 
+### Declare images in the profile, not in values
+
+This is the part people get wrong. An image is localized only if the profile declares it
+under `imageResources`:
+
+```yaml
+services:
+  openfga:
+    imageResources:
+    - name: openfga-image
+      annotations:
+        repo: oci
+        artifact: image
+        for: openfga
+        image-ref: combined
+```
+
+Setting the image under `values` instead localizes nothing:
+
+```yaml
+services:
+  openfga:
+    values:
+      image:
+        repository: openfga/openfga     # stays exactly this, gap or no gap
+        tag: v1.14.0
+```
+
+Neither case reports an error. Without an `imageResources` entry no `Resource` object is
+created, so there is nothing to resolve and the chart uses whatever the values say.
+
+If you set both, the injection wins and your value is quietly ignored. Our own test profile
+pinned `kcp.image.tag: v0.32.0` under values while also declaring the image resource, and
+the pods came up with `v0.32.2` from the component. Worth knowing before you spend an hour
+wondering why a pinned version has no effect.
+
 ## What you have to mirror yourself
 
 Two groups of images are outside the operator's reach.
