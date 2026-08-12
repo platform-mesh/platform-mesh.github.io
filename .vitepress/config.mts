@@ -245,6 +245,7 @@ export default withMermaid({
             { text: 'IAM Store resource', link: '/reference/resources/iamstore-resource' },
             { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
             { text: 'Metadata catalog', link: '/reference/resources/metadata-catalog' },
+            { text: 'ProviderPermissions', link: '/reference/resources/provider-permissions-resource' },
             ]
         },
         {
