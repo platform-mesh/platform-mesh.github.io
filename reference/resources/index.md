@@ -9,4 +9,5 @@ For conceptual explanations of accounts, control planes, API sharing, identity, 
 - [ContentConfiguration](./content-configuration.md) — register UI extensions with the Portal.
 - [Provider resource](./provider-resource.md) — provisions a dedicated kcp workspace and kubeconfig for a service provider.
 - [ManagedProvider resource](./managed-provider-resource.md) — automates end-to-end onboarding of platform-owned services.
+- [ProviderPermissions resource](./provider-permissions-resource.md) — customize authorization roles and permissions for provider APIs.
 - [Metadata catalog](./metadata-catalog.md) — Platform Mesh API groups, labels, and finalizers.
