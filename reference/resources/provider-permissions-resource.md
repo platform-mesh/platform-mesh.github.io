@@ -8,6 +8,15 @@ The `ProviderPermissions` CR is defined in the API group `providers.platform-mes
 
 Providers create this resource in their workspace under `:root:providers:<provider-name>`, alongside the `APIExport`, `ContentConfiguration`, and other provider resources.
 
+## Prerequisites
+
+The `ProviderPermissions` API is available to provider workspaces by default. However, full functionality requires specific component settings:
+
+| Component | Setting | Purpose |
+| --- | --- | --- |
+| IAM service | `--use-provider-permissions-retriever` | Exposes custom role metadata (display names, descriptions) in the IAM UI and GraphQL API. Disabled by default. |
+| Platform Mesh operator | `feature-enable-provider-permissions` | Enables system-role integration: binds the `ProviderPermissions` APIExport to provider workspaces and provisions default Account and Namespace roles. |
+
 ## When to use
 
 Use `ProviderPermissions` when your provider needs to:
@@ -37,6 +46,7 @@ spec:
         - id: codeviewer
           displayName: Code Viewer
           description: Can view code and related resources.
+          definition: "[role#assignee] or member"
   permissions:
     httpbin.orchestrate.platform-mesh.io:
       defaultPermissions:
@@ -71,7 +81,7 @@ roles:
 | `roles[].id` | Role identifier. Becomes the relation name in OpenFGA and is used in permission expressions. |
 | `roles[].displayName` | Human-readable name shown in the IAM UI. |
 | `roles[].description` | Explains what the role does. Shown in the IAM UI. |
-| `roles[].definition` | (Optional) OpenFGA relation definition. Defines how the role relation is computed. If omitted, defaults to `[role#assignee]`. |
+| `roles[].definition` | OpenFGA relation definition. Defines how the role relation is computed. **Required** — omitting this field produces an invalid authorization model. |
 
 ## Permissions configuration
 
@@ -99,7 +109,7 @@ permissions:
 
 ### Default permissions
 
-The `defaultPermissions` section overrides how standard Kubernetes verbs are authorized:
+The `defaultPermissions` section overrides how standard Kubernetes verbs are authorized **at the object level**:
 
 | Verb | Default (if empty) | Description |
 | --- | --- | --- |
@@ -107,7 +117,7 @@ The `defaultPermissions` section overrides how standard Kubernetes verbs are aut
 | `update` | `member` | Replace a resource |
 | `delete` | `member` | Delete a resource |
 | `patch` | `member` | Partially update a resource |
-| `watch` | `member` | Watch for resource changes |
+| `watch` | `member` | Watch a single resource for changes |
 
 Set a verb to an empty string `""` to use the default. Set it to a custom expression to override:
 
@@ -117,6 +127,16 @@ defaultPermissions:
   delete: "owner"               # Override: only owner can delete
   update: ""                    # Default: member can update
 ```
+
+`ProviderPermissions` does not configure `create`, `list`, or collection-level `watch` operations. These use relations on the parent (account or namespace) with fixed defaults:
+
+| Operation | Default | Scope |
+| --- | --- | --- |
+| `create` | `owner` | Parent account/namespace |
+| `list` | `member` | Parent account/namespace |
+| `watch` (collection) | `member` | Parent account/namespace |
+
+The `watch` field in `defaultPermissions` controls the **object-level** watch relation (watching a specific resource not a list of them)
 
 ### Additional permissions
 
@@ -129,7 +149,7 @@ additionalPermissions:
   review: "codeviewer or owner" # codeviewer OR owner can review
 ```
 
-These permissions become relations in the OpenFGA authorization model and can be checked by application code.
+These permissions become relations in the OpenFGA authorization model, scoped to specific resource instances. Custom roles defined in `ProviderPermissions` are also resource-scoped — they apply to individual resources.
 
 ## Who creates it
 
@@ -196,10 +216,18 @@ spec:
       additionalPermissions:
         scan: "[user:*] or member"
         approve: "admin or owner"
+```
+
+After the Security operator processes this resource, the status reflects the applied state:
+
+```yaml
 status:
+  observedGeneration: 1
   conditions:
-    - type: Ready
+    - type: Applied
       status: "True"
+      reason: AuthorizationModelsGenerated
+      message: ProviderPermissions successfully applied to all AuthorizationModels
 ```
 
 This configuration:

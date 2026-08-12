@@ -159,7 +159,7 @@ When somebody creates an `APIBinding` to consume a provider's API, the Security 
 
 This dynamic model extension means providers do not need to manually configure authorization for each consumer — the Security operator handles it automatically as APIs are bound and unbound.
 
-By default, the generated authorization model uses standard permission mappings (e.g., `member` can `get`, `update`, `patch`, `watch`; `owner` can `delete`). Providers who need custom roles or permissions can create a [`ProviderPermissions`](#providerpermissions) resource to customize the generated model.
+By default, the generated authorization model uses standard permission mappings (e.g., `member` can `get`, `update`, `patch`, `watch`; `owner` can `manage_iam_roles`). Providers who need custom roles or permissions can create a [`ProviderPermissions`](#providerpermissions) resource to customize the generated model.
 
 **Example AuthorizationModel resource:**
 
@@ -393,6 +393,7 @@ spec:
         - id: codeviewer
           displayName: Code Viewer
           description: Can view code and related resources.
+          definition: "[role#assignee] or member"
   permissions:
     httpbin.orchestrate.platform-mesh.io:
       defaultPermissions:
