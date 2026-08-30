@@ -49,7 +49,7 @@ jobs:
           DOCS_VERSION: ${{ steps.set-version.outputs.version }}
           PAGES_BASE: ''
 
-      - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
+      - uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4
         if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-') }}
         with:
           folder: .vitepress/dist
@@ -58,7 +58,7 @@ jobs:
           clean-exclude: pr-preview
           force: false
 
-      - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
+      - uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
           folder: .
