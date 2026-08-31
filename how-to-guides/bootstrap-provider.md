@@ -71,7 +71,149 @@ export PROVIDER_KUBECONFIG=provider-kubeconfig.yaml
 kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f <your-workspace-resources>
 ```
 
-## Step 5: Wire the kubeconfig into your service controllers
+## Step 5: Register your provider in the Marketplace
+
+For your provider to appear in the Platform Mesh Marketplace, apply three resources to the provider workspace, all linked by the same `ui.platform-mesh.io/content-for` label set to the `ProviderMetadata` name:
+
+| Resource | API group | Purpose |
+| --- | --- | --- |
+| `ProviderMetadata` | `ui.platform-mesh.io/v1alpha1` | Marketplace card — name, description, icon, contacts, documentation, support links. |
+| `APIExport` | `apis.kcp.io/v1alpha1` | Publishes the provider's API group. **Must reference at least one `APIResourceSchema`** — the Marketplace skips exports with no schemas. UI-only providers that expose no real API still need a placeholder schema so the export is considered established. |
+| `ContentConfiguration` | `ui.platform-mesh.io/v1alpha1` | Portal navigation fragment (sidebar nodes, micro-frontend URL). |
+
+All three resources must carry the same label:
+
+```yaml
+labels:
+  ui.platform-mesh.io/content-for: <provider-name>
+```
+
+where `<provider-name>` matches `metadata.name` of the `ProviderMetadata`.
+
+A minimal example for a UI-only provider:
+
+```yaml
+# providermetadata.yaml
+apiVersion: ui.platform-mesh.io/v1alpha1
+kind: ProviderMetadata
+metadata:
+  name: my-service
+  labels:
+    ui.platform-mesh.io/content-for: my-service
+spec:
+  displayName: My Service
+  description: Short description shown in the Marketplace card.
+  tags: [example]
+  contacts:
+    - displayName: My Team
+      email: my-team@example.com
+      role: [Owner]
+  documentation:
+    - displayName: Documentation
+      url: https://docs.example.com
+  icon:
+    light:
+      url: https://example.com/icon-light.svg
+    dark:
+      url: https://example.com/icon-dark.svg
+```
+
+```yaml
+# apiresourceschema.yaml  (placeholder for UI-only providers)
+apiVersion: apis.kcp.io/v1alpha1
+kind: APIResourceSchema
+metadata:
+  name: v1.myresources.my-service.example.com
+spec:
+  group: my-service.example.com
+  names:
+    kind: MyResource
+    plural: myresources
+  scope: Cluster
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+```
+
+```yaml
+# apiexport.yaml
+apiVersion: apis.kcp.io/v1alpha1
+kind: APIExport
+metadata:
+  name: my-service.example.com
+  labels:
+    ui.platform-mesh.io/content-for: my-service
+spec:
+  latestResourceSchemas:
+    - v1.myresources.my-service.example.com
+```
+
+```yaml
+# contentconfiguration.yaml
+apiVersion: ui.platform-mesh.io/v1alpha1
+kind: ContentConfiguration
+metadata:
+  name: my-service-ui
+  labels:
+    ui.platform-mesh.io/content-for: my-service
+    ui.platform-mesh.io/entity: core_platform-mesh_io_account
+spec:
+  remoteConfiguration:
+    url: https://example.com/portal-config.json
+    contentType: json
+```
+
+Apply them using the provider kubeconfig:
+
+```bash
+export PROVIDER_KUBECONFIG=provider-kubeconfig.yaml
+kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f apiresourceschema.yaml
+kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f apiexport.yaml
+kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f providermetadata.yaml
+kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f contentconfiguration.yaml
+```
+
+## Step 6: Grant bind permission
+
+The Marketplace install flow creates an `APIBinding` in the consumer workspace by calling `bind` on the provider's `APIExport`. Without an explicit grant, the call fails with "no permission to bind to export". Apply a `ClusterRole` and `ClusterRoleBinding` to the provider workspace to allow it:
+
+```yaml
+# rbac-bind.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: my-service-bind
+rules:
+  - apiGroups: ["apis.kcp.io"]
+    resources: ["apiexports"]
+    resourceNames: ["my-service.example.com"]
+    verbs: ["bind"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: my-service-bind
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: my-service-bind
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: system:authenticated
+```
+
+```bash
+kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f rbac-bind.yaml
+```
+
+After both steps, open the Marketplace in a consumer workspace — the provider card appears and the **Enable** button works.
+
+## Step 7: Wire the kubeconfig into your service controllers
 
 Configure your service controllers to use the provider kubeconfig to watch the `APIExport` virtual workspace and reconcile service consumers. See [Integration paths](/concepts/integration-paths.md) to choose the right mechanism and find the corresponding tutorial.
 
@@ -81,3 +223,5 @@ Configure your service controllers to use the provider kubeconfig to watch the `
 - [Provider bootstrap](/concepts/provider-bootstrap.md)
 - [Integration paths](/concepts/integration-paths.md)
 - [Service provider persona](/concepts/personas/service-provider.md)
+- [Metadata catalog](/reference/resources/metadata-catalog.md) — `ui.platform-mesh.io/content-for` label reference
+- [ContentConfiguration](/reference/resources/content-configuration.md)

@@ -28,10 +28,9 @@ Platform Mesh attaches labels to its own resources and, in some cases, to upstre
 | Label | Used on | Purpose |
 | --- | --- | --- |
 | `core.platform-mesh.io/org` | WorkspaceTypes managed by the account-operator | Scopes a workspace type to a specific organization so child accounts inherit the right RBAC. |
+| `ui.platform-mesh.io/content-for` | `ProviderMetadata`, `APIExport`, `ContentConfiguration` | **Required by provider authors.** Links the three resources that make up a Marketplace entry. The value must be the name of the `ProviderMetadata` on all three resources. The virtual-workspaces server joins them by this label when building the `MarketplaceEntry` list. See [Register your provider in the Marketplace](/how-to-guides/bootstrap-provider.md#register-your-provider-in-the-marketplace). |
 | `ui.platform-mesh.io/entity` | ContentConfiguration | Attaches the configuration to a portal navigation entity (for example, `core_platform-mesh_io_account` to extend Account pages). |
 | `extensions.openmfp.io` | ContentConfiguration (legacy) | Maps to an `ExtensionClass` in older deployments. New deployments prefer `ui.platform-mesh.io/entity`. |
-
-Provider authors generally do **not** need to set Platform Mesh labels on APIExports or APIBindings — onboarding scripts and operators handle that.
 
 ## Finalizers
 
@@ -71,7 +70,7 @@ This catalog is updated as Platform Mesh component owners contribute the support
 ## Related
 
 - [Account resource](./account-resource.md) — uses the `core.platform-mesh.io` API group and its finalizers
-- [ContentConfiguration](./content-configuration.md) — uses the `ui.platform-mesh.io` API group and the `ui.platform-mesh.io/entity` label
+- [ContentConfiguration](./content-configuration.md) — uses the `ui.platform-mesh.io` API group and the `ui.platform-mesh.io/entity` and `ui.platform-mesh.io/content-for` labels
 - [Provider resource](./provider-resource.md) — uses the `providers.platform-mesh.io` API group and its finalizers
 - [ManagedProvider resource](./managed-provider-resource.md) — uses the `providers.platform-mesh.io` API group and its finalizers
 - [Account model](/concepts/account-model.md)
