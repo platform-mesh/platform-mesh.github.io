@@ -73,22 +73,18 @@ kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f <your-workspace-resources>
 
 ## Step 5: Register your provider in the Marketplace
 
-For your provider to appear in the Platform Mesh Marketplace, apply three resources to the provider workspace, all linked by the same `ui.platform-mesh.io/content-for` label set to the `ProviderMetadata` name:
+For your provider to appear in the Platform Mesh Marketplace and project its navigation into consumer workspaces, apply three resources to the provider workspace. The `ui.platform-mesh.io/content-for` label is the join key, but its **value differs by resource**:
 
-| Resource | API group | Purpose |
+| Resource | `content-for` value | Purpose |
 | --- | --- | --- |
-| `ProviderMetadata` | `ui.platform-mesh.io/v1alpha1` | Marketplace card — name, description, icon, contacts, documentation, support links. |
-| `APIExport` | `apis.kcp.io/v1alpha1` | Publishes the provider's API group. The Marketplace skips exports whose `status.identityHash` is empty (not yet established by kcp). UI-only providers that expose no CRD can omit `spec.latestResourceSchemas`; the export is still considered established once kcp sets the identity hash. |
-| `ContentConfiguration` | `ui.platform-mesh.io/v1alpha1` | Portal navigation fragment (sidebar nodes, micro-frontend URL). |
+| `ProviderMetadata` | `<provider-name>` — for example `my-service` | Marketplace card — name, description, icon, contacts, documentation, support links. |
+| `APIExport` | `<provider-name>` — same as `ProviderMetadata.name` | The Marketplace filter joins `APIExport` to `ProviderMetadata` by this value. The Marketplace skips exports whose `status.identityHash` is empty (not yet established by kcp). UI-only providers that expose no CRD can omit `spec.latestResourceSchemas`. |
+| `ContentConfiguration` | `<APIExport.name>` — for example `my-service.example.com` | The portal's nav projection reads ContentConfigurations by `content-for: <APIExport.name>` from the provider workspace once the APIBinding is installed. |
 
-All three resources must carry the same label:
-
-```yaml
-labels:
-  ui.platform-mesh.io/content-for: <provider-name>
-```
-
-where `<provider-name>` matches `metadata.name` of the `ProviderMetadata`.
+::: tip Two different values for the same label key
+`ProviderMetadata` and `APIExport` share `content-for: <provider-name>` so the Marketplace can join them.
+`ContentConfiguration` uses `content-for: <APIExport.name>` (the full API group name) so the portal can project nav nodes into the consumer workspace after install.
+:::
 
 A minimal example for a UI-only provider:
 
@@ -136,7 +132,7 @@ kind: ContentConfiguration
 metadata:
   name: my-service-ui
   labels:
-    ui.platform-mesh.io/content-for: my-service
+    ui.platform-mesh.io/content-for: my-service.example.com
     ui.platform-mesh.io/entity: core_platform-mesh_io_account
 spec:
   remoteConfiguration:
