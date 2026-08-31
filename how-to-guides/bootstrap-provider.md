@@ -78,7 +78,7 @@ For your provider to appear in the Platform Mesh Marketplace, apply three resour
 | Resource | API group | Purpose |
 | --- | --- | --- |
 | `ProviderMetadata` | `ui.platform-mesh.io/v1alpha1` | Marketplace card — name, description, icon, contacts, documentation, support links. |
-| `APIExport` | `apis.kcp.io/v1alpha1` | Publishes the provider's API group. **Must reference at least one `APIResourceSchema`** — the Marketplace skips exports with no schemas. UI-only providers that expose no real API still need a placeholder schema so the export is considered established. |
+| `APIExport` | `apis.kcp.io/v1alpha1` | Publishes the provider's API group. The Marketplace skips exports whose `status.identityHash` is empty (not yet established by kcp). UI-only providers that expose no CRD can omit `spec.latestResourceSchemas`; the export is still considered established once kcp sets the identity hash. |
 | `ContentConfiguration` | `ui.platform-mesh.io/v1alpha1` | Portal navigation fragment (sidebar nodes, micro-frontend URL). |
 
 All three resources must carry the same label:
@@ -119,37 +119,14 @@ spec:
 ```
 
 ```yaml
-# apiresourceschema.yaml  (placeholder for UI-only providers)
-apiVersion: apis.kcp.io/v1alpha1
-kind: APIResourceSchema
-metadata:
-  name: v1.myresources.my-service.example.com
-spec:
-  group: my-service.example.com
-  names:
-    kind: MyResource
-    plural: myresources
-  scope: Cluster
-  versions:
-    - name: v1
-      served: true
-      storage: true
-      schema:
-        openAPIV3Schema:
-          type: object
-```
-
-```yaml
-# apiexport.yaml
+# apiexport.yaml  (UI-only: no latestResourceSchemas needed)
 apiVersion: apis.kcp.io/v1alpha1
 kind: APIExport
 metadata:
   name: my-service.example.com
   labels:
     ui.platform-mesh.io/content-for: my-service
-spec:
-  latestResourceSchemas:
-    - v1.myresources.my-service.example.com
+spec: {}
 ```
 
 ```yaml
@@ -171,7 +148,6 @@ Apply them using the provider kubeconfig:
 
 ```bash
 export PROVIDER_KUBECONFIG=provider-kubeconfig.yaml
-kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f apiresourceschema.yaml
 kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f apiexport.yaml
 kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f providermetadata.yaml
 kubectl --kubeconfig $PROVIDER_KUBECONFIG apply -f contentconfiguration.yaml
