@@ -74,6 +74,8 @@ Both paths require a Kubernetes operator that reconciles the service's resources
 - [rebac-authz-webhook](reference/components/rebac-authz-webhook.md): kcp authorization webhook backed by OpenFGA.
 - [Kubernetes GraphQL Gateway](reference/components/kubernetes-graphql-gateway.md): GraphQL interface for kcp resources.
 - [Portal](reference/components/portal.md): Consumer-facing web UI.
+- [Portal UI library](reference/components/portal/portal-ui-lib.md): Angular library with Platform Mesh portal options and generic UI web components.
+- [Portal server library](reference/components/portal/portal-server-lib.md): NestJS library with Platform Mesh portal backend providers.
 - [Marketplace](reference/components/marketplace.md): Service discovery and binding for consumers.
 - [api-syncagent](reference/components/api-syncagent.md): CRD-based provider integration path.
 - [multi-cluster-runtime](reference/components/multi-cluster-runtime.md): Custom controller provider integration path.

@@ -68,7 +68,10 @@ export default withMermaid({
           )
         },
       ]
-    }
+    },
+    optimizeDeps: {
+      include: ['mermaid'],
+    },
   },
 
 
@@ -224,7 +227,15 @@ export default withMermaid({
             { text: 'OpenFGA', link: '/reference/components/openfga' },
             { text: 'rebac-authz-webhook', link: '/reference/components/rebac-authz-webhook' },
             { text: 'Kubernetes GraphQL gateway', link: '/reference/components/kubernetes-graphql-gateway' },
-            { text: 'Portal', link: '/reference/components/portal' },
+            {
+              text: 'Portal',
+              link: '/reference/components/portal',
+              collapsed: false,
+              items: [
+                { text: 'Portal UI library', link: '/reference/components/portal/portal-ui-lib' },
+                { text: 'Portal server library', link: '/reference/components/portal/portal-server-lib' },
+              ],
+            },
             { text: 'Marketplace', link: '/reference/components/marketplace' },
             { text: 'virtual-workspaces', link: '/reference/components/virtual-workspaces' },
             { text: 'Observability', link: '/reference/components/observability' },
