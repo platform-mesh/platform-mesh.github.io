@@ -22,12 +22,33 @@ Every navigation node is scoped to a **kcp workspace path** (for example `root:o
 The backend derives the active workspace path from the authenticated user's context and injects it into the 
 Luigi `globalContext`, making it available to all child microfrontends without additional round-trips.
 
+## Architecture
+
+The Portal repository is a thin application. Most of its behavior comes from two layers of libraries: the generic OpenMFP portal libraries provide the shell, and the Platform Mesh portal libraries plug in the Platform Mesh–specific implementations.
+
+```
+Portal frontend (Angular)                  Portal backend (NestJS)
+    ↓                                          ↓
+@platform-mesh/portal-ui-lib               @platform-mesh/portal-server-lib
+    ↓                                          ↓
+@openmfp/portal-ui-lib (Luigi shell)       @openmfp/portal-server-lib (PortalModule)
+```
+
+| Layer | Library | Role in the Portal |
+|---|---|---|
+| Frontend | [Portal UI library](./portal/portal-ui-lib.md) (`@platform-mesh/portal-ui-lib`) | Provides the `portal-options` service implementations passed to `providePortal()` — navigation, header bar, node context processing, routing, and user profile — plus the generic UI web components |
+| Backend | [Portal server library](./portal/portal-server-lib.md) (`@platform-mesh/portal-server-lib`) | Provides the providers passed to `PortalModule.create()` — authentication, request and portal context, account entity context, `ContentConfiguration` service providers, and the permissions proxy |
+
 ## Repository
 
 - [github.com/platform-mesh/portal](https://github.com/platform-mesh/portal)
+- [github.com/platform-mesh/portal-ui-lib](https://github.com/platform-mesh/portal-ui-lib)
+- [github.com/platform-mesh/portal-server-lib](https://github.com/platform-mesh/portal-server-lib)
 
 ## Related
 
+- [Portal UI library](./portal/portal-ui-lib.md)
+- [Portal server library](./portal/portal-server-lib.md)
 - [Explore the example MSP](/tutorials/explore-example-msp.md)
 - [IAM UI](./iam-ui.md)
 - [Marketplace](./marketplace.md)
