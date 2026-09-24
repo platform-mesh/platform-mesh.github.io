@@ -18,12 +18,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to push the built site to the gh-pages branch
+      contents: read # Only reads for checkout; pushes to gh-pages use the platform-mesh-publisher app token
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - id: app-token
+        name: Generate platform-mesh-publisher app token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: "1415820" # platform-mesh-publisher
+          private-key: ${{ secrets.PM_PUBLISHER_PRIVATE_KEY }}
+
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
@@ -52,6 +60,7 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4
         if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-') }}
         with:
+          token: ${{ steps.app-token.outputs.token }}
           folder: .vitepress/dist
           branch: gh-pages
           target-folder: ${{ steps.set-version.outputs.version }}
@@ -61,6 +70,7 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
+          token: ${{ steps.app-token.outputs.token }}
           folder: .
           branch: gh-pages
           target-folder: .

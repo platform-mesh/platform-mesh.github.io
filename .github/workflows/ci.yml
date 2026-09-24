@@ -22,13 +22,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to push the PR preview to the gh-pages branch
-      pull-requests: write # Needed to comment the preview link on the PR
+      contents: read # Only reads for checkout; gh-pages push and PR comment use the platform-mesh-publisher app token
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - id: app-token
+        name: Generate platform-mesh-publisher app token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: "1415820" # platform-mesh-publisher
+          private-key: ${{ secrets.PM_PUBLISHER_PRIVATE_KEY }}
+
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24
@@ -50,4 +57,5 @@ jobs:
       - uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1
         if: ${{ !github.event.pull_request.head.repo.fork }}
         with:
+          token: ${{ steps.app-token.outputs.token }}
           source-dir: .vitepress/dist
