@@ -9,7 +9,7 @@ Under the hood, installing a provider creates a Kubernetes `APIBinding` in the c
 The key capabilities are:
 
 - **Provider catalog** — browsable, searchable, and filterable list of all available service providers
-- **Provider details** — full metadata view: description, contacts, documentation, support channels, service level, and verification status
+- **Provider details** — full metadata view: description, contacts, documentation, support channels, service level
 - **Install** — creates an `APIBinding` in the current workspace with all required permission claims auto-accepted
 - **Uninstall** — deletes the `APIBinding` after a confirmation dialog
 - **Theme support** — renders provider icons in light or dark variants based on the active SAP Fiori theme
@@ -38,21 +38,6 @@ MarketplaceEntry resources + APIBinding create/delete
 
 The active `accountId` is forwarded from the Luigi context to every GraphQL request so that `spec.installed` reflects the binding state of the current workspace.
 
-## Technology stack
-
-| Component | Technology |
-|---|---|
-| Framework | Angular 21 |
-| UI components | SAP Fundamental NGX 0.61 |
-| Micro-frontend orchestration | Luigi 2.22 |
-| State management | NgRx 21 |
-| GraphQL client | Apollo Angular / Apollo Client 4 |
-| Subscriptions transport | SSE (Server-Sent Events) |
-| i18n | Angular localization (English, German) |
-| Testing | Vitest 4 |
-| Language | TypeScript (ES2022, strict mode) |
-| Container | nginx:alpine, served on port 8080 |
-
 ## Configuration
 
 The UI reads all runtime configuration from the Luigi node context injected by the Portal. No static environment files are required in production. The relevant context fields are:
@@ -63,6 +48,14 @@ The UI reads all runtime configuration from the Luigi node context injected by t
 | `accountId` | Current workspace scope for install/uninstall operations |
 | `token` | Bearer token forwarded to every GraphQL request |
 | `analyticsTrackerConfig` | Optional Matomo analytics configuration |
+| `uiConfig.filters` | Optional list of `{label, providerMetadataPath}` entries that define the catalog's filter facets |
+
+`uiConfig.filters` drives which filter dropdowns render above the provider catalog and how they behave, without requiring a UI code change:
+
+- Each entry renders one filter control. If the list is empty or absent, no filter row is shown.
+- `label` is the filter's display name (e.g. `Category`, `Provider`).
+- `providerMetadataPath` is a dot-path resolved against each provider's `ProviderMetadata`, walking through JSON-encoded sub-objects (such as `spec.data`) as needed — e.g. `spec.data.category` or `spec.data.provider`.
+- The available options for a filter are the distinct values found at that path across the current catalog. Selecting one or more values narrows the catalog to providers whose resolved value matches a selection; no selection shows every provider.
 
 ## Repository
 
