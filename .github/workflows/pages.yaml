@@ -17,8 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write # to write the built page to the branch
-  pull-requests: write # to leave a comment with the preview URL
+  contents: read # Only reads for checkout; gh-pages push and PR comment use the platform-mesh-publisher app token
 
 concurrency:
   # set separate concurrency groups for each version branch and PR
@@ -26,13 +25,24 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
+
+      - id: app-token
+        name: Generate platform-mesh-publisher app token
+        if: ${{ !github.event.pull_request.head.repo.fork }} # Secrets are unavailable on fork PRs; preview deploy below is likewise skipped
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: "1415820" # platform-mesh-publisher
+          private-key: ${{ secrets.PM_PUBLISHER_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 24
@@ -63,6 +73,7 @@ jobs:
       - uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1
         if: ${{ github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork }}
         with:
+          token: ${{ steps.app-token.outputs.token }}
           source-dir: .vitepress/dist
 
       # Deploy versioned docs to GitHub Pages
@@ -78,6 +89,7 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
         if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-')) }}
         with:
+          token: ${{ steps.app-token.outputs.token }}
           folder: .vitepress/dist
           branch: gh-pages
           target-folder: ${{ steps.set-version.outputs.version }}
@@ -89,6 +101,7 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@d92aa235d04922e8f08b40ce78cc5442fcfbfa2f # v4
         if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
         with:
+          token: ${{ steps.app-token.outputs.token }}
           folder: .
           branch: gh-pages
           target-folder: .
