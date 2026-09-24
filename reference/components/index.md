@@ -25,6 +25,8 @@ The components that run as part of a Platform Mesh installation. Most pages are 
 
 - [Kubernetes GraphQL gateway](./kubernetes-graphql-gateway.md)
 - [Portal](./portal.md)
+  - [Portal UI library](./portal/portal-ui-lib.md)
+  - [Portal server library](./portal/portal-server-lib.md)
 - [Marketplace](./marketplace.md)
 - [virtual-workspaces](./virtual-workspaces.md)
 

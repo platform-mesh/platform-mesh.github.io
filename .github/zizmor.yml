@@ -1,0 +1,8 @@
+# zizmor configuration for platform-mesh.github.io workflows.
+# https://docs.zizmor.sh/configuration/
+rules:
+  # Repo convention: jobs are identified by their key (e.g. `build`), not a
+  # separate display name. Adding `name:` to every job would fight the
+  # established style across the workflows here.
+  anonymous-definition:
+    disable: true

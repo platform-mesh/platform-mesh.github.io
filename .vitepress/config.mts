@@ -68,7 +68,10 @@ export default withMermaid({
           )
         },
       ]
-    }
+    },
+    optimizeDeps: {
+      include: ['mermaid'],
+    },
   },
 
 
@@ -121,6 +124,7 @@ export default withMermaid({
             items: [
             { text: 'Set up Platform Mesh locally', link: '/how-to-guides/set-up-platform-mesh-locally' },
             { text: 'Set up remote deployment', link: '/how-to-guides/set-up-remote-deployment' },
+            { text: 'Air-gapped deployment', link: '/how-to-guides/install-air-gapped' },
             { text: 'Speed up local rebuilds', link: '/how-to-guides/speed-up-local-rebuilds' },
             ]
         },
@@ -223,7 +227,15 @@ export default withMermaid({
             { text: 'OpenFGA', link: '/reference/components/openfga' },
             { text: 'rebac-authz-webhook', link: '/reference/components/rebac-authz-webhook' },
             { text: 'Kubernetes GraphQL gateway', link: '/reference/components/kubernetes-graphql-gateway' },
-            { text: 'Portal', link: '/reference/components/portal' },
+            {
+              text: 'Portal',
+              link: '/reference/components/portal',
+              collapsed: false,
+              items: [
+                { text: 'Portal UI library', link: '/reference/components/portal/portal-ui-lib' },
+                { text: 'Portal server library', link: '/reference/components/portal/portal-server-lib' },
+              ],
+            },
             { text: 'Marketplace', link: '/reference/components/marketplace' },
             { text: 'virtual-workspaces', link: '/reference/components/virtual-workspaces' },
             { text: 'Observability', link: '/reference/components/observability' },
@@ -244,6 +256,7 @@ export default withMermaid({
             { text: 'IAM Store resource', link: '/reference/resources/iamstore-resource' },
             { text: 'ContentConfiguration', link: '/reference/resources/content-configuration' },
             { text: 'Metadata catalog', link: '/reference/resources/metadata-catalog' },
+            { text: 'ProviderPermissions', link: '/reference/resources/provider-permissions-resource' },
             ]
         },
         {
