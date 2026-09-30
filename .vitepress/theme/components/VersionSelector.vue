@@ -22,15 +22,20 @@
 import { ref, onMounted } from 'vue'
 
 interface Version {
+  // name is the name of the directory where this version has its docs,
+  // usually identical to the branch name
   name: string
+  // label is how the version is shown in the dropdown
   label: string
+  // rootOnly should be set to true only for pre-0.3 versions for which the
+  // directory structure differs greatly from more recent versions. This
+  // prevents sending users to non-existent pages when they switch versions.
+  rootOnly: boolean
 }
 
 // Define available versions - update this list when adding new versions.
-// Set rootOnly: true for versions whose URL structure differs from the current
-// docs layout (pre-v0.3 used a different directory structure), so switching
-// to them always lands on the version root instead of trying to map the
-// current path.
+// NB: As of October 2026, whenever a new minor release is made, this list
+//     needs to be updated in every single release branch in this repository.
 const versions: Version[] = [
   { name: 'main', label: 'main (latest)' },
   { name: 'release-0.5', label: 'v0.5' },
