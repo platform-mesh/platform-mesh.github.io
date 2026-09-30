@@ -34,6 +34,7 @@ interface Version {
 // current path.
 const versions: Version[] = [
   { name: 'main', label: 'main (latest)' },
+  { name: 'release-0.5', label: 'v0.5' },
   { name: 'release-0.4', label: 'v0.4' },
   { name: 'release-0.3', label: 'v0.3' },
   { name: 'release-0.2', label: 'v0.2', rootOnly: true },
