@@ -22,8 +22,15 @@
 import { ref, onMounted } from 'vue'
 
 interface Version {
+  // name is the name of the directory where this version has its docs,
+  // usually identical to the branch name
   name: string
+  // label is how the version is shown in the dropdown
   label: string
+  // rootOnly should be set to true only for pre-0.3 versions for which the
+  // directory structure differs greatly from more recent versions. This
+  // prevents sending users to non-existent pages when they switch versions.
+  rootOnly?: boolean
 }
 
 // Define available versions - update this list when adding new versions.
@@ -73,6 +80,13 @@ function getCurrentVersion(): string {
 
 function switchVersion(): void {
   if (typeof window === 'undefined') return
+
+  const selected = versions.find(v => v.name === currentVersion.value)
+
+  if (selected?.rootOnly) {
+    window.location.href = `/${currentVersion.value}/`
+    return
+  }
 
   const currentPath = window.location.pathname
   const segments = currentPath.split('/').filter(Boolean)
