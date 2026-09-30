@@ -5,7 +5,7 @@ personas: [platform-owner, service-provider, service-consumer]
 
 # Set up Platform Mesh locally
 
-Use this how-to to bring up a local Platform Mesh environment on a Kind cluster. The result is a running portal, kcp endpoint, and the Platform Mesh runtime components needed to follow the [tutorials](/tutorials/).
+Use this how-to to bring up a local Platform Mesh environment on a kind cluster. The result is a running portal, kcp endpoint, and the Platform Mesh runtime components needed to follow the [tutorials](/tutorials/).
 
 ::: warning Development preview
 The local setup is intended for evaluation and development. It differs from production deployments in architecture, security configuration, and scalability.
@@ -20,17 +20,18 @@ Allocate at least 8 GB RAM and 6 CPUs to your container runtime.
 Install:
 
 - Docker or Podman
-- Kind
-- kubectl
-- Helm
-- openssl
-- base64
-- mkcert
-- yq
+- [kind](https://github.com/kubernetes-sigs/kind/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [Helm](https://helm.sh/)
+- `git`
+- `openssl`
+- `base64`
+- [mkcert](https://github.com/FiloSottile/mkcert)
+- [yq](https://mikefarah.gitbook.io/yq)
 
-Install the `kubectl-kcp` plugin if you want to run the example-data setup later.
+Install the [`kubectl-kcp`](https://docs.kcp.io/kcp/v0.33/setup/kubectl-plugin/) plugin if you want to run the example-data setup later.
 
-Task is optional. It provides convenient command aliases, but the setup scripts can be run directly.
+[Task](https://taskfile.dev/) is optional. It provides convenient command aliases, but the setup scripts can be run directly.
 
 ::: tip WSL2 users
 WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration enabled. See the [local setup README](https://github.com/platform-mesh/helm-charts/blob/main/local-setup/README.md#wsl2--windows-mkcert-setup-guide) for mkcert details.
@@ -45,8 +46,12 @@ Set `KIND_EXPERIMENTAL_PROVIDER=podman` before running the setup.
 ```bash
 git clone https://github.com/platform-mesh/helm-charts.git
 cd helm-charts
-git checkout 0.4.0
-cd local-setup
+```
+
+This will by default check out the latest development version. To install Platform Mesh in a specific version, you can check the [releases](https://github.com/platform-mesh/helm-charts/releases) and check out the corresponding tag, like so:
+
+```bash
+git checkout 0.5.2
 ```
 
 ## Run the setup
@@ -56,7 +61,7 @@ Use one of the following options.
 ::: code-group
 
 ```bash [Task]
-# Full setup. Deletes any existing platform-mesh Kind cluster first.
+# Full setup. Deletes any existing platform-mesh kind cluster first.
 task local-setup
 
 # Faster iteration on an existing cluster.
@@ -64,7 +69,7 @@ task local-setup:iterate
 ```
 
 ```bash [Script]
-# Full setup. Deletes any existing platform-mesh Kind cluster first.
+# Full setup. Deletes any existing platform-mesh kind cluster first.
 kind delete cluster --name platform-mesh
 ./local-setup/scripts/start.sh
 
