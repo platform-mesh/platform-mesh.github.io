@@ -23,17 +23,19 @@ Install:
 - Kind
 - kubectl
 - Helm
+- git
 - openssl
 - base64
 - mkcert
+- jq
 - yq
 
 Install the `kubectl-kcp` plugin if you want to run the example-data setup later.
 
-Task is optional. It provides convenient command aliases, but the setup scripts can be run directly.
+Task and Go are optional. They are only needed when using the Task command below; the setup script can be run directly.
 
 ::: tip WSL2 users
-WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration enabled. See the [local setup README](https://github.com/platform-mesh/helm-charts/blob/main/local-setup/README.md#wsl2--windows-mkcert-setup-guide) for mkcert details.
+WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration enabled. See the [v0.4.0 local setup README](https://github.com/platform-mesh/helm-charts/blob/0.4.0/local-setup/README.md#wsl2--windows-mkcert-setup-guide) for mkcert details.
 :::
 
 ::: tip macOS Podman users
@@ -43,35 +45,36 @@ Set `KIND_EXPERIMENTAL_PROVIDER=podman` before running the setup.
 ## Clone the setup repository
 
 ```bash
-git clone https://github.com/platform-mesh/helm-charts.git
+git clone --branch 0.4.0 --depth 1 https://github.com/platform-mesh/helm-charts.git
 cd helm-charts
-git checkout <version-tag>  # e.g. X.Y.Z — use the tag matching your Platform Mesh version
-cd local-setup
 ```
 
 ## Run the setup
 
-Use one of the following options.
+Run the setup script directly. If you have Task and Go installed, you can use the optional Task command instead.
 
 ::: code-group
 
-```bash [Task]
-# Full setup. Deletes any existing platform-mesh Kind cluster first.
-task local-setup
-
-# Faster iteration on an existing cluster.
-task local-setup:iterate
-```
-
 ```bash [Script]
-# Full setup. Deletes any existing platform-mesh Kind cluster first.
-kind delete cluster --name platform-mesh
-./local-setup/scripts/start.sh
-
-# Faster iteration on an existing cluster.
-./local-setup/scripts/start.sh
+PLATFORM_MESH_VERSION=0.4.0 ./local-setup/scripts/start.sh --sharded
 ```
 
+```bash [Task (optional)]
+PLATFORM_MESH_VERSION=0.4.0 task local-setup
+```
+
+:::
+
+Run these commands from the `helm-charts` repository root. The Task command asks for confirmation and deletes an existing `platform-mesh` Kind cluster before reinstalling. The direct script reuses an existing cluster if one is present.
+
+::: tip Local-source development
+The v0.4 setup supports iteration only when building the Platform Mesh aggregate from the checked-out source. Omit `PLATFORM_MESH_VERSION` and use the v0.4 flag syntax:
+
+```bash
+./local-setup/scripts/start.sh --iterate --sharded
+```
+
+Do not combine `PLATFORM_MESH_VERSION` with `--iterate`; v0.4 rejects that combination.
 :::
 
 When the setup completes, it prints `Installation Complete` and shows the portal access details.
