@@ -5,7 +5,7 @@ personas: [platform-owner, service-provider, service-consumer]
 
 # Troubleshoot the local setup
 
-For local-setup specific issues, also check the [local-setup issues in the helm-charts repository](https://github.com/platform-mesh/helm-charts/issues?q=state%3Aopen%20label%3Alocal-setup).
+For local-setup specific issues, also check the [local-setup issues in the helm-charts repository](https://github.com/platform-mesh/helm-charts/issues?q=state%3Aopen%20label%3Alocal-setup) and the [v0.4.0 local setup README](https://github.com/platform-mesh/helm-charts/blob/0.4.0/local-setup/README.md).
 
 ## Docker or Podman is not running
 
@@ -23,8 +23,10 @@ Delete the existing Kind cluster and retry:
 
 ```bash
 kind delete cluster --name platform-mesh
-task local-setup
+PLATFORM_MESH_VERSION=0.4.0 ./local-setup/scripts/start.sh --sharded
 ```
+
+Run the command from the `helm-charts` repository root. Deleting the cluster permanently removes its local state.
 
 Check available disk space. The setup needs about 10 GB. Also verify that the container runtime has enough CPU and memory.
 
@@ -36,7 +38,7 @@ Reinstall local certificates:
 mkcert -install
 ```
 
-If warnings continue, see the [certificate troubleshooting guide](https://github.com/platform-mesh/helm-charts/blob/main/local-setup/README.md#certificate-issues).
+If warnings continue, see the [v0.4.0 certificate troubleshooting guide](https://github.com/platform-mesh/helm-charts/blob/0.4.0/local-setup/README.md#certificate-issues).
 
 ## Component timeouts
 
@@ -44,10 +46,10 @@ Verify that all required images can be pulled from your network. To reduce image
 
 ## Enable debug output
 
-Prepend `DEBUG=true` to any setup task:
+Prepend `DEBUG=true` when rerunning the released setup:
 
 ```bash
-DEBUG=true task local-setup:iterate
+DEBUG=true PLATFORM_MESH_VERSION=0.4.0 ./local-setup/scripts/start.sh --sharded
 ```
 
 ## WSL2 cgroup issues
