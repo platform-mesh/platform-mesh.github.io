@@ -28,10 +28,14 @@ Install:
 - `base64`
 - [mkcert](https://github.com/FiloSottile/mkcert)
 - [yq](https://mikefarah.gitbook.io/yq)
+- yq
+- envsubst
+- curl
+- tar
 
 Install the [`kubectl-kcp`](https://docs.kcp.io/kcp/v0.33/setup/kubectl-plugin/) plugin if you want to run the example-data setup later.
 
-[Task](https://taskfile.dev/) is optional. It provides convenient command aliases, but the setup scripts can be run directly.
+Task and Go are optional. They are only needed when using the Task commands below; the setup script can be run directly.
 
 ::: tip WSL2 users
 WSL version 2.1.5 or higher is required with Docker Desktop WSL2 integration enabled. See the [local setup README](https://github.com/platform-mesh/helm-charts/blob/main/local-setup/README.md#wsl2--windows-mkcert-setup-guide) for mkcert details.
@@ -44,35 +48,35 @@ Set `KIND_EXPERIMENTAL_PROVIDER=podman` before running the setup.
 ## Clone the setup repository
 
 ```bash
-git clone https://github.com/platform-mesh/helm-charts.git
+git clone --branch 0.5.2 --depth 1 https://github.com/platform-mesh/helm-charts.git
 cd helm-charts
-git checkout 0.5.2
 ```
 
 ## Run the setup
 
-Use one of the following options.
+Run the setup script directly. If you have Task and Go installed, you can use the optional Task command instead.
 
 ::: code-group
 
-```bash [Task]
-# Full setup. Deletes any existing platform-mesh kind cluster first.
-task local-setup
+```bash [Script]
+# Fresh setup. Fails without changing it if a platform-mesh Kind cluster already exists.
+PLATFORM_MESH_VERSION=0.5.2 ./local-setup/scripts/start.sh --iterate=false
 
-# Faster iteration on an existing cluster.
-task local-setup:iterate
+# Reuse and update an existing cluster.
+PLATFORM_MESH_VERSION=0.5.2 ./local-setup/scripts/start.sh --iterate=true
 ```
 
-```bash [Script]
-# Full setup. Deletes any existing platform-mesh kind cluster first.
-kind delete cluster --name platform-mesh
-./local-setup/scripts/start.sh
+```bash [Task (optional)]
+# Fresh setup. Fails without changing it if a platform-mesh Kind cluster already exists.
+PLATFORM_MESH_VERSION=0.5.2 task local-setup -- --iterate=false
 
-# Faster iteration on an existing cluster.
-./local-setup/scripts/start.sh
+# Reuse and update an existing cluster.
+PLATFORM_MESH_VERSION=0.5.2 task local-setup -- --iterate=true
 ```
 
 :::
+
+Run these commands from the `helm-charts` repository root. To replace an existing local cluster, use the `--iterate=true` parameter.
 
 When the setup completes, it prints `Installation Complete` and shows the portal access details.
 
