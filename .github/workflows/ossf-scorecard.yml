@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   scorecard:
-    uses: platform-mesh/.github/.github/workflows/job-ossf-scorecard.yml@ab6caea57060a3eba5fc58cadbb2aaa1b06da18a # main
+    uses: platform-mesh/.github/.github/workflows/job-ossf-scorecard.yml@70ae2b114f3e2b2c4c4eff8d32f86efb01a532fa # main
     permissions:
       security-events: write # Needed to upload Scorecard results to the GitHub Security tab
       id-token: write # Needed for keyless publishing of Scorecard results
