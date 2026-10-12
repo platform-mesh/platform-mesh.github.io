@@ -27,6 +27,11 @@ How-to guides are task-focused. Use them when you already know what you want to 
 
 - [Troubleshoot the local setup](./troubleshoot-local-setup.md)
 
+## MCP integration
+
+- [Deploy the MCP integration](./deploy-mcp-integration.md)
+- [Troubleshoot the MCP integration](./troubleshoot-mcp-integration.md)
+
 ## Related sections
 
 - [Tutorials](/tutorials/) - guided learning paths.
