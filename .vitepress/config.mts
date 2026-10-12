@@ -114,6 +114,7 @@ export default withMermaid({
             { text: 'Explore the example MSP', link: '/tutorials/explore-example-msp' },
             { text: 'Consume a service from a controller', link: '/tutorials/consume-service-from-controller' },
             { text: 'Build a multicluster-runtime provider', link: '/tutorials/build-multicluster-runtime-provider' },
+            { text: 'Work with workspaces through an MCP agent', link: '/tutorials/work-with-workspaces-mcp' },
             ]
         }
       ],
@@ -141,6 +142,13 @@ export default withMermaid({
             text: 'Operate the local setup',
             items: [
             { text: 'Troubleshoot the local setup', link: '/how-to-guides/troubleshoot-local-setup' },
+            ]
+        },
+        {
+            text: 'MCP integration',
+            items: [
+            { text: 'Deploy the MCP integration', link: '/how-to-guides/deploy-mcp-integration' },
+            { text: 'Troubleshoot the MCP integration', link: '/how-to-guides/troubleshoot-mcp-integration' },
             ]
         }
       ],
@@ -175,6 +183,7 @@ export default withMermaid({
             items: [
             { text: 'API sharing', link: '/concepts/api-sharing' },
             { text: 'Integration paths', link: '/concepts/integration-paths' },
+            { text: 'MCP integration', link: '/concepts/mcp-integration' },
             ]
         },
         {
