@@ -7,9 +7,9 @@ personas: [platform-owner]
 
 This runbook covers the common failure modes of the MCP integration in the local setup. For general cluster problems, see [Troubleshoot the local setup](./troubleshoot-local-setup.md).
 
-## The front-proxy rejects a valid login with 401
+## The MCP server rejects a valid login with 401
 
-The most common cause is an audience mismatch. The front-proxy accepts a token only when its `aud` claim contains the expected client ID. Capture the access token the client presented, for example from the MCP client's output or logs, and decode it:
+The most common cause is an audience mismatch. The MCP server — and the Agent Router in front of it — accepts a token only when its `aud` claim contains the expected client ID. Capture the access token the client presented, for example from the MCP client's output or logs, and decode it:
 
 ```bash
 echo "$TOKEN" | jq -rR 'split(".")[1] | gsub("-";"+") | gsub("_";"/") | @base64d | fromjson | {aud, iss, exp}'
@@ -33,7 +33,7 @@ MCP clients bootstrap authentication through OAuth protected resource metadata. 
 https://mcp.portal.localhost:8443/services/mcp
 ```
 
-A client pointed at the front-proxy API host receives a plain 401 without discovery metadata and cannot start the login flow.
+A client pointed at the kcp API host receives a plain 401 without discovery metadata and cannot start the login flow. The kcp API does not accept MCP tokens at all.
 
 ## The Keycloak configuration Job fails on re-run
 
@@ -75,10 +75,6 @@ The local endpoints use certificates signed by the mkcert root CA. The machine t
 ## Write tools are missing
 
 The chart enables only the `core` toolset by default. Enable more toolsets through the chart values, see [Deploy the MCP integration](./deploy-mcp-integration.md#enable-additional-toolsets). After the upgrade, restart the MCP client session so it fetches the new tool list.
-
-## Agent Router tool names carry a prefix
-
-The Agent Router prefixes every tool name with the backend name, for example `frontproxy-front-proxy__list_kcp_workspaces`. This is a current limitation of the router and there is no option to disable it yet. Agents handle the prefixed names fine, but scripts that match tool names must account for the prefix.
 
 ## Rotate the demo credentials
 

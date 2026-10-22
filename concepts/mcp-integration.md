@@ -29,7 +29,7 @@ The integration consists of two kcp virtual workspaces, packaged as optional Hel
 - The **access virtual workspace** (`kcp-access-vw` chart) answers `SelfClusterAccessReview` requests. Given a caller's identity, it returns the kcp workspaces that caller can access.
 - The **MCP virtual workspace** (`kcp-mcp-vw` chart) is the MCP server. At the start of each request it asks the access virtual workspace for the caller's workspaces and limits the whole session to that set. Every resource read and write impersonates the caller, so kcp and the [authorization webhook](/concepts/security/authorization.md) evaluate each request against the user's own permissions.
 
-Both charts render [kcp-operator](/reference/components/kcp-operator.md) `VirtualWorkspace` resources, so the kcp installation wires the endpoints into the front-proxy declaratively.
+Both charts render [kcp-operator](/reference/components/kcp-operator.md) `VirtualWorkspace` resources, so the operator deploys and wires both endpoints declaratively.
 
 ## Request path
 
@@ -37,21 +37,21 @@ Both charts render [kcp-operator](/reference/components/kcp-operator.md) `Virtua
 sequenceDiagram
     participant Agent as MCP client (agent)
     participant GW as Gateway
-    participant FP as kcp front-proxy
     participant MCP as MCP virtual workspace
     participant ACC as Access virtual workspace
     participant WS as kcp workspace
 
     Agent->>GW: MCP tool call with bearer token
-    GW->>FP: forward request
-    FP->>FP: validate OIDC token
-    FP->>MCP: request with authenticated identity
+    GW->>MCP: forward request
+    MCP->>MCP: validate OIDC token (issuer, signature, audience)
     MCP->>ACC: SelfClusterAccessReview as the caller
     ACC-->>MCP: list of accessible workspaces
     MCP->>WS: resource request, impersonating the caller
     WS-->>MCP: result authorized by kcp
     MCP-->>Agent: tool result
 ```
+
+The MCP server validates the caller's bearer token itself. The token never travels further: every kcp-side call uses the MCP server's own client certificate through the kcp front-proxy, and the kcp API does not accept MCP tokens at all. A credential issued for the MCP endpoint is useless anywhere else, which is the token audience binding the [MCP authorization specification](https://modelcontextprotocol.io/specification/latest/basic/authorization) requires.
 
 The MCP server is stateless. It rebuilds the session scope on every request, so a change to the user's access takes effect immediately instead of lasting for the lifetime of a session.
 
@@ -67,8 +67,8 @@ Three properties follow from the design:
 
 Two ways to publish the MCP endpoint exist, and they differ in who handles the OAuth ceremony:
 
-- **Behind the kcp front-proxy.** The front-proxy validates the caller's OIDC bearer token. The MCP server additionally serves OAuth protected resource metadata (RFC 9728), so MCP clients discover the identity provider, register, and open a browser login without manual configuration.
-- **Behind an MCP-aware gateway.** A gateway such as the Agent Router validates the JWT, serves the OAuth discovery metadata itself, and forwards the token to the front-proxy. This path suits deployments that already run a gateway at the edge, and it is where aggregation of additional MCP backends, for example a search backend, can happen later.
+- **Direct.** The platform gateway routes the MCP host straight to the MCP server, which validates the caller's OIDC bearer token and serves OAuth protected resource metadata (RFC 9728), so MCP clients discover the identity provider, register, and open a browser login without manual configuration.
+- **Behind an MCP-aware gateway.** A gateway such as the Agent Router validates the JWT — including the audience — serves the OAuth discovery metadata itself, and forwards the token to the MCP server, which re-validates it independently. This path suits deployments that already run a gateway at the edge, and it is where aggregation of additional MCP backends, for example a search backend, can happen later.
 
 ## Toolsets
 
