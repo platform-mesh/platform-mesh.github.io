@@ -1,11 +1,11 @@
 ---
-title: Deploy the MCP integration
+title: Deploy the MCP integration locally
 personas: [platform-owner]
 ---
 
-# Deploy the MCP integration
+# Deploy the MCP integration locally
 
-This guide installs the MCP integration on a local Platform Mesh cluster. It deploys the access and MCP virtual workspaces from the published Helm charts, exposes the MCP server with OAuth discovery, and seeds a demo user and demo workspaces.
+This guide installs the MCP integration on a local Platform Mesh cluster. It deploys the access and MCP virtual workspaces from the published Helm charts, exposes the MCP server with OAuth discovery, and seeds a demo user and demo workspaces. A production deployment path does not exist yet.
 
 ::: warning
 The MCP integration is in alpha and the setup described here targets the local development environment. The demo credentials and the permissive demo RBAC are not suitable for production.
@@ -37,7 +37,7 @@ The script applies the declarative configuration under `examples/platform-mesh/`
 
 1. Installs the `kcp-access-vw` and `kcp-mcp-vw` charts from `oci://ghcr.io/platform-mesh/helm-charts/`.
 2. Adds the `/services/access` path mapping to the front-proxy, which the MCP server uses to reach the access virtual workspace with its own client certificate. The MCP server validates OIDC bearer tokens itself; the kcp API never accepts them.
-3. Configures the Keycloak `welcome` realm through a `keycloak-config-cli` Job: the demo user `alice@example.com`, the `kcp-mcp` client with an audience mapper, and the OAuth client registration policy.
+3. Configures the Keycloak `welcome` realm through a `keycloak-config-cli` Job: the demo user `alice@example.com`, an optional `kcp-mcp` client scope that carries the token audience and the kcp username claim, a demo-only token client for `hack/get-token.sh`, and the OAuth client registration policy.
 4. Applies the demo workspace manifests in each demo workspace: the access `APIBinding`, the impersonator RBAC for the MCP server, and the demo user RBAC.
 5. Verifies the stack end to end with a real token.
 
@@ -49,14 +49,14 @@ https://mcp.portal.localhost:8443/services/mcp
 
 ## Install behind the Agent Router (optional)
 
-The Agent Router validates the caller's JWT against Keycloak — issuer, signature, and the `kcp-mcp` audience — serves the OAuth discovery metadata itself, and forwards the token to the MCP virtual workspace, which re-validates it independently. Use this path when you want an MCP-aware gateway at the edge:
+The Agent Router validates the caller's JWT against Keycloak — issuer, signature, and the `kcp-mcp` audience — serves the OAuth discovery metadata itself, and asserts the verified identity to the MCP virtual workspace through a username header over mutual TLS. The router's client certificate is issued by a dedicated requestheader CA that only the MCP virtual workspace trusts, and the bearer token never travels past the router. Use this path when you want an MCP-aware gateway at the edge:
 
 ```bash
 KCP_ADMIN_KUBECONFIG=/path/to/helm-charts/.secret/kcp/admin.kubeconfig \
   hack/setup-agent-router.sh
 ```
 
-The script runs the base setup first, then installs Envoy Gateway and the Agent Router and applies the manifests from `examples/platform-mesh/agent-router/`: a `Gateway` and `EnvoyProxy`, an `MCPRoute` that validates JWTs and routes `/mcp` directly to the MCP virtual workspace, and an `HTTPRoute` that publishes the router on the local-setup Traefik gateway. TLS to the MCP virtual workspace is verified through the `BackendTLSPolicy` the base setup attaches to its Service.
+The script runs the base setup first, then installs Envoy Gateway and the Agent Router and applies the manifests from `examples/platform-mesh/agent-router/`: a `Gateway` and `EnvoyProxy`, an `MCPRoute` that validates JWTs, maps the token's username claim to the identity header, and routes `/mcp` directly to the MCP virtual workspace, the router's client certificate from the dedicated requestheader CA, and an `HTTPRoute` that publishes the router on the local-setup Traefik gateway. TLS to the MCP virtual workspace is verified through the `BackendTLSPolicy` the base setup attaches to its Service.
 
 The MCP endpoint for this setup is:
 
@@ -78,6 +78,7 @@ The response names the MCP endpoint as the protected resource and the Keycloak r
 {
   "resource": "https://mcp.portal.localhost:8443/services/mcp",
   "authorization_servers": ["https://portal.localhost:8443/keycloak/realms/welcome"],
+  "scopes_supported": ["kcp-mcp"],
   "bearer_methods_supported": ["header"]
 }
 ```
@@ -105,6 +106,5 @@ The `write` toolset adds create, update, patch, scale, and delete tools. The `ad
 ## Related
 
 - [MCP integration](/concepts/mcp-integration.md)
-- [Troubleshoot the MCP integration](./troubleshoot-mcp-integration.md)
 - [Work with your workspaces through an MCP agent](/tutorials/work-with-workspaces-mcp.md)
 - [Set up Platform Mesh locally](./set-up-platform-mesh-locally.md)

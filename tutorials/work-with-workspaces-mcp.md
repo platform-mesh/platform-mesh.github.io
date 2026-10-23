@@ -1,6 +1,6 @@
 # Work with your workspaces through an MCP agent
 
-This tutorial connects an AI agent to the Platform Mesh MCP integration and walks through everyday scenarios: discovering what you can manage, querying resources, comparing workspaces, and seeing the authorization model push back. You interact in natural language, and the agent translates your requests into MCP tool calls that always run as your user.
+This tutorial is for [service consumers](/concepts/personas/service-consumer): it connects an AI agent to the Platform Mesh MCP integration and walks through everyday scenarios — discovering what you can manage, querying resources, comparing workspaces, and seeing the authorization model push back. You interact in natural language, and the agent translates your requests into MCP tool calls that always run as your user. [Service providers](/concepts/personas/service-provider) benefit indirectly: every API they publish and consumers bind becomes usable through the agent, with no provider-side work.
 
 ::: warning Development preview
 The MCP integration is in alpha. Tool names and behavior may change.
@@ -10,7 +10,7 @@ The MCP integration is in alpha. Tool names and behavior may change.
 
 You need:
 
-- A local Platform Mesh cluster with the MCP integration deployed, see [Deploy the MCP integration](/how-to-guides/deploy-mcp-integration.md)
+- A local Platform Mesh cluster with the MCP integration deployed, see [Deploy the MCP integration locally](/how-to-guides/deploy-mcp-integration.md)
 - An MCP-capable agent. This tutorial uses GitHub Copilot Chat in VS Code, but any MCP client that supports OAuth discovery works the same way.
 
 The demo setup seeds a user `alice@example.com` with access to a small set of workspaces. When you run the scenarios, substitute the workspace names your own `list_kcp_workspaces` call returns.
@@ -98,6 +98,5 @@ Read [MCP integration](/concepts/mcp-integration.md) for the architecture behind
 
 Optional branches:
 
-- [Troubleshoot the MCP integration](/how-to-guides/troubleshoot-mcp-integration.md) if a scenario did not behave as described.
 - [Identity and authorization](/concepts/identity-and-authorization.md) for how kcp evaluates the impersonated requests.
 - [Access the kcp admin workspace](/how-to-guides/access-kcp-admin.md) to inspect the workspace tree the agent navigated.

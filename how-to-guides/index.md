@@ -29,8 +29,7 @@ How-to guides are task-focused. Use them when you already know what you want to 
 
 ## MCP integration
 
-- [Deploy the MCP integration](./deploy-mcp-integration.md)
-- [Troubleshoot the MCP integration](./troubleshoot-mcp-integration.md)
+- [Deploy the MCP integration locally](./deploy-mcp-integration.md)
 
 ## Related sections
 

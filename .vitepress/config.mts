@@ -147,8 +147,7 @@ export default withMermaid({
         {
             text: 'MCP integration',
             items: [
-            { text: 'Deploy the MCP integration', link: '/how-to-guides/deploy-mcp-integration' },
-            { text: 'Troubleshoot the MCP integration', link: '/how-to-guides/troubleshoot-mcp-integration' },
+            { text: 'Deploy the MCP integration locally', link: '/how-to-guides/deploy-mcp-integration' },
             ]
         }
       ],

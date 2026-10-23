@@ -5,11 +5,16 @@ personas: [platform-owner, service-consumer]
 
 # MCP integration
 
-The MCP integration lets AI agents work with Platform Mesh resources through the [Model Context Protocol](https://modelcontextprotocol.io). An agent connects to an MCP server that understands kcp workspaces and always acts as the signed-in user. The agent sees only the workspaces its user can access and every action runs with that user's permissions.
+The MCP integration lets AI agents work with Platform Mesh resources through the [Model Context Protocol](https://modelcontextprotocol.io). An agent connects to an MCP server that understands [kcp workspaces](/concepts/control-planes.md) — the isolated API surfaces behind every Platform Mesh account — and always acts as the signed-in user. The agent sees only the workspaces its user can access and every action runs with that user's permissions.
 
 ::: warning
 The MCP integration is in alpha. It is an optional add-on, not part of the default Platform Mesh profile. APIs, chart values, and deployment wiring may change on short notice.
 :::
+
+## What you get
+
+- **Platform owners** enable safe, auditable AI access to Platform Mesh without distributing credentials, and control which capabilities — read, write, platform internals — are exposed through opt-in toolsets.
+- **Service consumers** let an agent discover their workspaces and the APIs bound in them, query and compare resources across workspaces, and apply changes, always limited to what their own permissions allow.
 
 ## Why a dedicated MCP server
 
@@ -68,7 +73,7 @@ Three properties follow from the design:
 Two ways to publish the MCP endpoint exist, and they differ in who handles the OAuth ceremony:
 
 - **Direct.** The platform gateway routes the MCP host straight to the MCP server, which validates the caller's OIDC bearer token and serves OAuth protected resource metadata (RFC 9728), so MCP clients discover the identity provider, register, and open a browser login without manual configuration.
-- **Behind an MCP-aware gateway.** A gateway such as the Agent Router validates the JWT — including the audience — serves the OAuth discovery metadata itself, and forwards the token to the MCP server, which re-validates it independently. This path suits deployments that already run a gateway at the edge, and it is where aggregation of additional MCP backends, for example a search backend, can happen later.
+- **Behind an MCP-aware gateway.** A gateway such as the Agent Router validates the JWT — including the audience — serves the OAuth discovery metadata itself, and asserts the caller's identity to the MCP server with a username header over mutual TLS, authenticated by a dedicated requestheader CA that only the MCP server trusts. The bearer token never travels past the gateway. This path suits deployments that already run a gateway at the edge, and it is where aggregation of additional MCP backends, for example a search backend, can happen later.
 
 ## Toolsets
 
@@ -76,8 +81,7 @@ The MCP server groups its tools into toolsets that the chart enables explicitly.
 
 ## Related
 
-- [Deploy the MCP integration](/how-to-guides/deploy-mcp-integration.md)
-- [Troubleshoot the MCP integration](/how-to-guides/troubleshoot-mcp-integration.md)
+- [Deploy the MCP integration locally](/how-to-guides/deploy-mcp-integration.md)
 - [Work with your workspaces through an MCP agent](/tutorials/work-with-workspaces-mcp.md)
 - [Identity and authorization](/concepts/identity-and-authorization.md)
 - [Security architecture](/concepts/security/index.md)
