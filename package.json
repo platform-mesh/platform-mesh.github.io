@@ -13,6 +13,6 @@
     "medium-zoom": "^1.1.0"
   },
   "overrides": {
-    "vite": "^5.4.14"
+    "vite": "6.4.5"
   }
 }
