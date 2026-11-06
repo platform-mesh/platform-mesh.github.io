@@ -24,7 +24,7 @@ The local setup is under active development. Commands and component versions may
 
 Before you begin, make sure you have:
 
-- a local Platform Mesh setup without example data from [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md)
+- a local Platform Mesh setup without example data from [Install Platform Mesh](/how-to-guides/install-platform-mesh.md)
 - `kubectl` with the `kubectl-kcp`and `kubelogin` plugins installed
 - Helm 3 installed
 - basic familiarity with Kubernetes CRDs and operators

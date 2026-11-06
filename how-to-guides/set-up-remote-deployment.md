@@ -248,5 +248,5 @@ kubectl get helmreleases -n platform-mesh-system -o yaml | grep -A3 kubeConfig
 ## Related
 
 - [Platform Mesh operator reference](/reference/components/platform-mesh-operator.md)
-- [Set up Platform Mesh locally](./set-up-platform-mesh-locally.md)
+- [Install Platform Mesh](./install-platform-mesh.md)
 - [Architecture](/concepts/architecture.md)

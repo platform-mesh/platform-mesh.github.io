@@ -226,7 +226,7 @@ At runtime, kcp loads `kcp-webhook-secret` and calls its `/authz` URL for author
 
 ## Local setup
 
-For local setup, see [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md). The webhook ships with the standard local stack and depends on OpenFGA and the Security operator being healthy before it can return useful authorization decisions.
+For local setup, see [Install Platform Mesh](/how-to-guides/install-platform-mesh.md). The webhook ships with the standard local stack and depends on OpenFGA and the Security operator being healthy before it can return useful authorization decisions.
 
 ## Repository
 

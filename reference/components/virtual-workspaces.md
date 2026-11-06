@@ -188,7 +188,7 @@ The rendered `ClusterAccess` resource uses `introspectionPath: /clusters/*` and 
 
 ## Local setup
 
-The component ships with the standard Platform Mesh local setup. See [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md).
+The component ships with the standard Platform Mesh local setup. See [Install Platform Mesh](/how-to-guides/install-platform-mesh.md).
 
 ## Repository
 
