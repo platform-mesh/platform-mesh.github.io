@@ -253,6 +253,7 @@ helm upgrade platform-mesh-prerequisites \
   --reset-values \
   --wait \
   --timeout 15m \
+  --set keycloak-operator.watchNamespaces=platform-mesh-system \
   --set traefik.enabled=true \
   --set traefik.service.type=NodePort \
   --set traefik.service.spec.type=NodePort \
@@ -344,6 +345,7 @@ self_signed_certificates=true
 gateway_class_name=traefik
 test -n "${base_domain:-}"
 test -n "${platform_mesh_version:-}"
+test -n "${load_balancer_address:-}" || { echo "load_balancer_address is not set — run the step 2 shell block first"; exit 1; }
 echo "Configure ${base_domain} and *.${base_domain} for ${load_balancer_address}"
 
 helm upgrade --install platform-mesh-operator \
