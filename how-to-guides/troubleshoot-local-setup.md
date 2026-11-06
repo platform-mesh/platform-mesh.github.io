@@ -40,7 +40,7 @@ If warnings continue, see the [certificate troubleshooting guide](https://github
 
 ## Component timeouts
 
-Verify that all required images can be pulled from your network. To reduce image pulling on subsequent runs, see [Speed up local rebuilds](./speed-up-local-rebuilds.md).
+Verify that all required images can be pulled from your network.
 
 ## Enable debug output
 
@@ -72,7 +72,7 @@ mkcert -uninstall
 
 ## Related
 
-- [Set up Platform Mesh locally](./set-up-platform-mesh-locally.md)
-- [Speed up local rebuilds](./speed-up-local-rebuilds.md)
+- [Install Platform Mesh](./install-platform-mesh.md)
+- [Install Platform Mesh](./install-platform-mesh.md)
 - [Access the kcp admin workspace](./access-kcp-admin.md)
 - [Architecture](/concepts/architecture.md)

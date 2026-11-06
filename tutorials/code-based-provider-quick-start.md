@@ -31,7 +31,7 @@ It covers:
 
 ## Prerequisites
 
-- A local Platform Mesh setup from [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md).
+- A local Platform Mesh setup from [Install Platform Mesh](/how-to-guides/install-platform-mesh.md).
 - A local clone of [provider-quickstart](https://github.com/platform-mesh/provider-quickstart) (see the tip above).
 - `kubectl` with the `kubectl-kcp` plugin, Helm 3, Go, and `make`.
 

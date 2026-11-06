@@ -7,7 +7,7 @@ Platform Mesh is open source and developed in the open. This section covers wher
 Platform Mesh is hosted on GitHub:
 
 - [github.com/platform-mesh](https://github.com/platform-mesh) — the organization and all repositories.
-- [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally) — install on a development machine.
+- [Install Platform Mesh](/how-to-guides/install-platform-mesh) — install on a development machine.
 - [Tutorials](/tutorials/) — guided walkthroughs.
 
 ## Where to find people

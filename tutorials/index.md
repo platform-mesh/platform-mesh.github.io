@@ -4,7 +4,7 @@ Tutorials are for learning by doing. Follow them in order if this is your first 
 
 ## Before you start
 
-Set up a local Platform Mesh environment first: [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md). The tutorials assume a running cluster.
+Set up a local Platform Mesh environment first: [Install Platform Mesh](/how-to-guides/install-platform-mesh.md). The tutorials assume a running cluster.
 
 ## Recommended sequence
 
