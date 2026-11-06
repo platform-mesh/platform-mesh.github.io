@@ -4,13 +4,13 @@ How-to guides are task-focused. Use them when you already know what you want to 
 
 ## Set up and run
 
-- [Set up Platform Mesh locally](./set-up-platform-mesh-locally.md)
+- [Install Platform Mesh](./install-platform-mesh.md)
 - [Set up remote deployment](./set-up-remote-deployment.md)
 - [Air-gapped deployment](./install-air-gapped.md)
-- [Speed up local rebuilds](./speed-up-local-rebuilds.md)
 
 ## Platform operators
 
+- [Onboard an organization](./onboard-organization.md)
 - [Onboard a managed service](./onboard-managed-service.md)
 
 ## Service providers

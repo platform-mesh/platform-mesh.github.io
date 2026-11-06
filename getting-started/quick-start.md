@@ -1,7 +1,7 @@
 ---
-redirect: /how-to-guides/set-up-platform-mesh-locally
+redirect: /how-to-guides/install-platform-mesh
 ---
 
 # Quick start has moved
 
-The local setup quick start is now [Set up Platform Mesh locally](/how-to-guides/set-up-platform-mesh-locally.md).
+The installation guide is now [Install Platform Mesh](/how-to-guides/install-platform-mesh.md).
