@@ -52,6 +52,7 @@ jobs:
         run: echo "version=" >> $GITHUB_OUTPUT
 
       - run: npm ci
+      - run: npm test
       - run: npm run build
         env:
           DOCS_VERSION: ${{ steps.set-version.outputs.version }}

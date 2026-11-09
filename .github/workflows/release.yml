@@ -84,3 +84,53 @@ jobs:
           include: |
             index.html
             llms.txt
+
+  versions:
+    name: Update shared version list
+    needs: build
+    if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-') }}
+    runs-on: ubuntu-latest
+    # Every release writes the same root-level file. Read gh-pages only after
+    # acquiring this lock, so a later job never publishes an older snapshot.
+    concurrency:
+      group: pages-shared-versions
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    steps:
+      # Keep the generator centralized on main, even for release deployments.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: gh-pages
+          path: deployed-docs
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 26
+          package-manager-cache: false
+
+      - name: Generate versions.js from deployed documentation
+        run: node hack/generate-versions.mjs deployed-docs shared-versions/versions.js
+
+      - id: app-token
+        name: Generate platform-mesh-publisher app token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          app-id: "1415820" # platform-mesh-publisher
+          private-key: ${{ secrets.PM_PUBLISHER_PRIVATE_KEY }}
+          permission-contents: write
+
+      - uses: JamesIves/github-pages-deploy-action@fa24774553152dd7873cd16ebd8d959b010c5445 # v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          folder: shared-versions
+          branch: gh-pages
+          target-folder: .
+          clean: false
+          force: false
