@@ -24,7 +24,7 @@ features:
       width: 72
       height: 72
     title: Every tenant in its own space
-    details: Powered by kcp.io, each team or tenant gets their own isolated workspace that behaves like its own Kubernetes control plane. Scales across multiple shards and regions as you grow.
+    details: Each team or tenant gets their own isolated workspace, built on kcp, a multi-tenant control plane for Kubernetes-style APIs. Add shards and regions as you grow.
   - icon:
       src: /icons/common-language.svg
       alt: one model icon
@@ -44,8 +44,8 @@ features:
       alt: provider boundaries icon
       width: 72
       height: 72
-    title: Providers see only what you allow
-    details: You decide the boundaries with providers. Providers get the access they need to deliver their service and nothing more.
+    title: AI agents act as you
+    details: Turn on the optional MCP integration and connect your AI agent to Platform Mesh. It works with your own sign-in, limited to what your permissions allow.
   - icon:
       src: /icons/round-world.svg
       alt: extend world icon
