@@ -11,8 +11,7 @@ on:
       - synchronize
       - closed
 
-permissions:
-  contents: read # Baseline for actions/checkout; elevated scopes are granted per-job
+permissions: {}
 
 concurrency:
   group: pages-preview-${{ github.event.pull_request.number }}
@@ -23,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read # Only reads for checkout; gh-pages push and PR comment use the platform-mesh-publisher app token
+      pull-requests: write # pr-preview-action posts the preview link comment
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
