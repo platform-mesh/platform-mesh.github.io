@@ -163,37 +163,40 @@ git push -u origin release-0.1
 
 ### Updating the Version Selector
 
-After creating a new release branch, add it to the dropdown:
+No manual version-list updates are needed. Every successful documentation deployment
+runs a serialized `versions` job in `.github/workflows/release.yml`. It checks out
+`gh-pages`, discovers deployed `main/` and `release-X.Y/` directories containing an
+`index.html`, and publishes a single `/versions.js` at the site root. Releases are
+sorted numerically, newest first, with main at the top. A branch without a deployed
+site is not advertised.
+
+Every documentation build includes this shared script synchronously in `<head>`,
+before Vue initializes the dropdown. It is intentionally loaded from `/versions.js`,
+not from the release's base path. Old releases therefore see newly deployed versions
+without being rebuilt. Browser/GitHub Pages caching may briefly delay updates.
+If the script is unavailable, the dropdown falls back to main and the current release.
+PR previews continue to hide the selector.
+
+The generator lives in `hack/generate-versions.mjs` and is always loaded from main
+by the deployment job. It retains `rootOnly` navigation for releases 0.1 and 0.2.
+Run its tests with `npm test`.
+
+Both publishing jobs use the `github-pages` GitHub environment. In repository
+**Settings → Environments → github-pages**, ensure the deployment branch policy
+allows `main` and `release-*` before deploying these workflow changes to release
+branches. Environment policies apply to the workflow's source branch, even though
+it publishes files to `gh-pages`.
+
+**Local testing:** a single-version VitePress server does not have the root-level
+shared script; a 404 for `/versions.js` is expected and exercises the fallback.
+To test the full dropdown with the multi-version `test-deploy/` setup above, generate
+the shared script before serving that directory:
 
 ```bash
-# 1. Edit the version selector component
-git checkout main
+node hack/generate-versions.mjs test-deploy test-deploy/versions.js
 ```
 
-Edit `.vitepress/theme/components/VersionSelector.vue`:
-
-```typescript
-const versions: Version[] = [
-  { name: 'main', label: 'main (latest)' },
-  { name: 'release-0.2', label: 'v0.2' },  // Add new versions here
-  { name: 'release-0.1', label: 'v0.1' },
-]
-```
-
-```bash
-# 2. Commit and push
-git add .vitepress/theme/components/VersionSelector.vue
-git commit -m "Add release-0.2 to version selector"
-git push origin main
-```
-
-**Apply to other branches (optional):**
-```bash
-# Update the dropdown on release branches too
-git checkout release-0.1
-git cherry-pick <commit-hash-from-main>
-git push origin release-0.1
-```
+You can use the same command with a local checkout of `gh-pages` as the first argument.
 
 ### Updating Release Documentation
 
@@ -514,15 +517,16 @@ git push origin release-0.2
 
 ### Version Selector Management
 
-**Keep it updated:**
-- Add new versions to dropdown when created
-- List versions in reverse chronological order (newest first, except main)
-- Use clear labels (`main (latest)`, `v0.2`, `v0.1`)
+The shared `/versions.js` is regenerated automatically after each documentation
+deployment. Do not edit the generated file or maintain per-branch version lists.
 
 **Remove old versions:**
-1. Delete the branch: `git push origin --delete release-0.1`
-2. Remove from dropdown in `VersionSelector.vue`
-3. Optionally: manually delete from `gh-pages` branch
+1. Delete the source branch if it is no longer needed.
+2. Delete its deployed directory (for example `release-0.1/`) from `gh-pages`.
+3. Run the release workflow on main to regenerate `/versions.js`.
+
+Deleting only a source branch does not unpublish its documentation or remove it
+from the dropdown. The deployed directories are the source of truth.
 
 ### Testing Before Merging
 
