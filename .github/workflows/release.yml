@@ -17,6 +17,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: github-pages
     permissions:
       contents: read # Only reads for checkout; pushes to gh-pages use the platform-mesh-publisher app token
     steps:
@@ -90,6 +91,7 @@ jobs:
     needs: build
     if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release-') }}
     runs-on: ubuntu-latest
+    environment: github-pages
     # Every release writes the same root-level file. Read gh-pages only after
     # acquiring this lock, so a later job never publishes an older snapshot.
     concurrency:
