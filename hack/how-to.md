@@ -181,6 +181,12 @@ The generator lives in `hack/generate-versions.mjs` and is always loaded from ma
 by the deployment job. It retains `rootOnly` navigation for releases 0.1 and 0.2.
 Run its tests with `npm test`.
 
+Both publishing jobs use the `github-pages` GitHub environment. In repository
+**Settings → Environments → github-pages**, ensure the deployment branch policy
+allows `main` and `release-*` before deploying these workflow changes to release
+branches. Environment policies apply to the workflow's source branch, even though
+it publishes files to `gh-pages`.
+
 **Local testing:** a single-version VitePress server does not have the root-level
 shared script; a 404 for `/versions.js` is expected and exercises the fallback.
 To test the full dropdown with the multi-version `test-deploy/` setup above, generate
