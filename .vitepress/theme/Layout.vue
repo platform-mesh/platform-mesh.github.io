@@ -5,8 +5,8 @@
       <VersionSelector />
     </template>
 
-    <!-- Add YouTube video above homepage feature tiles -->
-    <template #home-features-before>
+    <!-- Add YouTube video after homepage feature tiles -->
+    <template #home-features-after>
       <YouTubeEmbed />
     </template>
   </Layout>
