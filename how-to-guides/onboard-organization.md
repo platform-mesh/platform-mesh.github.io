@@ -14,10 +14,50 @@ Two paths are available for onboarding a new organization:
 
 ## Initial user
 
-A cluster administrator creates the initial administrator in Keycloak's
-`welcome` realm and marks its email address as verified. The Keycloak console
-is `https://<base-domain>:<external-port>/keycloak/admin/`; its bootstrap
-credentials are in the `keycloak-admin` Secret in `platform-mesh-system`.
+Onboarding uses three separate login contexts. Select the realm in the
+Keycloak admin console when managing users; the portal selects the realm
+based on the URL you open.
+
+| Context | Realm | Credentials and purpose |
+| --- | --- | --- |
+| Keycloak admin console | `master` | Bootstrap credentials from the `keycloak-admin` Secret in `platform-mesh-system`. Manage the users in the other realms. |
+| Root portal, `https://<base-domain>/` | `welcome` | Initial user's email and password. Create organizations. |
+| Organization portal, `https://<org-name>.<base-domain>/` | `<org-name>` | Organization user's email and separately configured password. Work inside that organization. |
+
+For Kind, add `:8443` to both portal URLs. `org` is the Account type;
+the organization's realm is named `<org-name>`, not literally `org`.
+
+```mermaid
+%%{init: {"themeCSS": ".nodeLabel p { margin: 0; line-height: 1.5; }"}}%%
+flowchart TD
+    Admin["Keycloak admin: master realm<br/>Use keycloak-admin credentials"]
+    Welcome["welcome realm<br/>Create user, verify email, set password"]
+    Root["Root portal<br/>Sign in as welcome user and click Onboard"]
+    Org["Organization realm: org-name<br/>Creator's username and email copied<br/>No password set"]
+    Password["Verify email and set organization password<br/>Invitation or manual admin setup"]
+    Portal["Organization portal<br/>Switch and sign in as organization user"]
+    Admin -->|Select welcome realm| Welcome
+    Welcome --> Root
+    Root -->|Platform Mesh creates realm and user| Org
+    Org --> Password
+    Admin -->|Select organization realm| Password
+    Password --> Portal
+```
+
+A cluster administrator prepares the initial user:
+
+1. Open `https://<base-domain>:<external-port>/keycloak/admin/` and sign in
+   with the Keycloak bootstrap credentials. For the local setup, these are
+   username `keycloak-admin` and password `admin`; see
+   [Access the Keycloak admin console](/how-to-guides/access-keycloak). Use a
+   private browser window if you already have a portal session.
+2. Switch from `master` to the `welcome` realm in the realm selector.
+3. Under **Users**, create the initial user with a username and email address,
+   and turn on **Email verified**.
+4. Open that user's **Credentials** tab and set a password. Give the user
+   these credentials for the root portal login in step 1 below.
+
+Keep the admin console open for the organization account setup in step 3.
 
 ::: info
 kcp rejects tokens whose `email_verified` claim is false.
@@ -30,7 +70,7 @@ can instead register from the login page.
 
 ### 1. Open the portal
 
-Navigate to the portal URL and log in with the user's credentials:
+Navigate to the portal URL and log in with the `welcome` user's credentials:
 
 - **Production**: `https://<base-domain>/`
 - **Kind**: `https://<base-domain>:8443/`
@@ -50,6 +90,12 @@ panel.
 Enter the organization name in the **Organization name** field and click
 **Onboard**. Platform Mesh creates an `Account` resource of type `org` and a
 dedicated Keycloak realm for the organization in the background.
+
+::: warning Incorrect password in the local portal popup
+The local portal's success popup says the default password is `password`.
+This message is incorrect: the organization user has no password set yet.
+Before clicking **Switch**, complete the password setup in step 3 below.
+:::
 
 Wait for the **Switch** button to become active — this indicates the
 organization workspace is ready.
@@ -75,8 +121,11 @@ the portal does not report an error.
 :::
 
 Without SMTP, for example on Kind, a Keycloak administrator prepares the
-account instead. In the Keycloak console, select the `<org-name>` realm and
-open **Users → `<user-email>`**:
+account instead. Return to the admin console signed in with the Keycloak
+admin credentials, switch from `welcome` to the `<org-name>` realm, and open
+**Users → `<user-email>`**. Edit the organization user that onboarding
+created; you do not need to create another user. Changes to the user in
+`welcome` do not update this organization account:
 
 1. On **Details**, turn on **Email verified**, remove **Verify Email** from
    **Required user actions**, and click **Save**.
