@@ -19,42 +19,48 @@ hero:
 
 features:
   - icon:
-      src: /icons/multi-nodes.svg
+      light: /icons/multi-nodes-light.svg
+      dark: /icons/multi-nodes-dark.svg
       alt: multi tenants icon
       width: 72
       height: 72
     title: Every tenant in its own space
     details: Each team or tenant gets their own isolated workspace, built on kcp, a multi-tenant control plane for Kubernetes-style APIs. Add shards and regions as you grow.
   - icon:
-      src: /icons/common-language.svg
+      light: /icons/common-language-light.svg
+      dark: /icons/common-language-dark.svg
       alt: one model icon
       width: 72
       height: 72
     title: One API model for everything
     details: Every service is managed the same way declaratively with Kubernetes Resource Model (KRM). One common language shared between providers and consumers.
   - icon:
-      src: /icons/grocery-basket.svg
+      light: /icons/grocery-basket-light.svg
+      dark: /icons/grocery-basket-dark.svg
       alt: diverse providers icon
       width: 72
       height: 72
     title: Plug in any provider
     details: No more custom glue code. Providers expose their services through their own control plane, and consumers bind to them through theirs.
   - icon:
-      src: /icons/gate-control.svg
+      light: /icons/gate-control-light.svg
+      dark: /icons/gate-control-dark.svg
       alt: provider boundaries icon
       width: 72
       height: 72
     title: AI agents act as you
     details: Turn on the optional MCP integration and connect your AI agent to Platform Mesh. It works with your own sign-in, limited to what your permissions allow.
   - icon:
-      src: /icons/round-world.svg
+      light: /icons/round-world-light.svg
+      dark: /icons/round-world-dark.svg
       alt: extend world icon
       width: 72
       height: 72
     title: Fits around what you already run
     details: Your current clusters and services stay where they are. Bring them into the mesh, or build something new on top.
   - icon:
-      src: /icons/heart-diversity.svg
+      light: /icons/heart-diversity-light.svg
+      dark: /icons/heart-diversity-dark.svg
       alt: diverse community icon
       width: 72
       height: 72
