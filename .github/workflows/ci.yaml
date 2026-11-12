@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release-*'
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - closed
+
+permissions:
+  contents: read # Baseline for actions/checkout; elevated scopes are granted per-job
+
+concurrency:
+  group: pages-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # Only reads for checkout; gh-pages push and PR comment use the platform-mesh-publisher app token
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - id: app-token
+        name: Generate platform-mesh-publisher app token
+        if: ${{ !github.event.pull_request.head.repo.fork }} # Secrets are unavailable on fork PRs; preview deploy below is likewise skipped
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: "1415820" # platform-mesh-publisher
+          private-key: ${{ secrets.PM_PUBLISHER_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - id: configure
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
+
+      - id: set-version
+        name: Set documentation version
+        run: echo "version=" >> $GITHUB_OUTPUT
+
+      - run: npm ci
+      - run: npm run build
+        env:
+          DOCS_VERSION: ${{ steps.set-version.outputs.version }}
+          PAGES_BASE: ${{ format('pr-preview/pr-{0}', github.event.pull_request.number) }}
+
+      - uses: rossjrw/pr-preview-action@ffa7509e91a3ec8dfc2e5536c4d5c1acdf7a6de9 # v1
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          source-dir: .vitepress/dist

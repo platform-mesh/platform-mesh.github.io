@@ -25,7 +25,10 @@ const base = 'DOCS_VERSION' in process.env && process.env.DOCS_VERSION != ''
 export default withMermaid({
   title: "Platform Mesh",
   head: [
-    ['link', { rel: 'icon', href: `${base}favicon.ico` }]
+    ['link', { rel: 'icon', href: `${base}favicon.ico` }],
+    // Deliberately synchronous: the shared version list must be available before
+    // Vue mounts. Use the site root, not this build's release/preview base path.
+    ['script', { src: '/versions.js' }]
   ],
 
   base,
