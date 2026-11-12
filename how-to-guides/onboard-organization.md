@@ -92,8 +92,6 @@ Enter the organization name in the **Organization name** field and click
 dedicated Keycloak realm for the organization in the background.
 
 ::: warning Incorrect password in the local portal popup
-The local portal's success popup says the default password is `password`.
-This message is incorrect: the organization user has no password set yet.
 Before clicking **Switch**, complete the password setup in step 3 below.
 :::
 
