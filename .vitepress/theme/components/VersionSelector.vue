@@ -33,20 +33,15 @@ interface Version {
   rootOnly?: boolean
 }
 
-// Define available versions - update this list when adding new versions.
-// Set rootOnly: true for versions whose URL structure differs from the current
-// docs layout (pre-v0.3 used a different directory structure), so switching
-// to them always lands on the version root instead of trying to map the
-// current path.
-const versions: Version[] = [
-  { name: 'main',          label: 'main (latest)' },
-  { name: 'release-26.10', label: 'v26.10'        },
-  { name: 'release-0.5',   label: 'v0.5'          },
-  { name: 'release-0.4',   label: 'v0.4'          },
-  { name: 'release-0.3',   label: 'v0.3'          },
-  { name: 'release-0.2',   label: 'v0.2', rootOnly: true },
-  { name: 'release-0.1',   label: 'v0.1', rootOnly: true },
-]
+declare global {
+  interface Window {
+    PLATFORM_MESH_VERSIONS?: Version[]
+  }
+}
+
+// The root-level /versions.js is shared by all documentation releases.
+// Keep server rendering independent of window; load the list on mount.
+const versions = ref<Version[]>([{ name: 'main', label: 'main (latest)' }])
 
 const currentVersion = ref<string>('')
 const isPreview = ref<boolean>(false)
@@ -67,12 +62,10 @@ function getCurrentVersion(): string {
   const path = window.location.pathname
   const segments = path.split('/').filter(Boolean)
 
-  // Check if first segment matches a known version
-  if (segments.length > 0) {
-    const firstSegment = segments[0]
-    if (versions.some(v => v.name === firstSegment)) {
-      return firstSegment
-    }
+  // Detect the current release even when the shared script is unavailable.
+  const firstSegment = segments[0]
+  if (firstSegment === 'main' || /^release-\d+\.\d+$/.test(firstSegment || '')) {
+    return firstSegment
   }
 
   // Default to main if no version detected
@@ -82,7 +75,7 @@ function getCurrentVersion(): string {
 function switchVersion(): void {
   if (typeof window === 'undefined') return
 
-  const selected = versions.find(v => v.name === currentVersion.value)
+  const selected = versions.value.find(v => v.name === currentVersion.value)
 
   if (selected?.rootOnly) {
     window.location.href = `/${currentVersion.value}/`
@@ -94,7 +87,7 @@ function switchVersion(): void {
 
   // Remove the version from the path if it exists
   let pathWithoutVersion = ''
-  if (segments.length > 0 && versions.some(v => v.name === segments[0])) {
+  if (segments.length > 0 && versions.value.some(v => v.name === segments[0])) {
     pathWithoutVersion = '/' + segments.slice(1).join('/')
   } else {
     pathWithoutVersion = currentPath
@@ -117,6 +110,19 @@ function switchVersion(): void {
 onMounted(() => {
   isPreview.value = isPreviewContext()
   currentVersion.value = getCurrentVersion()
+  if (window.PLATFORM_MESH_VERSIONS?.length) {
+    versions.value = [...window.PLATFORM_MESH_VERSIONS]
+  }
+
+  // Local builds, a failed script request, or a stale cached list should still
+  // show the current version and allow navigation back to main.
+  if (!versions.value.some(v => v.name === currentVersion.value)) {
+    versions.value.push({
+      name: currentVersion.value,
+      label: `v${currentVersion.value.replace(/^release-/, '')}`,
+      rootOnly: ['release-0.1', 'release-0.2'].includes(currentVersion.value),
+    })
+  }
 })
 </script>
 
