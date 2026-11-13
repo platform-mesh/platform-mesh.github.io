@@ -11,17 +11,17 @@ For the runtime view — which component plays which role and how requests pass 
 ## Client entry paths
 
 Platform Mesh is accessed through multiple client types, each with distinct interaction patterns.
-UI clients interact through a Kubernetes-GraphQL-Gateway, `kubectl` users communicate directly with [kcp](https://kcp.io) via the KRM API, and AI agents are expected to interact through a dedicated MCP (Model Context Protocol) server[^1].
+UI clients interact through a Kubernetes-GraphQL-Gateway, `kubectl` users communicate directly with [kcp](https://kcp.io) via the KRM API, and AI agents interact through a dedicated MCP (Model Context Protocol) server[^1].
 Regardless of the client type, all requests ultimately reach kcp, where the same authentication and authorization mechanisms apply uniformly.
 
-[^1]: The MCP server for Platform Mesh is a planned future component.
+[^1]: The [MCP integration](/concepts/mcp-integration.md) is available as an alpha add-on.
 
 ```mermaid
 flowchart LR
     UI[UI Client] --> GW[GraphQL Gateway]
     CLI[kubectl] --> KCP
     GW --> KCP[kcp]
-    AI[AI Client] -.-> MCP["MCP Server (planned)"]
+    AI[AI Client] -.-> MCP["MCP Server (alpha)"]
     MCP -.-> KCP
 
     style MCP stroke-dasharray: 5 5
