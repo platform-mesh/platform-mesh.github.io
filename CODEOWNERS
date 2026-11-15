@@ -1,1 +1,5 @@
 * @platform-mesh/go-maintainers @platform-mesh/node-maintainers
+
+# ownerless so renovate can auto-merge updates
+package.json
+package-lock.json
