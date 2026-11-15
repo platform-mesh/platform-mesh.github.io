@@ -1,0 +1,1 @@
+var e=`/main/diagrams/p-to-c-kcp-mesh.svg`;export{e as t};
