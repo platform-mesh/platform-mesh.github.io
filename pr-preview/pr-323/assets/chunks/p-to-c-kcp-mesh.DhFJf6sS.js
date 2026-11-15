@@ -1,1 +1,0 @@
-var e=`/pr-preview/pr-323/diagrams/p-to-c-kcp-mesh.svg`;export{e as t};
