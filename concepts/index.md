@@ -13,6 +13,7 @@ Use this section when you want to understand why Platform Mesh exists, how its p
 7. [API sharing](./api-sharing.md) - how provider APIs become available in consumer workspaces.
 8. [Identity and authorization](./identity-and-authorization.md) - how identity, authorization data, and kcp enforcement relate.
 9. [Integration paths](./integration-paths.md) - when providers should use api-syncagent, multicluster-runtime, or related mechanisms.
-10. [Interaction patterns](./interaction-patterns/provider-to-consumer.md) - common provider-consumer, provider-provider, and cross-consumption flows.
+10. [MCP integration](./mcp-integration.md) - how AI agents work with workspace resources as the signed-in user.
+11. [Interaction patterns](./interaction-patterns/provider-to-consumer.md) - common provider-consumer, provider-provider, and cross-consumption flows.
 
 For factual lookup, use [Reference](/reference/). For guided local setup, start with [Tutorials](/tutorials/).
