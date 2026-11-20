@@ -128,6 +128,17 @@ export default withMermaid({
             { text: 'Install Platform Mesh', link: '/how-to-guides/install-platform-mesh' },
             { text: 'Set up remote deployment', link: '/how-to-guides/set-up-remote-deployment' },
             { text: 'Air-gapped deployment', link: '/how-to-guides/install-air-gapped' },
+            {
+                text: 'Upgrading',
+                items: [
+                { text: '26.11', link: '/how-to-guides/upgrading/26.11/' },
+                //{ text: '26.10', link: '/how-to-guides/upgrading/26.10/' },
+                { text: '0.5', link: '/how-to-guides/upgrading/0.5/' },
+                { text: '0.4', link: '/how-to-guides/upgrading/0.4/' },
+                { text: '0.3', link: '/how-to-guides/upgrading/0.3/' },
+                { text: '0.2', link: '/how-to-guides/upgrading/0.2/' },
+                ]
+            },
             ]
         },
         {
