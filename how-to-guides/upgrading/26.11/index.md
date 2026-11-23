@@ -1,231 +1,176 @@
-# Migrating from Platform Mesh 26.10 to 26.11
+# Upgrading from Platform Mesh 26.10 to 26.11
 
-See also [keycloak-api-group.md](keycloak-api-group.md) for the move of
-`IdentityProviderConfiguration`/`Invite` to `keycloak.platform-mesh.io` and
-[openfga-api-group.md](openfga-api-group.md) for the move of
-`Store`/`AuthorizationModel`/`APIExportPolicy` to `openfga.platform-mesh.io`
-in the same release (both automatic).
+These steps are for an installation made with the `platform-mesh-prerequisites` and `platform-mesh-operator` charts, whose profile is the `platform-mesh-profile` ConfigMap in the cluster. `pmctl migrate` moves the data. You upgrade the two charts and apply the new profile yourself.
 
-This procedure moves OpenFGA from its bundled PostgreSQL instance to the shared CNPG cluster. It requires a maintenance window.
+::: warning Maintenance window
+OpenFGA is stopped from step 1 until the rollout in step 4 is done, and Keycloak restarts during the rollout.
+:::
 
-`pmctl migrate` does steps 1 to 4 for an installation whose profile is the `platform-mesh-profile` ConfigMap, managed directly in the cluster:
+If your profile lives somewhere else, such as a GitOps repository, `pmctl migrate` cannot change it. In that case, migrate the data [by hand](openfga-cnpg.md) and make the profile change of step 3 in the repository that owns the profile.
 
-```shell
-pmctl migrate --from v26.10.x                 # before the upgrade: stop OpenFGA, dump, restore, compare
-# upgrade to 26.11 with the profile of step 5 and 6
-pmctl migrate --from v26.10.x --phase after   # after the upgrade: OpenFGA runs on CNPG and has the data
-```
+## What changes in 26.11
 
-It leaves OpenFGA stopped until the upgrade, and keeps the dump and the profile as it was in `--backup-dir`. The rest of this document is the same procedure by hand, for a profile that is managed elsewhere.
+| Change | What you do |
+| --- | --- |
+| OpenFGA moves from its bundled PostgreSQL to the shared CNPG cluster. | Run `pmctl migrate` before and after the upgrade (steps 1 and 5). No other change moves data. |
+| `security-operator` becomes `pm-openfga-operator`, `rebac-authz-webhook` becomes `pm-openfga-authz-webhook`, and the OpenFGA kinds move to `openfga.platform-mesh.io`. | Nothing during the upgrade, because the operator migrates it. See [OpenFGA API group](openfga-api-group.md). |
+| The Keycloak integration moves to `pm-keycloak-operator` and `keycloak.platform-mesh.io`. | Nothing during the upgrade, because the operator migrates it. See [Keycloak API group](keycloak-api-group.md). |
 
-Run the commands from the repository root in the same shell. Apply profile changes through the source that owns the profile. The examples below use a directly managed `platform-mesh-profile` ConfigMap.
+## Before you start
 
-## 1. Prepare CNPG and save the current profile
+You need:
 
-Ensure `components.services.infra.values.cnpg` contains the OpenFGA role and database. Preserve the existing credentials if they are already configured.
-
-```yaml
-cnpg:
-  enabled: true
-  roles:
-    openfga:
-      username: openfga
-      password: "<strong-random-password>"
-  databases:
-    - name: openfga
-      owner: openfga
-```
-
-After every profile change, request PlatformMesh reconciliation with the function below.
+- `kubectl` and `yq`
+- Helm 3.14 or newer (for `--reset-then-reuse-values`)
+- `pmctl` of the version you upgrade to, from the [release assets](https://github.com/platform-mesh/platform-mesh/releases)
 
 ```shell
-reconcile() {
-  kubectl annotate platformmesh platform-mesh -n platform-mesh-system \
-    reconcile.fluxcd.io/requestedAt="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --overwrite
-}
-
-reconcile
-kubectl wait database/openfga-db -n platform-mesh-system \
-  --for=jsonpath='{.status.applied}'=true --timeout=300s
-
-umask 077
-BACKUPDIR=backup/openfga-migration
-mkdir -p "$BACKUPDIR"
-kubectl get configmap platform-mesh-profile -n platform-mesh-system -o yaml \
-  > "$BACKUPDIR/profile-before.yaml"
-ORIGINAL_REPLICAS=$(kubectl get deployment openfga -n platform-mesh-system \
-  -o jsonpath='{.spec.replicas}')
+export KUBECONFIG=<kubeconfig of the cluster Platform Mesh runs in>
+export NS=platform-mesh-system
+export FROM=v26.10.2          # the installed version
+export V=26.11.0              # the version to upgrade to
+export REPO=oci://ghcr.io/platform-mesh/helm-charts
 ```
 
-Record the original autoscaling settings, store and model IDs, tuple counts, and representative allow/deny checks. Protect the profile backup because it can contain credentials.
+Run every step from the same directory. `pmctl migrate` keeps its backup in `./pmctl-migrate` and reads it again in step 5.
 
-## 2. Stop OpenFGA
-
-In `components.services.openfga.values`, set:
-
-```yaml
-replicaCount: 0
-autoscaling:
-  enabled: false
-postgresql:
-  enabled: true
-```
-
-Keep the old datastore settings unchanged. Do not scale the Deployment directly because a controller can restore it.
+::: tip Try it on a local cluster first
+`pmctl quickstart` installs a release into a kind cluster the same way the charts do, so you can run the whole upgrade there before you touch a real installation:
 
 ```shell
-cp "$BACKUPDIR/profile-before.yaml" "$BACKUPDIR/profile-maintenance.yaml"
-yq -i 'del(.metadata.resourceVersion, .metadata.uid, .metadata.creationTimestamp,
-  .metadata.managedFields,
-  .metadata.annotations."kubectl.kubernetes.io/last-applied-configuration")' \
-  "$BACKUPDIR/profile-maintenance.yaml"
+pmctl quickstart --version v26.10.2
+export KUBECONFIG=$PWD/platform-mesh.kubeconfig
 
-# Edit data.profile.yaml as shown above.
-kubectl apply -f "$BACKUPDIR/profile-maintenance.yaml"
-reconcile
-kubectl wait helmrelease/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.values.replicaCount}'=0 --timeout=300s
-kubectl wait deployment/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.replicas}'=0 --timeout=300s
-kubectl wait pods -n platform-mesh-system \
-  -l app.kubernetes.io/name=openfga,app.kubernetes.io/instance=openfga \
-  --for=delete --timeout=120s
+# Sign up in the portal and create an organization and an account,
+# so that there is data to move.
+
+pmctl migrate --from v26.10.2
+pmctl quickstart --version $V        # does steps 2 to 4 at once
+pmctl migrate --from v26.10.2 --phase after
 ```
 
-Do not continue until all OpenFGA application pods are gone.
+`pmctl quickstart delete` removes the cluster.
+:::
 
-## 3. Back up the source database
+## 1. Migrate the data
+
+First check what the upgrade needs. The dry run lists the migration `openfga-cnpg` and changes nothing:
 
 ```shell
-docs/migration-openfga-cnpg/openfga_migrate.sh backup "$BACKUPDIR"
+pmctl migrate --dry-run
 ```
 
-Keep the printed `.dump` file, its `.sha256` file, and the original profile together. Leave OpenFGA stopped.
-
-## 4. Restore and compare the databases
-
-Use the filename printed by the backup command.
+Then run the migration:
 
 ```shell
-BACKUPFILE="$BACKUPDIR/backup-<timestamp>-<unique-id>.dump"
-docs/migration-openfga-cnpg/openfga_migrate.sh restore "$BACKUPFILE"
+pmctl migrate --from $FROM
 ```
 
-The helper refuses a nonempty destination and restores the archive in one transaction. After it succeeds, compare the source and destination while OpenFGA remains stopped.
+`pmctl` stops OpenFGA through the profile, dumps the bundled PostgreSQL, restores the dump into CNPG, and compares both databases. It keeps the dump and the old profile in `./pmctl-migrate`. OpenFGA stays stopped until the upgrade.
+
+::: danger Do not continue if the migration fails
+Without the migration, OpenFGA comes up on an empty database after the upgrade, and every user loses every role.
+:::
+
+## 2. Upgrade the prerequisites chart
 
 ```shell
-PRIMARY=$(kubectl get cluster.postgresql.cnpg.io platform-mesh-pg \
-  -n platform-mesh-system -o jsonpath='{.status.currentPrimary}')
-kubectl exec -n platform-mesh-system "$PRIMARY" -c postgres -- \
-  psql -X -U postgres -d openfga -v ON_ERROR_STOP=1 \
-  -c 'SELECT count(*) FROM store; SELECT count(*) FROM authorization_model; SELECT count(*) FROM tuple;'
-
-set +x
-SOURCE_PGPASSWORD=$(kubectl get secret openfga-postgres -n platform-mesh-system \
-  -o jsonpath='{.data.postgres-password}' | base64 -d)
-printf '%s\0' "$SOURCE_PGPASSWORD" | \
-  kubectl exec -i -n platform-mesh-system openfga-postgres-0 -- bash -c '
-    IFS= read -r -d "" PGPASSWORD
-    export PGPASSWORD
-    exec psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 \
-      -c "SELECT count(*) FROM store; SELECT count(*) FROM authorization_model; SELECT count(*) FROM tuple;"
-  '
-unset SOURCE_PGPASSWORD
+helm upgrade platform-mesh-prerequisites $REPO/platform-mesh-prerequisites \
+  -n $NS --version $V --reset-then-reuse-values --wait
 ```
 
-Also compare the recorded store and model IDs. Investigate any difference before continuing.
+Use `--reset-then-reuse-values`, not `--reuse-values`, here and in step 4. `--reuse-values` ignores the defaults the new chart adds, and the operator chart then fails with `nil pointer evaluating interface {}.extraFeatureToggles`.
 
-## 5. Switch to CNPG and resume OpenFGA
+## 3. Render the 26.11 profile
 
-Copy the maintenance profile and merge these values into `components.services.openfga.values`. Keep `replicaCount: 0`, preserve the existing migration and image settings, and merge rather than replace existing volume lists.
+Helm does not touch the profile on an upgrade, and 26.11 needs a new one that points OpenFGA at CNPG and enables the renamed components. Render it now and apply it in step 4.
 
 ```shell
-cp "$BACKUPDIR/profile-maintenance.yaml" "$BACKUPDIR/profile-cnpg-stopped.yaml"
+helm get values platform-mesh-operator -n $NS -o yaml > pm-values.yaml
+
+helm template platform-mesh-operator $REPO/platform-mesh-operator \
+  -n $NS --version $V -f pm-values.yaml --set-string ocm.version=$V \
+  | yq 'select(.kind == "ConfigMap" and .metadata.name == "platform-mesh-profile")' \
+  > pm-profile-$V.yaml
+
+grep -c pm-openfga-operator pm-profile-$V.yaml   # must not be 0
 ```
 
-```yaml
-postgresql:
-  enabled: true
-datastore:
-  existingSecret: cnpg-openfga-user
-  secretKeys:
-    passwordKey: password
-    usernameKey: username
-  uri: "postgres://platform-mesh-pg-rw.platform-mesh-system.svc.cluster.local:5432/openfga?sslmode=verify-full&sslrootcert=/etc/openfga/cnpg-ca/ca.crt"
-extraVolumes:
-  - name: cnpg-ca
-    secret:
-      secretName: platform-mesh-pg-ca
-extraVolumeMounts:
-  - mountPath: /etc/openfga/cnpg-ca
-    name: cnpg-ca
-    readOnly: true
-migrate:
-  extraVolumeMounts:
-    - mountPath: /etc/openfga/cnpg-ca
-      name: cnpg-ca
-      readOnly: true
-```
+The result is the profile the chart ships for your `ocm.profile` (`kind` or `production`). If you changed the profile of your installation, make the same changes in `pm-profile-$V.yaml`. You can look them up in `pmctl-migrate/openfga-cnpg-profile-before.yaml`, which is the profile as it was before step 1.
 
-Remove an old `datastore.uriSecret` or `secretKeys.uriKey` override if present. Apply the connection change while OpenFGA remains stopped.
+## 4. Upgrade the operator chart and apply the profile
+
+Run this as one command, so that the new operator never reconciles the old profile. [Troubleshooting](#a-helmrelease-hangs-in-running-upgrade-action) describes what happens if it does.
 
 ```shell
-kubectl apply -f "$BACKUPDIR/profile-cnpg-stopped.yaml"
-# reconcile
-kubectl wait helmrelease/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.values.datastore.existingSecret}'=cnpg-openfga-user --timeout=300s
-kubectl wait deployment/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.template.spec.volumes[?(@.name=="cnpg-ca")].secret.secretName}'=platform-mesh-pg-ca --timeout=300s
-kubectl wait deployment/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.replicas}'=0 --timeout=300s
+kubectl -n $NS annotate configmap platform-mesh-profile helm.sh/resource-policy=keep --overwrite && \
+helm upgrade platform-mesh-operator $REPO/platform-mesh-operator \
+  -n $NS --version $V --reset-then-reuse-values --set-string ocm.version=$V && \
+kubectl apply -f pm-profile-$V.yaml && \
+kubectl -n $NS annotate platformmesh platform-mesh \
+  reconcile.fluxcd.io/requestedAt="$(date -u +%Y-%m-%dT%H:%M:%SZ)" --overwrite
 ```
 
-Confirm the HelmRelease contains the CNPG URI and both the server and migration init container mount the CA. Then resume with autoscaling disabled for the first rollout.
+The ConfigMap annotation comes first because the chart refuses to upgrade over a profile it created without it.
+
+Wait for the rollout:
 
 ```shell
-cp "$BACKUPDIR/profile-cnpg-stopped.yaml" "$BACKUPDIR/profile-cnpg-running.yaml"
-# Set replicaCount to ORIGINAL_REPLICAS in data.profile.yaml.
-kubectl apply -f "$BACKUPDIR/profile-cnpg-running.yaml"
-reconcile
-kubectl wait helmrelease/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.values.replicaCount}'="$ORIGINAL_REPLICAS" --timeout=300s
-kubectl wait deployment/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.replicas}'="$ORIGINAL_REPLICAS" --timeout=300s
-kubectl rollout status deployment/openfga -n platform-mesh-system --timeout=300s
+kubectl -n $NS get platformmesh,helmreleases -w
 ```
 
-Verify the recorded stores, models, tuples, and allow/deny checks before reopening traffic. If autoscaling was originally enabled, restore its original settings through the profile and reconcile again.
+The rollout is done when the `PlatformMesh` is `Ready` and every HelmRelease is `True`. By then the HelmReleases `security-operator` and `rebac-authz-webhook` are gone, and `pm-openfga-operator`, `pm-openfga-authz-webhook`, and `pm-keycloak-operator` exist. On a kind cluster this takes 5 to 10 minutes.
 
-## 6. Remove the bundled PostgreSQL workload
-
-Check that the source PVC will be retained.
+## 5. Check the migration
 
 ```shell
-kubectl get statefulset openfga-postgres -n platform-mesh-system \
-  -o jsonpath='{.spec.persistentVolumeClaimRetentionPolicy}{"\n"}'
-kubectl get pvc data-openfga-postgres-0 -n platform-mesh-system
+pmctl migrate --from $FROM --phase after
 ```
 
-After application verification, disable the bundled database.
+The `after` phase is read-only. It checks that OpenFGA runs on CNPG and that the moved data is there.
+
+## 6. Verify
 
 ```shell
-cp "$BACKUPDIR/profile-cnpg-running.yaml" "$BACKUPDIR/profile-cnpg-final.yaml"
-# Set components.services.openfga.values.postgresql.enabled=false.
-# Set components.services.openfga.values.replicaCount=1
-kubectl apply -f "$BACKUPDIR/profile-cnpg-final.yaml"
-# reconcile
-kubectl wait helmrelease/openfga -n platform-mesh-system \
-  --for=jsonpath='{.spec.values.postgresql.enabled}'=false --timeout=300s
-kubectl wait statefulset/openfga-postgres -n platform-mesh-system \
-  --for=delete --timeout=300s
-kubectl wait pod/openfga-postgres-0 -n platform-mesh-system \
-  --for=delete --timeout=300s
-kubectl get pvc data-openfga-postgres-0 -n platform-mesh-system
+kubectl -n $NS logs deploy/platform-mesh-operator | grep -E "keycloak-apigroup-split|openfga-apigroup-split"
+kubectl -n $NS get statefulset openfga-postgres                      # NotFound
+kubectl -n $NS get deployments | grep -E "security-operator|rebac"   # nothing
 ```
 
-Verify OpenFGA reads and writes again. Retain the source PVC and migration archive according to your recovery policy, and include OpenFGA in the CNPG backup policy.
+Log in to the portal as an existing user and check that the organizations and accounts are there and that the user still has access to them. If roles are missing, the OpenFGA migration failed.
 
-## Recovery
+## 7. Clean up
 
-If backup or restore fails, keep OpenFGA stopped. Before cutover, restore the original connection and replica settings. After cutover, switch back only if CNPG has accepted no new writes; otherwise the source is stale and requires a reverse migration. Apply recovery changes through the profile and call `reconcile`.
+Keep the following until you are sure you will not roll back, then remove them:
 
+- Your own `APIExportPolicy`, `IdentityProviderConfiguration`, and `Invite` manifests, and the orphaned `rebac-authz-webhook-*` and `security-*` certificates and secrets. Follow the checklists for the [OpenFGA API group](openfga-api-group.md#operator-checklist) and the [Keycloak API group](keycloak-api-group.md#operator-checklist).
+- The PersistentVolumeClaim `data-openfga-postgres-0`, which still holds the old OpenFGA database.
+- The `./pmctl-migrate` directory. It holds the dump and the old profile, which can contain credentials.
+
+## Troubleshooting
+
+### `pmctl migrate --phase after`: the profile has not been switched
+
+```
+the datastore of OpenFGA does not point at CNPG cluster platform-mesh-pg: the profile has not been switched
+```
+
+The 26.11 profile is not applied, so OpenFGA still uses the old database, which is intact. Render the profile (step 3), run the `kubectl apply` of step 4, and run the phase again.
+
+### A HelmRelease hangs in `Running 'upgrade' action`
+
+If the 26.11 operator reconciles the 26.10 profile, even for the few seconds between the two halves of step 4, the pods it rolls out get a gateway address in `hostAliases` that does not exist (`10.96.188.4`). They cannot reach the identity provider and fail. Flux waits 15 minutes for them before it goes on, which also delays the removal of `security-operator`.
+
+Compare the address in the deployments with the address of the gateway:
+
+```shell
+kubectl -n $NS get svc platform-mesh-prerequisites-traefik -o jsonpath='{.spec.clusterIP}{"\n"}'
+kubectl -n $NS get deployments -o json \
+  | jq -r '.items[] | select(.spec.template.spec.hostAliases) | "\(.metadata.name) \(.spec.template.spec.hostAliases[0].ip)"'
+```
+
+If the addresses differ, you only need to wait. Once the 26.11 profile is applied, the HelmReleases are correct again, and the hanging ones are retried or removed when their timeout is over.
+
+### The PlatformMesh reports `pm-keycloak-operator-ca-secret` not found
+
+The operator is on 26.11 and the profile is still on 26.10, which does not enable `pm-keycloak-operator`. Apply the 26.11 profile.
