@@ -53,6 +53,8 @@ jobs:
 
       - run: npm ci
       - run: npm test
+      - name: Lint install.sh
+        run: shellcheck install.sh
       - run: npm run build
         env:
           DOCS_VERSION: ${{ steps.set-version.outputs.version }}

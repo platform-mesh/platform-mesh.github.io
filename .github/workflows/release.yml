@@ -85,6 +85,7 @@ jobs:
           include: |
             index.html
             llms.txt
+            install.sh
 
   versions:
     name: Update shared version list
