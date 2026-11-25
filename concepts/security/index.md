@@ -4,7 +4,6 @@ Securing a distributed, multi-tenant platform that spans organizational boundari
 Traditional monolithic security models, where authentication and authorization are tightly coupled within a single system, fail to address the dynamic nature of service ecosystems where [service providers](/concepts/personas/service-provider), [service consumers](/concepts/personas/service-consumer), and marketplace operators interact across isolated [control planes](/concepts/control-planes).
 
 Platform Mesh addresses this challenge through a clear separation of authentication and authorization as independent architectural concerns, each implemented by purpose-built components that can evolve, scale, and be replaced independently.
-This design aligns directly with the [decoupling principle](/concepts/why-platform-mesh) that guides the overall architecture: security subsystems, like all other components, should be directly usable without requiring the complete framework.
 
 For the runtime view — which component plays which role and how requests pass through the authorizer chain — see [Identity and authorization](/concepts/identity-and-authorization).
 
@@ -50,7 +49,7 @@ flowchart TD
 
 ## Separation of concerns
 
-[Authentication](./authentication) and [authorization](./authorization) are independent subsystems, reflecting Platform Mesh [guiding principles](/concepts/why-platform-mesh).
+[Authentication](./authentication) and [authorization](./authorization) are independent subsystems, reflecting Platform Mesh [guiding principles](/concepts/platform-mesh-manifesto).
 The two are connected solely through the OIDC token: authentication produces it, authorization consumes the identity claims within it.
 While OIDC tokens carry claims such as group memberships that inform RBAC decisions, the token should establish _who_ the caller is, not _what_ they are allowed to do — encoding permissions as group claims is an anti-pattern that blurs this boundary.
 They share no other state, meaning each can evolve, scale, and be replaced independently.

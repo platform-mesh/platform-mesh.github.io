@@ -38,7 +38,7 @@ Both paths require a Kubernetes operator that reconciles the service's resources
 
 ## Concepts
 
-- [Why Platform Mesh](concepts/why-platform-mesh.md): Motivation, design principles, and the managed-service-provider pattern.
+- [Platform Mesh Manifesto](concepts/platform-mesh-manifesto.md): a one-pager - what is Platform Mesh, problem it solves, benefits and use cases..
 - [Architecture](concepts/architecture.md): Component layers and how user requests flow through the system.
 - [Personas](concepts/personas/index.md): Role guide for platform owners, service providers, and service consumers.
 - [Account model](concepts/account-model.md): How organizations and accounts map to isolated control planes.

@@ -10,7 +10,7 @@ Since the Platform Mesh API layer is built on the [Kubernetes Resource Model](/c
 
 Kubernetes RBAC operates at the API resource level, governing which subjects (users, groups, service accounts) can perform which verbs (get, list, create, update, delete) on which resource types within a given workspace.
 Each account functions as an isolated [control plane](/concepts/control-planes) with its own RBAC configuration, meaning access policies are always scoped to the control plane they are defined in.
-RBAC rules are themselves Kubernetes resources, managed declaratively through the same KRM patterns used for all platform resources, consistent with the [declarative API principle](/concepts/why-platform-mesh).
+RBAC rules are themselves Kubernetes resources, managed declaratively through the same KRM patterns used for all platform resources.
 This extends naturally to Custom Resource Definitions introduced by [Managed Service Providers](/concepts/personas/service-provider): when a service provider exposes new capabilities, the existing RBAC mechanism governs access without additional configuration.
 
 ## Fine-grained authorization with ReBAC

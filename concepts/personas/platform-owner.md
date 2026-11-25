@@ -28,7 +28,7 @@ The platform owner owns the **mesh itself** — the control plane substrate, the
 
 ## Recommended reading
 
-Start with [Why Platform Mesh?](../why-platform-mesh.md) for motivation, then read [Architecture](../architecture.md) for component layout, [Account model](../account-model.md) for the hierarchy, and [Control planes and workspaces](../control-planes.md) for how the kcp substrate is used. Use [Identity and authorization](../identity-and-authorization.md) for the runtime relationship between Keycloak, OpenFGA, and the kcp authorizer. Use [Components](/reference/components/) for factual component lookup.
+Start with [Platform Mesh Manifesto](../platform-mesh-manifesto.md) one-pager, then read [Architecture](../architecture.md) for component layout, [Account model](../account-model.md) for the hierarchy, and [Control planes and workspaces](../control-planes.md) for how the kcp substrate is used. Use [Identity and authorization](../identity-and-authorization.md) for the runtime relationship between Keycloak, OpenFGA, and the kcp authorizer. Use [Components](/reference/components/) for factual component lookup.
 
 ## Related
 
