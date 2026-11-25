@@ -7,7 +7,7 @@
 For the conceptual overview, see [Provider bootstrap](/concepts/provider-bootstrap.md).
 
 ::: info
-`Provider` resources are available in workspaces that have an `APIBinding` to the `providers.platform-mesh.io` export from `root:platform-mesh-system`. The workflow for obtaining that binding (the "become a provider" onboarding path) is TBD. For now, platform owners can create the binding manually where needed.
+`Provider` resources are available in workspaces that have an `APIBinding` to the `providers.platform-mesh.io` export from `root:platform-mesh-system`. A platform admin allows a user to create this binding, see [Bootstrap a provider](/how-to-guides/bootstrap-provider.md).
 :::
 
 ## Schema
@@ -55,8 +55,8 @@ The **Provider controller**, part of the [Platform Mesh operator](/reference/com
 
 1. Finalizers are added for ordered cleanup.
 2. A workspace (WorkspaceType **`provider`**, declared in `root`) is created under `root:providers`. Its name is `<Provider.name>-<cluster-id>`, where `<cluster-id>` is the logical cluster ID (the `kcp.io/cluster` annotation) of the workspace holding the `Provider`. The name is deterministic: recreating the same `Provider` in the same workspace maps back to the same provider workspace, while equal names created by different tenants do not collide.
-3. Inside that workspace, a ServiceAccount, ClusterRoleBinding, and token Secret are created.
-4. A kubeconfig is generated from those credentials and written to the Secret specified by `providerKubeconfigSecret` (or the default location). The Secret is placed in the workspace where the `Provider` object lives, not in the provider workspace itself.
+3. Inside that workspace, a ServiceAccount with a cluster-admin ClusterRoleBinding is created.
+4. A kubeconfig is written to the Secret specified by `providerKubeconfigSecret` (or the default location). The Secret is placed in the workspace where the `Provider` object lives, not in the provider workspace itself. Its token is valid for one hour and is renewed after 40 minutes. The Secret has it also under the key `token`, and the kubeconfig reads that file first.
 5. `status.phase` transitions to `Ready` once provisioning completes.
 
 ## Lifecycle
