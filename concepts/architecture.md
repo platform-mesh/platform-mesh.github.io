@@ -49,7 +49,7 @@ When a consumer creates a resource in their workspace, the resource exists in kc
 
 ## Related
 
-- [Why Platform Mesh?](./why-platform-mesh.md)
+- [Platform Mesh Manifesto](./platform-mesh-manifesto.md)
 - [Control planes](./control-planes.md)
 - [Integration paths](./integration-paths.md)
 - [Observability](./observability.md)

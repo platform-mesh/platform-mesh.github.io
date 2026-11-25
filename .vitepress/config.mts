@@ -149,7 +149,7 @@ export default withMermaid({
         {
             text: 'Foundations',
             items: [
-            { text: 'Why Platform Mesh?', link: '/concepts/why-platform-mesh' },
+            { text: 'Platform Mesh Manifesto', link: '/concepts/platform-mesh-manifesto' },
             { text: 'Architecture', link: '/concepts/architecture' },
             { text: 'Personas', link: '/concepts/personas/' },
             ]
