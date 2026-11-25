@@ -11,48 +11,38 @@ If the platform team runs the service for you, read [Onboard a managed service](
 
 ## What you need
 
-- A Platform Mesh user and a workspace where you can create objects, for example your account workspace. The commands below use a kubeconfig for this workspace.
+- A Platform Mesh user and an account in an organization, where you can create objects. The commands below use a kubeconfig for this account workspace.
 - `kubectl`.
-- The right to bind the `providers.platform-mesh.io` API. A platform admin gives it to you in step 1.
+- The right to bind the `providers.platform-mesh.io` API in your account. A platform admin gives it to you in step 1.
 
 ## Step 1: The admin allows you to become a provider
 
-This step is for the platform admin. Apply this in the workspace `root:platform-mesh-system`, with the user or the group of the provider as subject:
+This step is for the platform admin. Apply this in the workspace `root:orgs`:
 
 ```yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+apiVersion: openfga.platform-mesh.io/v1alpha1
+kind: APIExportPolicy
 metadata:
-  name: providers-bind
-rules:
-- apiGroups: ["apis.kcp.io"]
-  resources: ["apiexports"]
-  resourceNames: ["providers.platform-mesh.io"]
-  verbs: ["bind"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: providers-bind-my-service
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: providers-bind
-subjects:
-- apiGroup: rbac.authorization.k8s.io
-  kind: User
-  name: user@example.com
+  name: providers.platform-mesh.io
+spec:
+  apiExportRef:
+    name: providers.platform-mesh.io
+    clusterPath: root:platform-mesh-system
+  allowPathExpressions:
+  - :root:orgs:acme:*
 ```
 
-The user can only bind the API with it. It gives no other access to `root:platform-mesh-system`.
+`:root:orgs:acme:*` allows all accounts of the organization `acme`. To allow only one account, use its path, for example `:root:orgs:acme:team-a`. This is the same object as for the Marketplace in step 7, only for the providers API.
+
+The policy works per account, not per user. Every user who can create an `APIBinding` in an allowed account can become a provider.
 
 ::: info
-To check the grant, log in as the user. A test with `kubectl --as` does not work: kcp limits an impersonated user to the workspace of the request, and the bind check runs in another workspace.
+The bind check needs the account of the request. kcp knows it for users who log in through the login of the organization, and for ServiceAccounts of the account. A user of a global login, which is not bound to a workspace, cannot bind with the policy.
 :::
 
 ## Step 2: Bind the providers API
 
-In your workspace:
+In your account workspace:
 
 ```yaml
 apiVersion: apis.kcp.io/v1alpha2
