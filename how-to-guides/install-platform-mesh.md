@@ -31,13 +31,13 @@ Platform Mesh requires the following cluster components at the listed versions:
 | Component | Version |
 |---|---|
 | Flux | 2.17.2 |
-| OCM controller (ocm-k8s-toolkit) | 0.13.0 |
-| cert-manager | v1.20.5 |
-| Gateway API CRDs | 1.5.1, standard channel or later |
+| OCM controller (ocm-k8s-toolkit) | 0.24.0 |
+| cert-manager | v1.21.3 |
+| Gateway API CRDs | 1.5.1, experimental channel |
 | Traefik | 42.2.0 |
 | Traefik CRDs | 1.18.0 |
-| CloudNativePG | 0.28.0 |
-| Keycloak operator | 0.10.0 |
+| CloudNativePG | 0.29.1 |
+| Keycloak operator (container image) | 26.8.1 |
 | etcd-druid | v0.39.2 |
 
 The `platform-mesh-prerequisites` chart installs all of the above at these exact
@@ -206,7 +206,7 @@ release to change the installation.
 ```shell [Production]
 helm upgrade --install platform-mesh-prerequisites \
   oci://ghcr.io/platform-mesh/helm-charts/platform-mesh-prerequisites \
-  --version 0.2.2 \
+  --version 26.11.0 \
   --namespace platform-mesh-system \
   --create-namespace \
   --wait \
@@ -214,7 +214,7 @@ helm upgrade --install platform-mesh-prerequisites \
 
 helm upgrade platform-mesh-prerequisites \
   oci://ghcr.io/platform-mesh/helm-charts/platform-mesh-prerequisites \
-  --version 0.2.2 \
+  --version 26.11.0 \
   --namespace platform-mesh-system \
   --reset-values \
   --wait \
@@ -239,7 +239,7 @@ echo "LoadBalancer address: ${load_balancer_address}"
 ```shell [Kind]
 helm upgrade --install platform-mesh-prerequisites \
   oci://ghcr.io/platform-mesh/helm-charts/platform-mesh-prerequisites \
-  --version 0.2.2 \
+  --version 26.11.0 \
   --namespace platform-mesh-system \
   --set keycloak-operator.watchNamespaces=platform-mesh-system \
   --create-namespace \
@@ -248,7 +248,7 @@ helm upgrade --install platform-mesh-prerequisites \
 
 helm upgrade platform-mesh-prerequisites \
   oci://ghcr.io/platform-mesh/helm-charts/platform-mesh-prerequisites \
-  --version 0.2.2 \
+  --version 26.11.0 \
   --namespace platform-mesh-system \
   --reset-values \
   --wait \
@@ -298,9 +298,11 @@ For an Envoy Gateway setup walkthrough, see
 Set the base domain and desired OCM component version before installing PMO.
 The base domain and its wildcard subdomains must resolve to the gateway
 controller address. Production DNS must point to the LoadBalancer address. The
-commands pin the operator chart to `0.61.0`, which was tested with prerequisite
-chart `0.2.2` and Platform Mesh component `0.6.0-build.6`; select and test a
-compatible set when upgrading.
+commands pin the operator chart, prerequisite chart, and Platform Mesh OCM
+component to `26.11.0`.
+
+For existing 26.10 installations, follow the [26.11 upgrade guide](/how-to-guides/upgrading/26.11/)
+to migrate the profile and OpenFGA data.
 
 Choose who manages the domain certificates with
 `certificates.selfSigned.enabled`:
@@ -340,7 +342,7 @@ using these externally managed Secrets.
 
 ```shell [Production]
 base_domain=platform.example.com
-platform_mesh_version=0.6.0-build.6
+platform_mesh_version=26.11.0
 self_signed_certificates=true
 gateway_class_name=traefik
 test -n "${base_domain:-}"
@@ -350,7 +352,7 @@ echo "Configure ${base_domain} and *.${base_domain} for ${load_balancer_address}
 
 helm upgrade --install platform-mesh-operator \
   oci://ghcr.io/platform-mesh/helm-charts/platform-mesh-operator \
-  --version 0.61.0 \
+  --version 26.11.0 \
   --namespace platform-mesh-system \
   --set ocm.enabled=true \
   --set ocm.profile=production \
@@ -366,7 +368,7 @@ helm upgrade --install platform-mesh-operator \
 
 ```shell [Kind]
 base_domain=portal.localhost
-platform_mesh_version=0.6.0-build.6
+platform_mesh_version=26.11.0
 self_signed_certificates=true
 gateway_class_name=traefik
 gateway_cluster_ip="$(kubectl -n platform-mesh-system get svc platform-mesh-prerequisites-traefik -o jsonpath='{.spec.clusterIP}')"
@@ -376,7 +378,7 @@ test -n "${gateway_cluster_ip:-}"
 
 helm upgrade --install platform-mesh-operator \
   oci://ghcr.io/platform-mesh/helm-charts/platform-mesh-operator \
-  --version 0.61.0 \
+  --version 26.11.0 \
   --namespace platform-mesh-system \
   --set ocm.enabled=true \
   --set ocm.profile=kind \
